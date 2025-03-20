@@ -1,6 +1,6 @@
 const FindBlood = () => {
   return (
-    <section className="py-10 bg-gray-50 dark:bg-gray-800 rounded-xl p-6 mb-12">
+    <section className="py-10 bg-gray-50 dark:bg-gray-800 rounded-xl p-6 mb-12 mt-10">
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">জরুরি রক্ত খুঁজুন</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">

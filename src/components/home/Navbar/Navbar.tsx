@@ -1,17 +1,31 @@
 'use client'
 import Link from 'next/link'
 import { FaDonate, FaBars, FaTimes } from 'react-icons/fa'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Profile from '../Profile/Profile'
+import { usePathname } from 'next/navigation'
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState(false)
+  const pathname = usePathname()
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
   }
+
+  // Close mobile menu when changing routes
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [pathname])
+
+  const isActive = (path: string) => {
+    return pathname === path
+  }
+
+  const activeClass = "text-red-600 font-semibold"
+  const inactiveClass = "text-gray-700 hover:text-red-600"
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -45,35 +59,35 @@ const Navbar = () => {
           <div className="hidden md:flex md:items-center md:space-x-6">
             {/* Blood Donation Link */}
             <Link href="/blood-donation" passHref>
-              <div className="flex items-center text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium">
-                রক্তদান
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/blood-donation') ? activeClass : inactiveClass}`}>
+                রক্তদান সেবা
               </div>
             </Link>
             
             {/* SOS Link */}
             <Link href="/sos" passHref>
-              <div className="flex items-center text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium">
-                জরুরি সাহায্য
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/sos') ? activeClass : inactiveClass}`}>
+                জরুরি রক্তের আবেদন
               </div>
             </Link>
             
             {/* Advice Link */}
             <Link href="/advice" passHref>
-              <div className="flex items-center text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium">
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/advice') ? activeClass : inactiveClass}`}>
                 পরামর্শ
               </div>
             </Link>
             
             {/* Blog Link */}
             <Link href="/blog" passHref>
-              <div className="flex items-center text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium">
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/blog') ? activeClass : inactiveClass}`}>
                 ব্লগ
               </div>
             </Link>
 
             {/* Donation Amount Link */}
             <Link href="/donation" passHref>
-              <div className="flex items-center text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium">
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
                 <FaDonate className="mr-1" /> অনুদান
               </div>
             </Link>
@@ -82,13 +96,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 <Link 
                   href="/register" 
-                  className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-lg text-center text-sm font-medium transition-colors duration-200"
+                  className={`${isActive('/register') ? 'bg-red-700' : 'bg-red-600 hover:bg-red-700'} text-white py-1 px-3 rounded-lg text-center text-sm font-medium transition-colors duration-200`}
                 >
                   রেজিস্ট্রেশন
                 </Link>
                 <Link 
                   href="/login" 
-                  className="bg-orange-500 hover:bg-orange-600 text-white py-1 px-3 rounded-lg text-center text-sm font-medium transition-colors duration-200"
+                  className={`${isActive('/login') ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-600'} text-white py-1 px-3 rounded-lg text-center text-sm font-medium transition-colors duration-200`}
                 >
                   লগইন
                 </Link>
@@ -104,34 +118,34 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {/* Blood Donation Link - Mobile */}
             <Link href="/blood-donation" passHref>
-              <div className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md">
-                রক্তদান
+              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/blood-donation') ? activeClass : inactiveClass}`}>
+                রক্তদান সেবা
               </div>
             </Link>
             
             {/* SOS Link - Mobile */}
             <Link href="/sos" passHref>
-              <div className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md">
-                জরুরি সাহায্য
+              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/sos') ? activeClass : inactiveClass}`}>
+                জরুরি রক্তের আবেদন
               </div>
             </Link>
             
             {/* Advice Link - Mobile */}
             <Link href="/advice" passHref>
-              <div className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md">
+              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/advice') ? activeClass : inactiveClass}`}>
                 পরামর্শ
               </div>
             </Link>
             
             {/* Blog Link - Mobile */}
             <Link href="/blog" passHref>
-              <div className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md">
+              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/blog') ? activeClass : inactiveClass}`}>
                 ব্লগ
               </div>
             </Link>
             
             <Link href="/donation" passHref>
-              <div className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded-md">
+              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/donation') ? activeClass : inactiveClass}`}>
                 <FaDonate className="mr-2" /> অনুদান
               </div>
             </Link>
@@ -140,13 +154,13 @@ const Navbar = () => {
               <div className="grid grid-cols-2 gap-2 mt-3 px-3 py-2">
                 <Link 
                   href="/register" 
-                  className="bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-center font-medium transition-colors duration-200"
+                  className={`${isActive('/register') ? 'bg-red-700' : 'bg-red-600 hover:bg-red-700'} text-white py-2 px-3 rounded-lg text-center font-medium transition-colors duration-200`}
                 >
                   রেজিস্ট্রেশন
                 </Link>
                 <Link 
                   href="/login" 
-                  className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-3 rounded-lg text-center font-medium transition-colors duration-200"
+                  className={`${isActive('/login') ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-600'} text-white py-2 px-3 rounded-lg text-center font-medium transition-colors duration-200`}
                 >
                   লগইন
                 </Link>
