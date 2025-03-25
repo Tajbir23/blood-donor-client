@@ -27,5 +27,5 @@ const BloodDonationPage = () => {
     </div>
   )
 }
-
 export default BloodDonationPage
+

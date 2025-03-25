@@ -74,7 +74,7 @@ const Navbar = () => {
             {/* Advice Link */}
             <Link href="/advice" passHref>
               <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/advice') ? activeClass : inactiveClass}`}>
-                পরামর্শ
+                পরামর্শ দিন
               </div>
             </Link>
             
@@ -133,7 +133,7 @@ const Navbar = () => {
             {/* Advice Link - Mobile */}
             <Link href="/advice" passHref>
               <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/advice') ? activeClass : inactiveClass}`}>
-                পরামর্শ
+                পরামর্শ দিন
               </div>
             </Link>
             
