@@ -2,36 +2,30 @@ import Register from "./Register"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: 'রক্তদান রংপুর বিভাগে যোগ দিন | নিবন্ধন করুন',
-  description: 'রংপুর বিভাগের সবচেয়ে বড় রক্তদান কমিউনিটিতে নিবন্ধন করুন। আপনি ব্যক্তিগতভাবে রক্তদাতা হিসেবে অথবা প্রতিষ্ঠান হিসেবে যোগ দিতে পারেন।',
-  keywords: ['রক্তদান', 'রংপুর বিভাগ', 'রক্তদাতা নিবন্ধন', 'blood donation', 'Rangpur Division', 'donor registration'],
+  title: "নিবন্ধন করুন | রক্তদান রংপুর বিভাগ",
+  description: "রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। একটি অ্যাকাউন্ট তৈরি করুন এবং রক্তদান সেবা দিন বা গ্রহণ করুন।",
+  keywords: "রক্তদান, রংপুর, নিবন্ধন, রেজিস্ট্রেশন, রক্তদাতা, ব্লাড ডোনেশন, blood donation, rangpur, registration",
   alternates: {
     canonical: 'https://blooddonation-rangpur.com/register',
   },
   openGraph: {
-    title: 'রক্তদান রংপুর বিভাগে যোগ দিন | নিবন্ধন করুন',
-    description: 'রংপুর বিভাগের সবচেয়ে বড় রক্তদান কমিউনিটিতে নিবন্ধন করুন। ব্যক্তিগত বা প্রতিষ্ঠান হিসেবে যোগ দিন।',
+    title: "নিবন্ধন করুন | রক্তদান রংপুর বিভাগ",
+    description: "রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। আপনার অ্যাকাউন্ট তৈরি করুন।",
     url: 'https://blooddonation-rangpur.com/register',
     siteName: 'রক্তদান রংপুর বিভাগ',
     images: [
       {
-        url: '/images/register-og.jpg',
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: 'রক্তদান রংপুর বিভাগ নিবন্ধন পেজ',
-      }
+        alt: "রক্তদান রংপুর বিভাগ",
+      },
     ],
     locale: 'bn_BD',
     type: 'website',
   },
 }
 
-const page = () => {
-  return (
-    <div>
-      <Register />
-    </div>
-  )
+export default function RegisterPage() {
+  return <Register />;
 }
-
-export default page

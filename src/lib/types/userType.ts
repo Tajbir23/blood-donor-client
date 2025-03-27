@@ -22,9 +22,9 @@ export interface User {
     longitude: number;
     agreedToTerms: boolean;
     fingerprint?: FingerprintData;
-    isActive: boolean;
-    isVerified: boolean;
-    reportCount: number;
+    isActive?: boolean;
+    isVerified?: boolean;
+    reportCount?: number;
     createdAt?: string;
     updatedAt?: string;
 }

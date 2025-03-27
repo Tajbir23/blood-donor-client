@@ -5,6 +5,8 @@ import Navbar from "@/components/home/Navbar/Navbar";
 import EmergencyHeadline from "@/components/Emergency-headline/Emergency-headline";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { Toaster } from "react-hot-toast";
+import QueryProvider from "@/components/QueryProvider/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +31,14 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Header />
-        <Navbar />
-        <EmergencyHeadline />
-        {children}
-        <Footer />
+        <QueryProvider>
+          <Header />
+          <Navbar />
+          <EmergencyHeadline />
+          {children}
+          <Footer />
+          <Toaster position="top-right" />
+        </QueryProvider>
       </body>
     </html>
   );

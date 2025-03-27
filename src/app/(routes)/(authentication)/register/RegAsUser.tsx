@@ -5,12 +5,17 @@ import { useRangpurDivision } from '@/hooks/useLocation';
 import LocationInput from '@/components/LocationInput';
 import { UploadImage } from '@/app/libs';
 import { useFingerprint } from '@/app/actions/fingerprint';
-import { registerAsUser } from '@/app/actions/authentication';
 import { User } from '@/lib/types/userType';
+import useRegisterAsUser from '@/app/hooks/useRegisterAsUser';
+import { useRouter } from 'next/navigation';
+import Loading from '@/app/libs/Loading';
 
 const RegAsUser = () => {
+  const router = useRouter()
+  const {mutate: registerAsUser, isPending, data} = useRegisterAsUser()
   const { division, loading: loadingDivision } = useRangpurDivision();
   const { fingerprint } = useFingerprint();
+  const [locationError, setLocationError] = useState<string>('');
 
   const [formData, setFormData] = useState<User>({
     fullName: '',
@@ -99,6 +104,9 @@ const RegAsUser = () => {
 
   const handleLocationChange = (location: { lat: number, lng: number }) => {
     setFormData(prev => ({ ...prev, latitude: location.lat, longitude: location.lng }));
+    if (location.lat !== 0 && location.lng !== 0) {
+      setLocationError('');
+    }
   };
 
   const handleImageSelect = (file: File, previewUrl: string) => {
@@ -109,12 +117,29 @@ const RegAsUser = () => {
     }));
   };
 
+  const validateLocation = (): boolean => {
+    if (formData.latitude === 0 || formData.longitude === 0) {
+      setLocationError('অনুগ্রহ করে আপনার অবস্থান নির্বাচন করুন');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate location
+    if (!validateLocation()) {
+      // Scroll to location section
+      document.getElementById('location-section')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    
     // Form validation and submission logic
-    console.log(formData);
-    const response = await registerAsUser(formData)
-    console.log(response)
+     await registerAsUser(formData);
+    if(data.success){
+      router.push("/")
+    }
   };
 
   return (
@@ -373,7 +398,7 @@ const RegAsUser = () => {
         </div>
         
         {/* Location Input */}
-        <div className="border-l-4 border-red-500 pl-4 pb-2">
+        <div id="location-section" className="border-l-4 border-red-500 pl-4 pb-2">
           <h3 className="text-lg font-medium text-gray-800 mb-4">অবস্থান (Location)</h3>
           <div className="space-y-4">
             <LocationInput
@@ -382,6 +407,14 @@ const RegAsUser = () => {
               width="100%"
               mapHeight="250px"
             />
+            {locationError && (
+              <div className="text-red-500 text-sm mt-1">
+                {locationError}
+              </div>
+            )}
+            <p className="text-xs text-gray-500">
+              আপনার সঠিক অবস্থান নির্বাচন করুন যাতে রক্তের প্রয়োজনে আপনাকে সহজে খুঁজে পাওয়া যায়।
+            </p>
           </div>
         </div>
         
@@ -404,10 +437,17 @@ const RegAsUser = () => {
         <div className="flex flex-col gap-4">
           <button 
             type="submit" 
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors"
-            disabled={!formData.agreedToTerms}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center disabled:bg-red-300"
+            disabled={!formData.agreedToTerms || isPending}
           >
-            নিবন্ধন করুন
+            {isPending ? (
+              <div className="flex items-center justify-center">
+                <Loading size="small" color="#ffffff" />
+                <span className="ml-2">নিবন্ধন হচ্ছে...</span>
+              </div>
+            ) : (
+              'নিবন্ধন করুন'
+            )}
           </button>
           
           <p className="text-center text-gray-600">
