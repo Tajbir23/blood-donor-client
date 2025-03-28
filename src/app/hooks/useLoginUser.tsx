@@ -1,15 +1,19 @@
-import { useMutation } from "@tanstack/react-query"
+"use client"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { loginUser } from "../actions/authentication"
 import toast from "react-hot-toast"
 
 
 const useLoginUser = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ['loginUser', 'user'],
     mutationFn: loginUser,
     onSuccess: (data) => {
         if(data?.success){
             toast.success("লগইন সম্পন্ন হয়েছে")
+            queryClient.setQueryData(['user'], data.user)
         }else{
             toast.error(data?.message)
         }

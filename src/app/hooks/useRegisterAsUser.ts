@@ -1,15 +1,20 @@
-
-import { useMutation } from '@tanstack/react-query'
+'use client'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { registerAsUser } from '../actions/authentication'
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 const useRegisterAsUser = () => {
+  const queryClient = useQueryClient()
+  const router = useRouter()
   return useMutation({
     mutationKey: ['registerUser', 'user'],
     mutationFn: registerAsUser,
     onSuccess: (data) => {
         if (data?.success) {
             toast.success('আপনার নিবন্ধন সফল হয়েছে');
+            queryClient.setQueryData(['user'], data.user)
+            router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
           } else {
             toast.error(data?.message);
           }

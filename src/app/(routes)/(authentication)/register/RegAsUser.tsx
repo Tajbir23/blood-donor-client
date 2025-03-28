@@ -137,9 +137,6 @@ const RegAsUser = () => {
     
     // Form validation and submission logic
      await registerAsUser(formData);
-    if(data.success){
-      router.push("/")
-    }
   };
 
   return (

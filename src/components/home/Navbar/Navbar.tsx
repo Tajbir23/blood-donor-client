@@ -1,14 +1,18 @@
 'use client'
 import Link from 'next/link'
-import { FaDonate, FaBars, FaTimes } from 'react-icons/fa'
+import { FaBars, FaTimes } from 'react-icons/fa'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Profile from '../Profile/Profile'
 import { usePathname } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
+import { User } from '@/lib/types/userType'
 
 const Navbar = () => {
+  const queryClient = useQueryClient();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState(false)
+  const [userData, setUserData] = useState<User>()
   const pathname = usePathname()
 
   const toggleMobileMenu = () => {
@@ -19,6 +23,18 @@ const Navbar = () => {
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    setTimeout(() => {
+        const data = queryClient.getQueryData<User>(['user']);
+        console.log(data)
+        if(data){
+          setUser(true)
+          setUserData(data)
+        }
+        // console.log("Cached User After Timeout:", cachedUserAfter);
+    }, 100);
+}, [queryClient]);
 
   const isActive = (path: string) => {
     return pathname === path
@@ -88,11 +104,17 @@ const Navbar = () => {
             {/* Donation Amount Link */}
             <Link href="/donation" passHref>
               <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
-                <FaDonate className="mr-1" /> অনুদান
+                 অনুদান
               </div>
             </Link>
 
-            {user ? <Profile /> : 
+            {user && (userData?.role === "admin" || "superAdmin" || "moderator" || "associationSuperAdmin" || "associationModerator" || "associationAdmin") && <Link href="/dashboard" passHref>
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
+                 ড্যাশবোর্ড
+              </div>
+            </Link>}
+
+            {user && userData ? <Profile userData={userData} /> : 
               <div className="flex items-center space-x-3">
                 <Link 
                   href="/register" 
@@ -146,11 +168,17 @@ const Navbar = () => {
             
             <Link href="/donation" passHref>
               <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/donation') ? activeClass : inactiveClass}`}>
-                <FaDonate className="mr-2" /> অনুদান
+                 অনুদান
               </div>
             </Link>
+
+            {user && (userData?.role === "admin" || "superAdmin" || "moderator" || "associationSuperAdmin" || "associationModerator" || "associationAdmin") && userData?.isActive && <Link href="/dashboard" passHref>
+              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/dashboard') ? activeClass : inactiveClass}`}>
+                 ড্যাশবোর্ড
+              </div>
+            </Link>}
             
-            {user ? <Profile /> : 
+            {user && userData ? <Profile userData={userData} /> : 
               <div className="grid grid-cols-2 gap-2 mt-3 px-3 py-2">
                 <Link 
                   href="/register" 

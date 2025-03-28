@@ -3,8 +3,10 @@ import { FingerprintData } from "./fingerprint";
 export interface User {
     _id?: string;
     email: string;
+    emailVerified?: boolean;
     fullName: string;
     password: string;
+    role?: string;
     confirmPassword: string;
     phone: string;
     birthDate: string;

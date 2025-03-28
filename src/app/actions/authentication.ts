@@ -107,6 +107,12 @@ export const verifyJwt = async() => {
         redirect("/login")
     }
 
-    const decoded = jwt.verify(token.value, process.env.NEXT_PUBLIC_JWT_TOKEN as string);
-    return decoded
+    try {
+        const decoded = jwt.verify(token.value, process.env.NEXT_PUBLIC_JWT_TOKEN as string);
+        return decoded
+    } catch (error) {
+        console.log(error)
+        cookieStore.delete("token")
+        redirect("/login")
+    }
 }
