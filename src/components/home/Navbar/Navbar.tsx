@@ -27,12 +27,12 @@ const Navbar = () => {
   useEffect(() => {
     setTimeout(() => {
         const data = queryClient.getQueryData<User>(['user']);
-        console.log(data)
+        
         if(data){
           setUser(true)
           setUserData(data)
         }
-        // console.log("Cached User After Timeout:", cachedUserAfter);
+        
     }, 100);
 }, [queryClient]);
 

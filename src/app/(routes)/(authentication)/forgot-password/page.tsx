@@ -46,7 +46,7 @@ const ForgotPasswordPage = () => {
             পাসওয়ার্ড ভুলে গেছেন?
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            আপনার ইমেইল ঠিকানা দিন, আমরা আপনাকে ইমেইল এ ওটিপি পাঠাবো
+            আপনার ইমেইল ঠিকানা দিন, আমরা আপনাকে ইমেইল এ নতুন পাসওয়ার্ড পাঠাবো
           </p>
         </div>
 
@@ -83,7 +83,7 @@ const ForgotPasswordPage = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-red-300"
             >
-              {loading ? 'পাঠানো হচ্ছে...' : 'ওটিপি পাঠান'}
+              {loading ? 'পাঠানো হচ্ছে...' : 'পাসওয়ার্ড পাঠান'}
             </button>
           </div>
 

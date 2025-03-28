@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const RegularDonor = () => {
@@ -61,11 +61,9 @@ const RegularDonor = () => {
   const totalSlides = donors.length;
   const maxIndex = totalSlides - slidesToShow;
 
-  const nextSlide = () => {
-    setCurrentIndex(prevIndex => 
-      prevIndex >= maxIndex ? 0 : prevIndex + 1
-    );
-  };
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % maxIndex);
+  }, [maxIndex]);
 
   const prevSlide = () => {
     setCurrentIndex(prevIndex => 
@@ -75,11 +73,12 @@ const RegularDonor = () => {
 
   // Auto-advance slides
   useEffect(() => {
-    const interval = setInterval(() => {
+    const timer = setInterval(() => {
       nextSlide();
     }, 5000);
-    return () => clearInterval(interval);
-  }, [currentIndex, maxIndex]);
+
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   return (
     <div className="py-10 bg-gray-50">

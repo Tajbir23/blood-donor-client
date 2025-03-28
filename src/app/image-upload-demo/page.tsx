@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { UploadImage } from '@/app/libs';
+import Image from 'next/image'
 
 export default function ImageUploadDemo() {
   const [imageData, setImageData] = useState<{ file: File | null; preview: string }>({
@@ -67,10 +68,12 @@ export default function ImageUploadDemo() {
           <div className="mt-8 bg-white rounded-lg shadow-md p-4">
             <h3 className="text-lg font-medium mb-3 text-gray-800 border-b pb-2">সর্বশেষ আপলোড করা ছবি</h3>
             <div className="flex items-center space-x-4">
-              <img 
-                src={imageData.preview} 
-                alt="Selected image" 
-                className="w-20 h-20 object-cover rounded"
+              <Image
+                src={imageData.preview}
+                alt="Selected image"
+                width={80}
+                height={80}
+                className="rounded-lg"
               />
               <div>
                 <p className="text-sm text-gray-500">ফাইলের নাম:</p>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import useLoginUser from '@/app/hooks/useLoginUser'
@@ -24,15 +24,20 @@ const LoginForm = () => {
     }))
   }
 
+  useEffect(() => {
+    if (data?.success) {
+      setTimeout(() => {
+        router.push("/")
+      }, 100)
+    }
+  }, [data, router])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
     try {
       await loginUser(formData)
-      if(data?.success){
-        router.push("/")
-      }
     } catch (err) {
       console.log(err)
       setError('লগইন করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।')

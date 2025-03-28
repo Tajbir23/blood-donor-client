@@ -31,11 +31,12 @@ export const registerAsUser = async (data: User) => {
             })
 
             
-            if (!response.ok) {
-                throw new Error('Failed to register');
-            }
-            
-            return await response.json();
+            // if (!response.ok) {
+            //     throw new Error('Failed to register');
+            // }
+            const user = await response.json()
+            console.log(user)
+            return user;
         } else {
             
         
@@ -47,11 +48,13 @@ export const registerAsUser = async (data: User) => {
                 body: JSON.stringify(data)
             })
             
-            if (!response.ok) {
-                throw new Error('Failed to register');
-            }
-        
-            return await response.json();
+
+            // if (!response.ok) {
+            //     throw new Error('Failed to register');
+            // }
+            const user = await response.json()
+            console.log(user)
+            return user;
         }
     } catch (error) {
         console.error('Error registering user:', error);

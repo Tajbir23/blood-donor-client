@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import GeoMapTemplate from '@/components/GeoMapTemplate';
+import type { LatLngTuple } from 'leaflet';
 
 interface LocationInputProps {
   onLocationChange?: (location: { lat: number; lng: number }) => void;
@@ -26,11 +27,12 @@ const LocationInput: React.FC<LocationInputProps> = ({
     initialLocation || null
   );
 
-  const handleLocationSelect = (location: { lat: number; lng: number }) => {
-    setLocation(location);
+  const handleLocationSelect = (latLng: LatLngTuple) => {
+    const newLocation = { lat: latLng[0], lng: latLng[1] };
+    setLocation(newLocation);
     
     if (onLocationChange) {
-      onLocationChange(location);
+      onLocationChange(newLocation);
     }
   };
 
@@ -43,10 +45,9 @@ const LocationInput: React.FC<LocationInputProps> = ({
       
       <div className="border border-gray-300 rounded-md overflow-hidden">
         <GeoMapTemplate
-          onLocationChange={handleLocationSelect}
-          required={required}
-          width="100%"
-          mapHeight={mapHeight}
+          selectedLocation={location}
+          onLocationSelect={handleLocationSelect}
+          height={mapHeight}
         />
       </div>
       

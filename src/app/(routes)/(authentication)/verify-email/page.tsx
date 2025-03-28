@@ -1,12 +1,11 @@
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import OtpVerification from '@/components/auth/OtpVerification'
 import { verifyOtp, resendOtp } from '@/app/actions/otpActions'
 import toast from 'react-hot-toast'
 
-
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
@@ -99,5 +98,17 @@ export default function VerifyEmailPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-red-600 mb-6">Loading...</h2>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   )
 } 

@@ -21,6 +21,7 @@ const fixLeafletIcon = () => {
 export interface MapComponentProps {
   selectedLocation: { lat: number; lng: number } | null;
   onLocationSelect: (location: LatLngTuple) => void;
+  height?: string;
 }
 
 // Component to handle map view updates
@@ -68,9 +69,21 @@ const LocationMarker = ({
   );
 };
 
+interface SearchResult {
+  display_name: string;
+  lat: number;
+  lon: number;
+  address?: {
+    city?: string;
+    town?: string;
+    village?: string;
+    state?: string;
+  };
+}
+
 const MapComponent = ({ selectedLocation, onLocationSelect }: MapComponentProps) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Array<{ display_name: string; lat: number; lon: number }>>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
@@ -120,13 +133,8 @@ const MapComponent = ({ selectedLocation, onLocationSelect }: MapComponentProps)
     setDebounceTimer(timer);
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    searchLocation(searchQuery);
-  };
-
-  const handleResultClick = (result: { lat: number; lon: number }) => {
-    const location: LatLngTuple = [parseFloat(result.lat), parseFloat(result.lon)];
+  const handleResultClick = (result: SearchResult) => {
+    const location: LatLngTuple = [result.lat, result.lon];
     onLocationSelect(location);
     setSearchResults([]);
     setSearchQuery('');
