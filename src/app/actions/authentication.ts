@@ -116,3 +116,16 @@ export const verifyJwt = async() => {
         redirect("/login")
     }
 }
+
+
+export const forgotPassword = async(email: string) => {
+    const response = await baseUrl("/user/forgot-password", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email})
+    })
+
+    return response.json()
+}
