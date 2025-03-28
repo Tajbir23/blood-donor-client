@@ -7,12 +7,10 @@ import { UploadImage } from '@/app/libs';
 import { useFingerprint } from '@/app/actions/fingerprint';
 import { User } from '@/lib/types/userType';
 import useRegisterAsUser from '@/app/hooks/useRegisterAsUser';
-import { useRouter } from 'next/navigation';
 import Loading from '@/app/libs/Loading';
 
 const RegAsUser = () => {
-  const router = useRouter()
-  const {mutate: registerAsUser, isPending, data} = useRegisterAsUser()
+  const {mutate: registerAsUser, isPending} = useRegisterAsUser()
   const { division, loading: loadingDivision } = useRangpurDivision();
   const { fingerprint } = useFingerprint();
   const [locationError, setLocationError] = useState<string>('');

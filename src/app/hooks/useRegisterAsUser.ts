@@ -12,9 +12,9 @@ const useRegisterAsUser = () => {
     mutationFn: registerAsUser,
     onSuccess: (data) => {
         if (data?.success) {
-            toast.success('আপনার নিবন্ধন সফল হয়েছে');
+            toast.success(data?.message);
             queryClient.setQueryData(['user'], data.user)
-            router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
+            router.push(`/verify-email?email=${encodeURIComponent(data.email)}&otpType=register`)
           } else {
             toast.error(data?.message);
           }

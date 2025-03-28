@@ -9,6 +9,7 @@ interface OtpVerificationProps {
   onResendOtp?: () => Promise<boolean>
   redirectUrl?: string
   resendTimeout?: number
+  loading?: boolean
 }
 
 const OtpVerification = ({
@@ -16,11 +17,11 @@ const OtpVerification = ({
   onVerify,
   onResendOtp,
   redirectUrl = '/login',
-  resendTimeout = 60
+  resendTimeout = 60,
+  loading = false
 }: OtpVerificationProps) => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''))
   const [error, setError] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
   const [countdown, setCountdown] = useState<number>(resendTimeout)
   const [canResend, setCanResend] = useState<boolean>(false)
   
@@ -87,7 +88,6 @@ const OtpVerification = ({
     }
     
     try {
-      setLoading(true)
       const success = await onVerify(otp.join(''))
       if (!success) {
         setError('অবৈধ ওটিপি। আবার চেষ্টা করুন।')
@@ -95,8 +95,6 @@ const OtpVerification = ({
     } catch (error) {
       console.error('Verification error:', error)
       setError('যাচাইকরণে সমস্যা হয়েছে। আবার চেষ্টা করুন।')
-    } finally {
-      setLoading(false)
     }
   }
   
@@ -104,7 +102,6 @@ const OtpVerification = ({
     if (!canResend || !onResendOtp) return
     
     try {
-      setLoading(true)
       const success = await onResendOtp()
       if (success) {
         setCountdown(resendTimeout)
@@ -115,8 +112,6 @@ const OtpVerification = ({
     } catch (error) {
       console.error('Resend OTP error:', error)
       setError('ওটিপি পুনরায় পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।')
-    } finally {
-      setLoading(false)
     }
   }
   
@@ -146,6 +141,7 @@ const OtpVerification = ({
               aria-label={`OTP digit ${index + 1}`}
               title={`OTP digit ${index + 1}`}
               className="w-12 h-14 text-center text-xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              disabled={loading}
             />
           ))}
         </div>
@@ -161,7 +157,7 @@ const OtpVerification = ({
             <button
               onClick={handleResendOtp}
               disabled={!canResend || loading}
-              className="text-red-600 hover:text-red-700 text-sm font-medium disabled:text-gray-400"
+              className="cursor-pointer text-red-600 hover:text-red-700 text-sm font-medium disabled:text-gray-400"
             >
               {canResend 
                 ? 'কোড পুনরায় পাঠান'

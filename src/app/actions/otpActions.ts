@@ -1,6 +1,7 @@
 'use server'
 
-import { baseUrl } from '@/app/libs/baseUrl'
+import baseUrl from "@/lib/api/baseUrl"
+
 
 /**
  * Verify an OTP for email verification
@@ -8,15 +9,23 @@ import { baseUrl } from '@/app/libs/baseUrl'
  * @param otp The OTP to verify
  * @returns Success status and any additional data
  */
-export async function verifyOtp(email: string, otp: string) {
+export async function verifyOtp(email: string, otp: string, otpType: string) {
   try {
-    const response = await fetch(`${baseUrl}/user/verify-otp`, {
+    // const response = await fetch(`${baseUrl}/user/verify-otp`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ email, otp }),
+    //   cache: 'no-store',
+    // })
+
+    const response = await baseUrl('/user/verify-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, otp }),
-      cache: 'no-store',
+      body: JSON.stringify({ email, otp, otpType }),
     })
 
     if (!response.ok) {
@@ -41,13 +50,21 @@ export async function verifyOtp(email: string, otp: string) {
  */
 export async function resendOtp(email: string) {
   try {
-    const response = await fetch(`${baseUrl}/user/resend-otp`, {
+    // const response = await fetch(`${baseUrl}/user/resend-otp`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ email }),
+    //   cache: 'no-store',
+    // })
+
+    const response = await baseUrl("/user/resend-otp", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email }),
-      cache: 'no-store',
+      body: JSON.stringify({email})
     })
 
     if (!response.ok) {

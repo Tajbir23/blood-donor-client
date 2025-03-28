@@ -10,6 +10,7 @@ export default function VerifyEmailPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
+  const otpType = searchParams.get('otpType') || ''
   const [loading, setLoading] = useState(false)
   
   // Handle OTP verification
@@ -21,7 +22,7 @@ export default function VerifyEmailPage() {
     
     try {
       setLoading(true)
-      const response = await verifyOtp(email, otp)
+      const response = await verifyOtp(email, otp, otpType)
       
       if (response.success) {
         toast.success('Email verified successfully!')
@@ -84,6 +85,7 @@ export default function VerifyEmailPage() {
           onResendOtp={handleResendOtp}
           redirectUrl="/login"
           resendTimeout={60}
+          loading={loading}
         />
       ) : (
         <div className="text-center py-8">
