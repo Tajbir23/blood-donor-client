@@ -5,16 +5,23 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Profile from '../Profile/Profile'
 import { usePathname } from 'next/navigation'
-import { useQueryClient } from '@tanstack/react-query'
-import { User } from '@/lib/types/userType'
+import { useQuery } from '@tanstack/react-query'
 
 const Navbar = () => {
-  const queryClient = useQueryClient();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [user, setUser] = useState(false)
-  const [userData, setUserData] = useState<User>()
   const pathname = usePathname()
 
+  const { data: userData } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const response = await fetch('/api/user/me')
+      if (!response.ok) return null
+      return response.json()
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  })
+
+  console.log(userData)
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
   }
@@ -23,18 +30,6 @@ const Navbar = () => {
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
-
-  useEffect(() => {
-    setTimeout(() => {
-        const data = queryClient.getQueryData<User>(['user']);
-        
-        if(data){
-          setUser(true)
-          setUserData(data)
-        }
-        
-    }, 100);
-}, [queryClient]);
 
   const isActive = (path: string) => {
     return pathname === path
@@ -101,99 +96,59 @@ const Navbar = () => {
               </div>
             </Link>
 
-            {/* Donation Amount Link */}
-            <Link href="/donation" passHref>
-              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
-                 অনুদান
-              </div>
-            </Link>
-
-            {user && (userData?.role === "admin" || "superAdmin" || "moderator" || "associationSuperAdmin" || "associationModerator" || "associationAdmin") && <Link href="/dashboard" passHref>
-              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
-                 ড্যাশবোর্ড
-              </div>
-            </Link>}
-
-            {user && userData ? <Profile userData={userData} /> : 
-              <div className="flex items-center space-x-3">
-                <Link 
-                  href="/register" 
-                  className={`${isActive('/register') ? 'bg-red-700' : 'bg-red-600 hover:bg-red-700'} text-white py-1 px-3 rounded-lg text-center text-sm font-medium transition-colors duration-200`}
-                >
-                  রেজিস্ট্রেশন
-                </Link>
-                <Link 
-                  href="/login" 
-                  className={`${isActive('/login') ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-600'} text-white py-1 px-3 rounded-lg text-center text-sm font-medium transition-colors duration-200`}
-                >
-                  লগইন
-                </Link>
-              </div>
-            }
+            {/* Profile or Login Button */}
+            {userData?.user ? (
+              <Profile userData={userData?.user} />
+            ) : (
+              <Link href="/login" passHref>
+                <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/login') ? activeClass : inactiveClass}`}>
+                  লগইন করুন
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white shadow-inner">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {/* Blood Donation Link - Mobile */}
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1">
             <Link href="/blood-donation" passHref>
-              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/blood-donation') ? activeClass : inactiveClass}`}>
+              <div className={`block px-3 py-2 text-base font-medium ${isActive('/blood-donation') ? activeClass : inactiveClass}`}>
                 রক্তদান সেবা
               </div>
             </Link>
             
-            {/* SOS Link - Mobile */}
             <Link href="/sos" passHref>
-              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/sos') ? activeClass : inactiveClass}`}>
+              <div className={`block px-3 py-2 text-base font-medium ${isActive('/sos') ? activeClass : inactiveClass}`}>
                 জরুরি রক্তের আবেদন
               </div>
             </Link>
             
-            {/* Advice Link - Mobile */}
             <Link href="/advice" passHref>
-              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/advice') ? activeClass : inactiveClass}`}>
+              <div className={`block px-3 py-2 text-base font-medium ${isActive('/advice') ? activeClass : inactiveClass}`}>
                 পরামর্শ দিন
               </div>
             </Link>
             
-            {/* Blog Link - Mobile */}
             <Link href="/blog" passHref>
-              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/blog') ? activeClass : inactiveClass}`}>
+              <div className={`block px-3 py-2 text-base font-medium ${isActive('/blog') ? activeClass : inactiveClass}`}>
                 ব্লগ
               </div>
             </Link>
-            
-            <Link href="/donation" passHref>
-              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/donation') ? activeClass : inactiveClass}`}>
-                 অনুদান
-              </div>
-            </Link>
 
-            {user && (userData?.role === "admin" || "superAdmin" || "moderator" || "associationSuperAdmin" || "associationModerator" || "associationAdmin") && userData?.isActive && <Link href="/dashboard" passHref>
-              <div className={`flex items-center px-3 py-2 text-base font-medium hover:bg-gray-50 rounded-md ${isActive('/dashboard') ? activeClass : inactiveClass}`}>
-                 ড্যাশবোর্ড
+            {userData?.user ? (
+              <div className="px-3 py-2">
+                <Profile userData={userData?.user} />
               </div>
-            </Link>}
-            
-            {user && userData ? <Profile userData={userData} /> : 
-              <div className="grid grid-cols-2 gap-2 mt-3 px-3 py-2">
-                <Link 
-                  href="/register" 
-                  className={`${isActive('/register') ? 'bg-red-700' : 'bg-red-600 hover:bg-red-700'} text-white py-2 px-3 rounded-lg text-center font-medium transition-colors duration-200`}
-                >
-                  রেজিস্ট্রেশন
-                </Link>
-                <Link 
-                  href="/login" 
-                  className={`${isActive('/login') ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-600'} text-white py-2 px-3 rounded-lg text-center font-medium transition-colors duration-200`}
-                >
-                  লগইন
-                </Link>
-              </div>
-            }
+            ) : (
+              <Link href="/login" passHref>
+                <div className={`block px-3 py-2 text-base font-medium ${isActive('/login') ? activeClass : inactiveClass}`}>
+                  লগইন করুন
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       )}

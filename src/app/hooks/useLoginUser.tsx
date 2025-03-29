@@ -15,7 +15,7 @@ const useLoginUser = () => {
           duration: 3000,
           position: 'top-right',
         })
-        queryClient.setQueryData(['user'], data.user)
+        queryClient.invalidateQueries({ queryKey: ['user'] })
       } else {
         toast.error(data?.message || "লগইন করতে ব্যর্থ হয়েছে", {
           duration: 4000,

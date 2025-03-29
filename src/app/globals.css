@@ -10,5 +10,15 @@
 }
 
 .animate-marquee {
-  animation: marquee 15s linear infinite;
+  animation: marquee 30s linear infinite;
+  display: inline-block;
+  width: max-content;
+  white-space: nowrap;
+  -webkit-animation: marquee 30s linear infinite;
+}
+
+/* Ensure the content appears to repeat */
+.animate-marquee::after {
+  content: "জরুরি রক্তের প্রয়োজনীয় গ্রুপ দ্রুত খুঁজে বের করুন। সহজেই রক্ত পেতে এখনই যোগাযোগ করুন।";
+  padding-left: 50px;
 }
