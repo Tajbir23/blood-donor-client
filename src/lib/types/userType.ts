@@ -7,6 +7,7 @@ export interface User {
     fullName: string;
     password: string;
     role?: string;
+    organizationId?: string;
     confirmPassword: string;
     phone: string;
     birthDate: string;
@@ -14,7 +15,9 @@ export interface User {
     gender: string;
     lastDonationDate: string;
     canDonate: boolean;
+    totalDonationCount?: number;
     nextDonationDate?: string;
+    badges?: string[];
     districtId: string;
     thanaId: string;
     address: string;
