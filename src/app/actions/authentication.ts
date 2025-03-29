@@ -63,7 +63,6 @@ export const registerAsUser = async (data: User) => {
 }
 
 export const loginUser = async(formdata: {identity: string, password: string, rememberMe: boolean}) => {
-
     try {
         const response = await baseUrl('/user/login', {
             method: 'POST',
@@ -73,16 +72,25 @@ export const loginUser = async(formdata: {identity: string, password: string, re
             body: JSON.stringify(formdata)
         })
 
+        const data = await response.json()
+
         if(!response.ok){
             if(response.status === 401){
-                throw new Error("পাসওয়ার্ড ভুল হয়েছে")
+                return { success: false, message: "পাসওয়ার্ড ভুল হয়েছে" }
             }
-            throw new Error("login failed")
+            if(response.status === 404){
+                return { success: false, message: "ইমেইল বা ফোন নম্বর খুঁজে পাওয়া যায়নি" }
+            }
+            return { success: false, message: data.message || "লগইন করতে ব্যর্থ হয়েছে" }
         }
-        return await response.json()
+
+        return { success: true, user: data.user }
     } catch (error: unknown) {
-        console.error("Error login user", error)
-        return {success: false, message: error instanceof Error ? error.message : "Login failed"}
+        console.error("Error login user:", error)
+        return {
+            success: false, 
+            message: error instanceof Error ? error.message : "লগইন করতে ব্যর্থ হয়েছে"
+        }
     }
 }
 

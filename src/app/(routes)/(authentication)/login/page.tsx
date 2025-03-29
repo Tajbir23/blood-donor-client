@@ -1,6 +1,13 @@
 import Image from "next/image";
 import { Suspense } from "react";
 import LoginFormWrapper from "./LoginFormWrapper";
+import { generateMetadata } from "@/app/config/metadata";
+
+export const metadata = generateMetadata({
+  title: "লগইন করুন",
+  description: "রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। লগইন করে আপনার অ্যাকাউন্টে প্রবেশ করুন এবং রক্তদান সেবা গ্রহণ করুন।",
+  path: "/login",
+});
 
 function LoginContent() {
   return (

@@ -1,27 +1,16 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { defaultMetadata } from './config/metadata'
+import './globals.css'
 import Navbar from "@/components/home/Navbar/Navbar";
 import EmergencyHeadline from "@/components/Emergency-headline/Emergency-headline";
-import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { Toaster } from "react-hot-toast";
 import QueryProvider from "@/components/QueryProvider/QueryProvider";
+import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'] })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: 'রক্তদান রংপুর বিভাগ',
-  description: 'রংপুর বিভাগের সবচেয়ে বড় রক্তদাতা নেটওয়ার্ক। দ্রুত এবং নির্ভরযোগ্যভাবে রক্তদাতাদের সাথে সংযোগ স্থাপন করুন।',
-};
+export const metadata: Metadata = defaultMetadata
 
 export default function RootLayout({
   children,
@@ -29,17 +18,31 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="bn">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="bn" className="h-full">
+      <body className={`${inter.className} h-full`}>
         <QueryProvider>
-          <Header />
           <Navbar />
           <EmergencyHeadline />
           {children}
           <Footer />
-          <Toaster position="top-right" />
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#333',
+                color: '#fff',
+              },
+              success: {
+                duration: 3000,
+              },
+              error: {
+                duration: 4000,
+              },
+            }}
+          />
         </QueryProvider>
       </body>
     </html>
-  );
+  )
 }

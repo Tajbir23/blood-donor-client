@@ -26,9 +26,11 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (data?.success) {
-      setTimeout(() => {
+      // Add a small delay to ensure router is mounted
+      const timer = setTimeout(() => {
         router.push("/")
       }, 100)
+      return () => clearTimeout(timer)
     }
   }, [data, router])
 
@@ -39,7 +41,7 @@ const LoginForm = () => {
     try {
       await loginUser(formData)
     } catch (err) {
-      console.log(err)
+      console.error(err)
       setError('লগইন করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।')
     }
   }
@@ -48,12 +50,12 @@ const LoginForm = () => {
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
         {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
+          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4" role="alert">
             <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
         
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit} noValidate>
           <div>
             <label htmlFor="identity" className="block text-sm font-medium text-gray-700">
               ইমেইল বা ফোন নম্বর
@@ -69,6 +71,8 @@ const LoginForm = () => {
                 onChange={handleChange}
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                 placeholder="আপনার ইমেইল বা ফোন নম্বর লিখুন"
+                aria-describedby={error ? "error-message" : undefined}
+                aria-invalid="false"
               />
             </div>
           </div>
@@ -88,6 +92,8 @@ const LoginForm = () => {
                 onChange={handleChange}
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                 placeholder="আপনার পাসওয়ার্ড লিখুন"
+                aria-describedby={error ? "error-message" : undefined}
+                aria-invalid="false"
               />
             </div>
           </div>
@@ -121,6 +127,7 @@ const LoginForm = () => {
               className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white
                 bg-red-600 hover:bg-red-700 disabled:bg-red-300
                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors`}
+              aria-busy="false"
             >
               {isPending ? (
                 <div className="flex items-center justify-center">
