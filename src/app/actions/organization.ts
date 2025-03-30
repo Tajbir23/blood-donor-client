@@ -3,7 +3,7 @@ import baseUrl from "@/lib/api/baseUrl";
 import organizationType from "@/lib/types/organizationType";
 import { cookies } from "next/headers";
 
-const registerOrganization = async (organization: organizationType) => {
+export const registerOrganization = async (organization: organizationType) => {
     const cookieStore = await cookies()
     try {
         if(organization.logoImage){
@@ -37,4 +37,19 @@ const registerOrganization = async (organization: organizationType) => {
     }
 };
 
-export default registerOrganization;
+export const myOrganizations = async() => {
+    const cookieStore = await cookies()
+    const token = await cookieStore.get("token")?.value
+    try {
+        const response = await baseUrl('/organization/my_organizations', {
+            method: "GET",
+            headers: {
+                "Authorization" : `Bearer ${token}`
+            }
+        })
+
+        return await response.json()
+    } catch (error) {
+        console.log(error)
+    }
+}

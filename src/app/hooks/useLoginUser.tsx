@@ -23,7 +23,7 @@ const useLoginUser = () => {
         })
       }
     },
-    onError: (error: any) => {
+    onError: (error) => {
       console.error("Login error:", error)
       toast.error(error?.message || "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।", {
         duration: 4000,

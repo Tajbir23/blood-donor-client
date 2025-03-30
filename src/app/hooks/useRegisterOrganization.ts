@@ -2,7 +2,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "react-hot-toast"
-import registerOrganization from "../actions/organization"
+import { registerOrganization } from "../actions/organization"
+
 
 const useRegisterOrganization = () => {
     const queryClient = useQueryClient()
@@ -12,7 +13,7 @@ const useRegisterOrganization = () => {
         mutationFn: registerOrganization,
         onSuccess: (data) => {
             if(data.success){
-                queryClient.invalidateQueries({ queryKey: ['organization'] });
+                queryClient.invalidateQueries({ queryKey: ['organizations'] });
                 toast.success('প্রতিষ্ঠান সফলভাবে নিবন্ধন করা হয়েছে');
                 
                 // Use a timeout to ensure router is mounted before navigation
