@@ -1,9 +1,9 @@
-
+import RegisterOrg from "./RegisterOrg";
 
 const page = () => {
   return (
     <div>
-      
+      <RegisterOrg />
     </div>
   )
 }

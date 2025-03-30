@@ -24,7 +24,7 @@ const baseUrl = async(path: string, options = {}) => {
             })
         }
         
-        if(res.status === 403){
+        if(res.status === 403 || res.status === 401){
             cookieStore.delete('token')
             redirect('/login')
         }

@@ -1,12 +1,25 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRangpurDivision } from '@/hooks/useLocation';
+import { UploadImage } from '@/app/libs';
+import { useQueryClient } from '@tanstack/react-query';
+import { User } from '@/lib/types/userType';
+import useRegisterOrganization from '@/app/hooks/useRegisterOrganization';
+import organizationType from '@/lib/types/organizationType';
 
-const RegAsAssociation = () => {
+
+interface UserQueryData {
+  success: boolean;
+  user: User;
+}
+
+const RegisterOrg = () => {
   const { division, loading: loadingDivision } = useRangpurDivision();
-  
-  const [formData, setFormData] = useState({
+  const {mutate: registerOrganization, isPending} = useRegisterOrganization()
+  const queryClient = useQueryClient();
+
+  const [formData, setFormData] = useState<organizationType>({
     // প্রতিষ্ঠান সম্পর্কিত তথ্য
     organizationName: '',
     organizationType: '',
@@ -26,28 +39,36 @@ const RegAsAssociation = () => {
     
     // প্রতিনিধির তথ্য
     representativeName: '',
-    representativePosition: '',
+    representativePosition: 'owner',
     representativePhone: '',
     representativeEmail: '',
     
     // সেবা সম্পর্কিত তথ্য
-    hasBloodBank: false,
-    providesEmergencyBlood: false,
-    availableBloodGroups: [] as string[],
+    hasBloodBank: true,
+    providesEmergencyBlood: true,
+    availableBloodGroups: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as string[],
     
     // লোগো/ছবি
     logoImage: null as File | null,
     logoImageUrl: '',
     
-    // অ্যাকাউন্ট নিরাপত্তা
-    password: '',
-    confirmPassword: '',
     
     // শর্তাবলী
-    agreedToTerms: true
+    agreedToTerms: true,
   });
 
   const [thanas, setThanas] = useState<Array<{id: string, name: string}>>([]);
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const user = queryClient.getQueryData<UserQueryData>(['user']);
+      if(user){
+        setFormData(prev => ({ ...prev, representativeName: user.user.fullName, representativeEmail: user.user.email, representativePhone: user.user.phone }));
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  },[queryClient]);
   
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   
@@ -61,12 +82,12 @@ const RegAsAssociation = () => {
         if (target.checked) {
           setFormData(prev => ({
             ...prev,
-            availableBloodGroups: [...prev.availableBloodGroups, bloodGroup]
+            availableBloodGroups: [...(prev.availableBloodGroups || []), bloodGroup]
           }));
         } else {
           setFormData(prev => ({
             ...prev,
-            availableBloodGroups: prev.availableBloodGroups.filter(group => group !== bloodGroup)
+            availableBloodGroups: (prev.availableBloodGroups || []).filter(group => group !== bloodGroup)
           }));
         }
       } else {
@@ -93,10 +114,14 @@ const RegAsAssociation = () => {
     }
   };
 
+  const handleImageSelect = (file: File, previewUrl: string) => {
+    setFormData(prev => ({ ...prev, logoImage: file, logoImageUrl: previewUrl }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Form validation and submission logic
-    console.log(formData);
+    registerOrganization(formData)
   };
 
   return (
@@ -400,7 +425,7 @@ const RegAsAssociation = () => {
                         id={`blood-${group}`}
                         name="availableBloodGroups"
                         value={group}
-                        checked={formData.availableBloodGroups.includes(group)}
+                        checked={(formData.availableBloodGroups || []).includes(group)}
                         onChange={handleChange}
                         className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                       />
@@ -419,54 +444,11 @@ const RegAsAssociation = () => {
         <div className="border-l-4 border-red-500 pl-4 pb-2">
           <h3 className="text-lg font-medium text-gray-800 mb-4">প্রতিষ্ঠানের লোগো</h3>
           
-          <div>
-            <label htmlFor="logoImage" className="block text-sm font-medium text-gray-700 mb-1">লোগো আপলোড করুন</label>
-            <input 
-              type="file" 
-              id="logoImage"
-              name="logoImage"
-              onChange={handleChange}
-              accept="image/*"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
-            <p className="text-xs text-gray-500 mt-1">সর্বোচ্চ ফাইল সাইজ: 2MB (JPG, PNG)</p>
-          </div>
+          <UploadImage 
+            onImageSelect={handleImageSelect}
+          />
         </div>
         
-        {/* পাসওয়ার্ড */}
-        <div className="border-l-4 border-red-500 pl-4 pb-2">
-          <h3 className="text-lg font-medium text-gray-800 mb-4">অ্যাকাউন্ট নিরাপত্তা</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড</label>
-              <input 
-                type="password" 
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                minLength={6}
-              />
-              <p className="text-xs text-gray-500 mt-1">ন্যূনতম ৬ অক্ষরের পাসওয়ার্ড দিন</p>
-            </div>
-            
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড নিশ্চিত করুন</label>
-              <input 
-                type="password" 
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-              />
-            </div>
-          </div>
-        </div>
         
         {/* শর্তাবলী */}
         <div className="flex items-center">
@@ -488,18 +470,25 @@ const RegAsAssociation = () => {
           <button 
             type="submit" 
             className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors"
-            disabled={!formData.agreedToTerms}
+            disabled={!formData.agreedToTerms || isPending}
           >
-            প্রতিষ্ঠান নিবন্ধন করুন
+            {isPending ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                প্রসেসিং হচ্ছে...
+              </span>
+            ) : (
+              'প্রতিষ্ঠান নিবন্ধন করুন'
+            )}
           </button>
           
-          <p className="text-center text-gray-600">
-            ইতিমধ্যে একাউন্ট আছে? <Link href="/login" className="text-red-600 hover:underline">লগইন করুন</Link>
-          </p>
         </div>
       </form>
     </div>
   );
 };
 
-export default RegAsAssociation;
+export default RegisterOrg;
