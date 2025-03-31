@@ -12,6 +12,9 @@ import { User } from '@/lib/types/userType'
 import { useQueryClient } from '@tanstack/react-query'
 import useMyOrganizations from '@/app/hooks/useMyOrganizations'
 import organizationType from '@/lib/types/organizationType'
+import { logoutUser } from '@/app/actions/authentication'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 interface userQueryData {
   success: boolean;
@@ -25,6 +28,7 @@ interface myOrganizationType {
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [userData, setUserData] = useState<User>()
+  const router = useRouter()
   const queryClient = useQueryClient()
   const {mutate: myOrganizations, data} = useMyOrganizations()
   
@@ -74,6 +78,14 @@ const Profile = () => {
     { date: '২২ ফেব্রুয়ারি, ২০২২', location: 'রংপুর মেডিকেল কলেজ হাসপাতাল', recipient: 'কামরুল হাসান', bloodGroup: 'B+' },
   ]
 
+  const handleLogout = async() => {
+    const data = await logoutUser();
+    if(data.success){
+      toast.success(data.message)
+      queryClient.removeQueries({queryKey : ["user", "organizations"]})
+      router.push("/")
+    }
+  }
   // Sample organization data
   const userOrganizations: myOrganizationType = data
 
@@ -81,7 +93,7 @@ const Profile = () => {
     <div className="bg-gray-50 min-h-screen pt-8 pb-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Profile Header */}
-        <ProfileHeader userProfile={userProfile} />
+        <ProfileHeader userProfile={userProfile} onLogout={handleLogout} />
 
         {/* Profile Tabs */}
         <div className="mt-6">

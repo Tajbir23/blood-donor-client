@@ -104,6 +104,8 @@ export const logoutUser = async() => {
                 "Authorization": `Bearer ${token?.value}`,
             }
         })
+
+        await cookieStore.delete("token")
         return await response.json()
     } catch (error) {
         return {success: false, message: error instanceof Error ? error.message : "Logout failed"}
