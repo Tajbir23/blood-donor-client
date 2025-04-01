@@ -4,6 +4,10 @@ import { useQuery } from "@tanstack/react-query"
 import Image from "next/image"
 import { useState } from "react"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
+import decodedJwtType from '../../../../lib/types/decodedJwtType';
+import Link from "next/link"
+import { joinOrganization } from "@/app/actions/organization"
+import toast from "react-hot-toast"
 
 interface Organization {
   _id: string;
@@ -27,7 +31,8 @@ interface OrganizationsProps {
   initialData: {
     organizations: Organization[];
     totalOrganizations: number;
-  }
+  },
+  decodedUser: decodedJwtType
 }
 
 const ITEMS_PER_PAGE = 10
@@ -45,7 +50,7 @@ const getOrganizationTypeBangla = (type: string): string => {
   }
 };
 
-const Organizations = ({ initialData }: OrganizationsProps) => {
+const Organizations = ({ initialData, decodedUser }: OrganizationsProps) => {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
 
@@ -64,7 +69,7 @@ const Organizations = ({ initialData }: OrganizationsProps) => {
       return res.json()
     },
     initialData,
-    staleTime: 60000, // 1 minute
+    staleTime: 600000, // 10 minutes
   })
 
   const totalPages = Math.ceil((data?.totalOrganizations || 0) / ITEMS_PER_PAGE)
@@ -72,6 +77,12 @@ const Organizations = ({ initialData }: OrganizationsProps) => {
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error loading organizations</div>
+
+  const handleJoinOrganization = async(orgId: string) => {
+    
+    const response = await joinOrganization(orgId)
+    toast.success(response.message)
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -161,17 +172,17 @@ const Organizations = ({ initialData }: OrganizationsProps) => {
               
               {/* Action Buttons */}
               <div className="mt-4 flex gap-3 pt-3 border-t">
-                <a 
+                <Link 
                   href={`/organizations/${org._id}`} 
                   className="flex-1 text-center px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded transition-colors text-sm"
                 >
                   বিস্তারিত দেখুন
-                </a>
-                <button 
-                  className="flex-1 px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors text-sm"
+                </Link>
+                {decodedUser && <button onClick={() => handleJoinOrganization(org._id)}
+                  className="cursor-pointer flex-1 px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors text-sm"
                 >
                   অংশগ্রহণ করুন
-                </button>
+                </button>}
               </div>
             </div>
           </div>

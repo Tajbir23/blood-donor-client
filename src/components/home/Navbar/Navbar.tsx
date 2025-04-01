@@ -21,7 +21,7 @@ const Navbar = () => {
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
 
-  console.log(userData)
+  
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
   }
@@ -81,6 +81,13 @@ const Navbar = () => {
                 জরুরি রক্তের আবেদন
               </div>
             </Link>
+
+            {/* Organizations Link */}
+            <Link href="/organizations" passHref>
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/organizations') ? activeClass : inactiveClass}`}>
+                প্রতিষ্ঠান সমূহ
+              </div>
+            </Link>
             
             {/* Advice Link */}
             <Link href="/advice" passHref>
@@ -123,6 +130,12 @@ const Navbar = () => {
             <Link href="/sos" passHref>
               <div className={`block px-3 py-2 text-base font-medium ${isActive('/sos') ? activeClass : inactiveClass}`}>
                 জরুরি রক্তের আবেদন
+              </div>
+            </Link>
+
+            <Link href="/organizations" passHref>
+              <div className={`block px-3 py-2 text-base font-medium ${isActive('/organizations') ? activeClass : inactiveClass}`}>
+                প্রতিষ্ঠান সমূহ
               </div>
             </Link>
             

@@ -1,6 +1,7 @@
 'use client'
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRangpurDivision } from '@/hooks/useLocation';
+import LocationSelector from '../ui/location-selector';
 
 interface BloodRequestFormProps {
   type: string;
@@ -30,9 +31,14 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
     bloodUnits: '1',
     urgencyLevel: 'normal',
     requiredDate: '',
-    districtId: '',         
-    thanaId: '',            
-    hospitalId: '',         
+    requiredTime: '',
+    reason: '',
+    contactPerson: '',
+    contactNumber: '',
+    divisionId: '',
+    districtId: '',
+    thanaId: '',
+    hospitalId: '',
     hospitalName: '',
     hospitalWard: '',
     patientAge: '',
@@ -104,6 +110,16 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleLocationChange = (type: string, value: string) => {
+    setFormData(prev => ({ ...prev, [type]: value }));
+    
+    if (type === 'districtId') {
+      setFormData(prev => ({ ...prev, thanaId: '', hospitalId: '', hospitalName: '' }));
+    } else if (type === 'thanaId') {
+      setFormData(prev => ({ ...prev, hospitalId: '', hospitalName: '' }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -318,51 +334,16 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
         <div className="border-l-4 border-red-500 pl-4 pb-1">
           <h3 className="text-lg font-medium text-gray-800 mb-4">হাসপাতাল ও অবস্থান</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="districtId" className="block text-sm font-medium text-gray-700 mb-1">জেলা</label>
-              <select 
-                id="districtId"
-                name="districtId"
-                value={formData.districtId}
-                onChange={handleChange}
-                aria-label="জেলা নির্বাচন করুন"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                disabled={loadingDivision}
-              >
-                <option value="">জেলা নির্বাচন করুন</option>
-                {districts.map(district => (
-                  <option key={district.id} value={district.id}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-              {loadingDivision && <p className="text-sm text-gray-500 mt-1">জেলার তথ্য লোড হচ্ছে...</p>}
-              {divisionError && <p className="text-sm text-red-500 mt-1">{divisionError}</p>}
-            </div>
-            
-            <div>
-              <label htmlFor="thanaId" className="block text-sm font-medium text-gray-700 mb-1">থানা</label>
-              <select 
-                id="thanaId"
-                name="thanaId"
-                value={formData.thanaId}
-                onChange={handleChange}
-                aria-label="থানা নির্বাচন করুন"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                disabled={!formData.districtId || loadingDivision}
-              >
-                <option value="">থানা নির্বাচন করুন</option>
-                {thanas.map(thana => (
-                  <option key={thana.id} value={thana.id}>
-                    {thana.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
+          <LocationSelector 
+            onDivisionChange={(value) => handleLocationChange('divisionId', value)}
+            onDistrictChange={(value) => handleLocationChange('districtId', value)}
+            onThanaChange={(value) => handleLocationChange('thanaId', value)}
+            defaultDivisionId={formData.divisionId}
+            defaultDistrictId={formData.districtId}
+            defaultThanaId={formData.thanaId}
+          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
               <label htmlFor="hospitalId" className="block text-sm font-medium text-gray-700 mb-1">হাসপাতাল</label>
               <select 

@@ -18,6 +18,7 @@ export interface User {
     totalDonationCount?: number;
     nextDonationDate?: string;
     badges?: string[];
+    divisionId?: string;
     districtId: string;
     thanaId: string;
     address: string;

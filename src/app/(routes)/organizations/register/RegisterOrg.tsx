@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/lib/types/userType';
 import useRegisterOrganization from '@/app/hooks/useRegisterOrganization';
 import organizationType from '@/lib/types/organizationType';
+import LocationSelector from '@/components/ui/location-selector';
 
 
 interface UserQueryData {
@@ -33,6 +34,7 @@ const RegisterOrg = () => {
     phone: '',
     
     // ঠিকানার তথ্য
+    divisionId: '',
     districtId: '',
     thanaId: '',
     address: '',
@@ -116,6 +118,10 @@ const RegisterOrg = () => {
 
   const handleImageSelect = (file: File, previewUrl: string) => {
     setFormData(prev => ({ ...prev, logoImage: file, logoImageUrl: previewUrl }));
+  };
+
+  const handleLocationChange = (type: string, value: string) => {
+    setFormData(prev => ({ ...prev, [type]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -262,62 +268,26 @@ const RegisterOrg = () => {
         <div className="border-l-4 border-red-500 pl-4 pb-2">
           <h3 className="text-lg font-medium text-gray-800 mb-4">প্রতিষ্ঠানের ঠিকানা</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="districtId" className="block text-sm font-medium text-gray-700 mb-1">জেলা</label>
-              <select 
-                id="districtId"
-                name="districtId"
-                value={formData.districtId}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                disabled={loadingDivision}
-              >
-                <option value="">জেলা নির্বাচন করুন</option>
-                {division?.districts.map(district => (
-                  <option key={district.id} value={district.id}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-              {loadingDivision && (
-                <p className="text-sm text-gray-500 mt-1">লোড হচ্ছে...</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="thanaId" className="block text-sm font-medium text-gray-700 mb-1">থানা/উপজেলা</label>
-              <select 
-                id="thanaId"
-                name="thanaId"
-                value={formData.thanaId}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                disabled={!formData.districtId || thanas.length === 0}
-              >
-                <option value="">থানা নির্বাচন করুন</option>
-                {thanas.map(thana => (
-                  <option key={thana.id} value={thana.id}>
-                    {thana.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="md:col-span-2">
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">বিস্তারিত ঠিকানা</label>
-              <textarea 
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                rows={2}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-              ></textarea>
-            </div>
+          <LocationSelector 
+            onDivisionChange={(value) => handleLocationChange('divisionId', value)}
+            onDistrictChange={(value) => handleLocationChange('districtId', value)}
+            onThanaChange={(value) => handleLocationChange('thanaId', value)}
+            defaultDivisionId={formData.divisionId}
+            defaultDistrictId={formData.districtId}
+            defaultThanaId={formData.thanaId}
+          />
+          
+          <div className="mt-4">
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">বিস্তারিত ঠিকানা</label>
+            <textarea 
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              rows={2}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              required
+            ></textarea>
           </div>
         </div>
         

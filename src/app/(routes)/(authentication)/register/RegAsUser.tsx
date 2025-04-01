@@ -8,6 +8,7 @@ import { useFingerprint } from '@/app/actions/fingerprint';
 import { User } from '@/lib/types/userType';
 import useRegisterAsUser from '@/app/hooks/useRegisterAsUser';
 import Loading from '@/app/libs/Loading';
+import LocationSelector from '@/components/ui/location-selector';
 
 const RegAsUser = () => {
   const {mutate: registerAsUser, isPending} = useRegisterAsUser()
@@ -26,6 +27,7 @@ const RegAsUser = () => {
     gender: '',
     lastDonationDate: '',
     canDonate: true,
+    divisionId: '',
     districtId: '',
     thanaId: '',
     address: '',
@@ -121,6 +123,10 @@ const RegAsUser = () => {
       return false;
     }
     return true;
+  };
+
+  const handleLocationSelectChange = (type: string, value: string) => {
+    setFormData(prev => ({ ...prev, [type]: value }));
   };
 
   const handleSubmit = async(e: React.FormEvent) => {
@@ -282,61 +288,25 @@ const RegAsUser = () => {
         <div className="border-l-4 border-red-500 pl-4 pb-2">
           <h3 className="text-lg font-medium text-gray-800 mb-4">ঠিকানা</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="districtId" className="block text-sm font-medium text-gray-700 mb-1">জেলা</label>
-              <select 
-                id="districtId"
-                name="districtId"
-                value={formData.districtId}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                disabled={loadingDivision}
-              >
-                <option value="">জেলা নির্বাচন করুন</option>
-                {division?.districts.map(district => (
-                  <option key={district.id} value={district.id}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-              {loadingDivision && (
-                <p className="text-sm text-gray-500 mt-1">লোড হচ্ছে...</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="thanaId" className="block text-sm font-medium text-gray-700 mb-1">থানা/উপজেলা</label>
-              <select 
-                id="thanaId"
-                name="thanaId"
-                value={formData.thanaId}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-                disabled={!formData.districtId || thanas.length === 0}
-              >
-                <option value="">থানা নির্বাচন করুন</option>
-                {thanas.map(thana => (
-                  <option key={thana.id} value={thana.id}>
-                    {thana.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="md:col-span-2">
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">বিস্তারিত ঠিকানা</label>
-              <textarea 
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                rows={2}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              ></textarea>
-            </div>
+          <LocationSelector 
+            onDivisionChange={(value) => handleLocationSelectChange('divisionId', value)}
+            onDistrictChange={(value) => handleLocationSelectChange('districtId', value)}
+            onThanaChange={(value) => handleLocationSelectChange('thanaId', value)}
+            defaultDivisionId={formData.divisionId}
+            defaultDistrictId={formData.districtId}
+            defaultThanaId={formData.thanaId}
+          />
+          
+          <div className="mt-4">
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">বিস্তারিত ঠিকানা</label>
+            <textarea 
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              rows={2}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            ></textarea>
           </div>
         </div>
         

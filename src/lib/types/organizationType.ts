@@ -19,6 +19,7 @@ interface organizationType {
     phone?: string;
 
     // ঠিকানার তথ্য
+    divisionId?: string;
     districtId: string;
     thanaId: string;
     address: string;

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FaTimes } from "react-icons/fa"
 import { User } from "@/lib/types/userType";
 import LocationInput from "@/components/LocationInput";
+import LocationSelector from '@/components/ui/location-selector';
 
 interface EditDetailsModalProps {
   setIsModalOpen: (isOpen: boolean) => void;
@@ -11,7 +12,17 @@ interface EditDetailsModalProps {
 
 const EditDetailsModal = ({ setIsModalOpen, userProfile }: EditDetailsModalProps) => {
     const { division, loading: loadingDivision } = useRangpurDivision();
-    const [formData, setFormData] = useState(userProfile);
+    const [formData, setFormData] = useState({
+        fullName: userProfile.fullName,
+        bloodGroup: userProfile.bloodGroup,
+        phone: userProfile.phone,
+        address: userProfile.address,
+        divisionId: '',
+        districtId: userProfile.districtId || '',
+        thanaId: userProfile.thanaId || '',
+        latitude: userProfile.latitude || 0,
+        longitude: userProfile.longitude || 0
+    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,7 +31,11 @@ const EditDetailsModal = ({ setIsModalOpen, userProfile }: EditDetailsModalProps
     const handleLocationChange = (location: { lat: number, lng: number }) => {
       setFormData(prev => ({ ...prev, latitude: location.lat, longitude: location.lng }));
     };
-    
+
+    const handleLocationSelectChange = (type: string, value: string) => {
+        setFormData(prev => ({ ...prev, [type]: value }));
+    };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -95,53 +110,18 @@ const EditDetailsModal = ({ setIsModalOpen, userProfile }: EditDetailsModalProps
                             defaultValue={userProfile.address}
                           />
                         </div>
-                        <div>
-                            <label htmlFor="districtId" className="block text-sm font-medium text-gray-700 mb-1">জেলা</label>
-                            <select 
-                                id="districtId"
-                                name="districtId"
-                                value={formData.districtId}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                required
-                                disabled={loadingDivision}
-                            >
-                                <option value="">জেলা নির্বাচন করুন</option>
-                                {division?.districts.map(district => (
-                                <option key={district.id} value={district.id}>
-                                    {district.name}
-                                </option>
-                                ))}
-                            </select>
-                            {loadingDivision && (
-                                <p className="text-sm text-gray-500 mt-1">লোড হচ্ছে...</p>
-                            )}
+                        <div className="my-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">অবস্থান</label>
+                          <LocationSelector 
+                            onDivisionChange={(value) => handleLocationSelectChange('divisionId', value)}
+                            onDistrictChange={(value) => handleLocationSelectChange('districtId', value)}
+                            onThanaChange={(value) => handleLocationSelectChange('thanaId', value)}
+                            defaultDivisionId={formData.divisionId}
+                            defaultDistrictId={formData.districtId}
+                            defaultThanaId={formData.thanaId}
+                          />
                         </div>
                         
-                        <div>
-                            <label htmlFor="thanaId" className="block text-sm font-medium text-gray-700 mb-1">থানা</label>
-                            <select 
-                                id="thanaId"
-                                name="thanaId"
-                                value={formData.thanaId}
-                                onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                required
-                                disabled={!formData.districtId || loadingDivision}
-                            >
-                                <option value="">থানা নির্বাচন করুন</option>
-                                {formData.districtId && division?.districts
-                                  .find(d => d.id === formData.districtId)?.thanas
-                                  .map(thana => (
-                                    <option key={thana.id} value={thana.id}>
-                                        {thana.name}
-                                    </option>
-                                  ))}
-                            </select>
-                            {formData.districtId && !division?.districts.find(d => d.id === formData.districtId)?.thanas && (
-                                <p className="text-sm text-gray-500 mt-1">থানা লোড হচ্ছে...</p>
-                            )}
-                        </div>
                         <LocationInput
                             onLocationChange={handleLocationChange}
                             width="100%"

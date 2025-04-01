@@ -112,12 +112,16 @@ export const logoutUser = async() => {
     }
 }
 
-export const verifyJwt = async() => {
+export const verifyJwt = async(protection: boolean = true) => {
     const cookieStore = await cookies();
     const token = await cookieStore.get("token")
 
-    if(!token){
+    if(!token && protection){
         redirect("/login")
+    }
+
+    if(!token){
+        return null
     }
 
     try {

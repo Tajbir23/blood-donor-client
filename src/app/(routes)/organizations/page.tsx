@@ -1,5 +1,7 @@
+import { verifyJwt } from "@/app/actions/authentication";
 import Organizations from "./components/Organizations"
 import { Metadata } from 'next'
+import decodedJwtType from "@/lib/types/decodedJwtType";
 
 interface Organization {
   organizationName: string;
@@ -58,10 +60,11 @@ async function getOrganizations() {
 
 const page = async () => {
   const initialData = await getOrganizations()
+  const user = await verifyJwt(false) as decodedJwtType
   
   return (
     <div>
-      <Organizations initialData={initialData} />
+      <Organizations decodedUser={user} initialData={initialData} />
     </div>
   )
 }
