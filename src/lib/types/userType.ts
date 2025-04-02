@@ -1,14 +1,15 @@
 import { FingerprintData } from "./fingerprint";
+import organizationType from "./organizationType";
 
 export interface User {
     _id?: string;
     email: string;
     emailVerified?: boolean;
     fullName: string;
-    password: string;
+    password?: string;
     role?: string;
-    organizationId?: string;
-    confirmPassword: string;
+    organizationId?: organizationType[];
+    confirmPassword?: string;
     phone: string;
     birthDate: string;
     bloodGroup: string;

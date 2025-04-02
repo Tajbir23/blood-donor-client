@@ -7,22 +7,29 @@ import EmergencyHeadline from "@/components/Emergency-headline/Emergency-headlin
 import Footer from "@/components/layout/Footer";
 import QueryProvider from "@/components/QueryProvider/QueryProvider";
 import { Toaster } from "react-hot-toast";
+import UpdateBloodDonationDate from '@/components/home/UpdateBloodDonationDate';
+import BloodDonationModal from '@/components/modals/BloodDonationModal';
+import { verifyJwt } from './actions/authentication';
+import decodedJwtType from '@/lib/types/decodedJwtType';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = defaultMetadata
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const decodedUser = await verifyJwt(false)
+  
   return (
     <html lang="bn" className="h-full">
       <body className={`${inter.className} h-full`}>
         <QueryProvider>
           <Navbar />
           <EmergencyHeadline />
+          <UpdateBloodDonationDate Modal={BloodDonationModal} decodedUser={decodedUser as decodedJwtType} />
           {children}
           <Footer />
           <Toaster 

@@ -61,14 +61,15 @@ const Profile = () => {
     createdAt: userData?.createdAt ?? '',
     birthDate: userData?.birthDate ?? '',
     gender: userData?.gender ?? '',
-    password: '', // Required by type but not shown in UI
-    confirmPassword: '', // Required by type but not shown in UI
     latitude: userData?.latitude ?? 0,
     longitude: userData?.longitude ?? 0,
     agreedToTerms: true,
     profileImage: null,
-    reportCount: userData?.reportCount ?? 0 // Number of times this user has been reported
+    reportCount: userData?.reportCount ?? 0, // Number of times this user has been reported
+    organizationId: userData?.organizationId ?? []
   }
+
+  console.log(userProfile.organizationId)
 
   const donationHistory: Donation[] = [
     { date: '১০ মার্চ, ২০২৩', location: 'রংপুর মেডিকেল কলেজ হাসপাতাল', recipient: 'শামীমা বেগম', bloodGroup: 'B+' },
@@ -103,7 +104,7 @@ const Profile = () => {
           <div className="mt-6">
             {activeTab === 'overview' && <ProfileOverview userProfile={userProfile} />}
             {activeTab === 'donations' && <DonationHistory userProfile={userProfile} donationHistory={donationHistory} />}
-            {activeTab === 'organizations' && <Organizations userOrganizations={userOrganizations} />}
+            {activeTab === 'organizations' && <Organizations userOrganizations={userOrganizations} memberOforg={userProfile.organizationId || []} />}
             {activeTab === 'settings' && <ProfileSettings />}
           </div>
         </div>

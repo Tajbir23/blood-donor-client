@@ -5,7 +5,7 @@ interface ProfileTabsProps {
 
 const ProfileTabs = ({ activeTab, setActiveTab }: ProfileTabsProps) => {
   return (
-    <div className="border-b border-gray-200 overflow-x-auto">
+    <div className="border-b border-gray-200 overflow-x-auto overflow-y-hidden">
       <nav className="-mb-px flex space-x-8 min-w-full pb-1">
         <button
           className={`${
