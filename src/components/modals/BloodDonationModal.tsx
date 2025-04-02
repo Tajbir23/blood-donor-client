@@ -7,7 +7,8 @@ import toast from 'react-hot-toast';
 
 interface BloodDonationModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  page?: boolean;
 }
 
 // Recipients/locations options
@@ -19,7 +20,7 @@ const RECIPIENTS = [
   { value: 'other', label: 'অন্যান্য' }
 ]
 
-const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose }) => {
+const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose = () => {}, page = false }) => {
   const queryClient = useQueryClient()
   const [donationDate, setDonationDate] = useState('')
   const [recipient, setRecipient] = useState('')
@@ -54,7 +55,7 @@ const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose
       })
 
       toast.success('রক্তদানের তথ্য সফলভাবে যোগ করা হয়েছে')
-      onClose()
+      page && onClose()
     }else{
       setError(response.message)
     }
@@ -64,23 +65,25 @@ const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose
   if (!isOpen) return null
   
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className={`${!page ? 'fixed' : ''} inset-0 z-50 flex items-center justify-center`}>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-md" onClick={onClose}></div>
+      {!page && <div className="fixed inset-0 bg-black/30 backdrop-blur-md" onClick={onClose}></div>}
       
       {/* Modal */}
       <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md mx-4 p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-gray-900">রক্তদানের তথ্য যোগ করুন</h3>
-          <button 
-            type="button"
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
-            onClick={onClose}
+          {!page && (
+            <button 
+              type="button"
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={onClose}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+              </svg>
+            </button>
+          )}
         </div>
         
         <form onSubmit={handleSubmit}>
@@ -139,13 +142,15 @@ const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose
           
           {/* Submit button */}
           <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+            {!page && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
             >
-              বাতিল
-            </button>
+                বাতিল
+              </button>
+            )}
             <button
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
