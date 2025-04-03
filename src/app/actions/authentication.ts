@@ -95,42 +95,43 @@ export const loginUser = async(formdata: {identity: string, password: string, re
 }
 
 export const logoutUser = async() => {
-    const cookieStore = await cookies()
-    const token = await cookieStore.get("token")
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
     try {
-        const response = await baseUrl("/user/logout",{
+        const response = await baseUrl("/user/logout", {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token?.value}`,
             }
-        })
+        });
 
-        await cookieStore.delete("token")
-        return await response.json()
+        cookieStore.delete("token");
+        return await response.json();
     } catch (error) {
-        return {success: false, message: error instanceof Error ? error.message : "Logout failed"}
+        return {success: false, message: error instanceof Error ? error.message : "Logout failed"};
     }
 }
 
 export const verifyJwt = async(protection: boolean = true) => {
     const cookieStore = await cookies();
-    const token = await cookieStore.get("token")
+    const token = cookieStore.get("token");
 
     if(!token && protection){
-        redirect("/login")
+        redirect("/login");
     }
 
-    if(!token){
-        return null
+    if(!token?.value){
+        return null;
     }
 
     try {
         const decoded = jwt.verify(token.value, process.env.NEXT_PUBLIC_JWT_TOKEN as string);
-        return decoded
+        // Ensure we return a plain serializable object
+        return typeof decoded === 'object' ? Object.assign({}, decoded) : decoded;
     } catch (error) {
-        console.log(error)
-        cookieStore.delete("token")
-        redirect("/login")
+        console.log(error);
+        cookieStore.delete("token");
+        redirect("/login");
     }
 }
 

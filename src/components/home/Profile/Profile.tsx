@@ -8,7 +8,7 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ userData }) => {
-  console.log(`${process.env.NEXT_PUBLIC_API_URL}${userData?.profileImageUrl}`)
+  
   return (
     <div className="flex space-x-6 px-3 py-2">
       <Link href="/chat" passHref>

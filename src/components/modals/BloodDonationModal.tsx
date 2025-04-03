@@ -55,7 +55,7 @@ const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose
       })
 
       toast.success('রক্তদানের তথ্য সফলভাবে যোগ করা হয়েছে')
-      page && onClose()
+      !page && onClose()
     }else{
       setError(response.message)
     }

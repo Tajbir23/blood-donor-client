@@ -43,6 +43,7 @@ const Profile = () => {
   },[queryClient, myOrganizations])
   
   console.log(data)
+  console.log(userData?.badges)
   // This would come from your user data fetch
   const userProfile: User = {
     fullName: userData?.fullName ?? 'Profile Name',
@@ -55,7 +56,7 @@ const Profile = () => {
     address: userData?.address ?? '',
     lastDonationDate: userData?.lastDonationDate ?? '',
     totalDonationCount: userData?.totalDonationCount ?? 0,
-    badges: ['প্রথম রক্তদান', 'নিয়মিত দাতা', 'জীবন রক্ষাকারী'],
+    badges: userData?.badges ?? [],
     nextDonationDate: userData?.nextDonationDate ?? '',
     canDonate: userData?.canDonate ?? false,
     createdAt: userData?.createdAt ?? '',

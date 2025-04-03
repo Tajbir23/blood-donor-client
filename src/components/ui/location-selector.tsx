@@ -6,7 +6,7 @@ import { bangladeshGeoData } from './bangladesh-geo-data';
 interface LocationSelectorProps {
   onDivisionChange?: (divisionId: string) => void;
   onDistrictChange: (districtId: string) => void;
-  onThanaChange: (thanaId: string) => void;
+  onThanaChange: (thanaId: string, latitude: string, longitude: string) => void;
   defaultDivisionId?: string;
   defaultDistrictId?: string;
   defaultThanaId?: string;
@@ -26,7 +26,8 @@ export default function LocationSelector({
   const [selectedThana, setSelectedThana] = useState<string>(defaultThanaId);
   
   const [districts, setDistricts] = useState<{ id: string; name: string }[]>([]);
-  const [thanas, setThanas] = useState<{ id: string; name: string }[]>([]);
+  const [thanas, setThanas] = useState<{ id: string; name: string; latitude?: string; longitude?: string }[]>([]);
+
 
   // Initial data loading effect
   useEffect(() => {
@@ -97,7 +98,7 @@ export default function LocationSelector({
     // Call external handlers after state updates
     if (onDivisionChange) onDivisionChange(newDivisionId);
     onDistrictChange('');
-    onThanaChange('');
+    onThanaChange('', '', '');
   }, [onDivisionChange, onDistrictChange, onThanaChange]);
 
   // Handle district changes and reset thana
@@ -108,7 +109,7 @@ export default function LocationSelector({
     
     // Call external handlers after state updates
     onDistrictChange(newDistrictId);
-    onThanaChange('');
+    onThanaChange('', '', '');
   }, [onDistrictChange, onThanaChange]);
 
   // Handle thana changes
@@ -116,9 +117,14 @@ export default function LocationSelector({
     const newThanaId = e.target.value;
     setSelectedThana(newThanaId);
     
+    // Find the thana to get its coordinates
+    const selectedThanaData = thanas.find(thana => thana.id === newThanaId);
+    const latitude = selectedThanaData?.latitude || '';
+    const longitude = selectedThanaData?.longitude || '';
+    
     // Call external handler
-    onThanaChange(newThanaId);
-  }, [onThanaChange]);
+    onThanaChange(newThanaId, latitude, longitude);
+  }, [onThanaChange, thanas]);
 
   if (loading) return <p>লোড হচ্ছে...</p>;
 

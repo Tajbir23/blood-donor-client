@@ -21,7 +21,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const decodedUser = await verifyJwt(false)
+  // Get decoded user and ensure it's serializable
+  const decodedUserRaw = await verifyJwt(false);
+  // Serialize and parse to ensure we have a plain object
+  const decodedUser = decodedUserRaw ? JSON.parse(JSON.stringify(decodedUserRaw)) : null;
   
   return (
     <html lang="bn" className="h-full">
