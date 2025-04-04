@@ -103,6 +103,13 @@ const Navbar = () => {
               </div>
             </Link>
 
+            {/* Donation Link */}
+            <Link href="/donation" passHref>
+              <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
+                অনুদান করুন
+              </div>
+            </Link> 
+
             {/* Profile or Login Button */}
             {userData?.user ? (
               <Profile userData={userData?.user} />
@@ -148,6 +155,12 @@ const Navbar = () => {
             <Link href="/blog" passHref>
               <div className={`block px-3 py-2 text-base font-medium ${isActive('/blog') ? activeClass : inactiveClass}`}>
                 ব্লগ
+              </div>
+            </Link>
+
+            <Link href="/donation" passHref>
+              <div className={`block px-3 py-2 text-base font-medium ${isActive('/donation') ? activeClass : inactiveClass}`}>
+                অনুদান করুন
               </div>
             </Link>
 
