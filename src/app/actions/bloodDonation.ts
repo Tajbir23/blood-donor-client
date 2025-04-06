@@ -78,5 +78,30 @@ export const getLeaderboardDonors = async() => {
             success: false,
             message: "কিছু ভুল হয়েছে"
         }
+    }   
+}
+
+export const findBloodDonors = async (latitude: string, longitude: string, bloodGroup: string) => {
+    console.log(latitude, longitude, bloodGroup)
+    try {
+        const response = await baseUrl(`/user/donor/search`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                latitude,
+                longitude,
+                bloodGroup
+            })
+        })
+        const data = await response.json()
+        return data
+    } catch (error) {
+        console.log(error)
+        return {
+            success: false,
+            message: "কিছু ভুল হয়েছে"
+        }
     }
 }
