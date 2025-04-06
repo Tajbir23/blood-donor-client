@@ -126,11 +126,13 @@ export const verifyJwt = async(protection: boolean = true) => {
 
     try {
         const decoded = jwt.verify(token.value, process.env.NEXT_PUBLIC_JWT_TOKEN as string);
+
+        console.log("line 130",decoded)
         // Ensure we return a plain serializable object
         return typeof decoded === 'object' ? Object.assign({}, decoded) : decoded;
     } catch (error) {
         console.log(error);
-        cookieStore.delete("token");
+        await logoutUser()
         redirect("/login");
     }
 }

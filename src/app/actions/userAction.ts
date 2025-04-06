@@ -2,7 +2,7 @@
 import baseUrl from "@/lib/api/baseUrl"
 import { cookies } from "next/headers"
 
-export const updateBloodDonationDate = async (lastDonation: string, recipient: string, recipientName: string) => {
+export const updateBloodDonationDate = async (lastDonation: Date, recipient: string, recipientName: string) => {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')
     console.log("lastDonation, recipient, recipientName", lastDonation, recipient, recipientName)

@@ -10,7 +10,6 @@ interface UpdateBloodDonationDateProps {
     isOpen: boolean;
     onClose: () => void;
   }>;
-  decodedUser: decodedJwtType;
 }
 
 interface DonationCheck {
@@ -18,22 +17,23 @@ interface DonationCheck {
   expiry: string;
 }
 
-interface UserData {
+interface UserDataType {
   user: User;
 }
 
-const UpdateBloodDonationDate: React.FC<UpdateBloodDonationDateProps> = ({ Modal, decodedUser }) => {
+const UpdateBloodDonationDate: React.FC<UpdateBloodDonationDateProps> = ({ Modal }) => {
   const [showModal, setShowModal] = useState(false)
   const [shouldShow, setShouldShow] = useState(false)
   const queryClient = useQueryClient()
   const router = useRouter()
+  const [userData, setUserData] = useState<User>()
   
   // Check if user has already answered using direct query client access
   useEffect(() => {
     const timeOut = setTimeout(() => {
       const donationCheck = queryClient.getQueryData<DonationCheck>(['bloodDonationCheck']);
-      const user = queryClient.getQueryData<UserData>(['user']);
-  
+      const user = queryClient.getQueryData<UserDataType>(['user']);
+      setUserData(user?.user)
       const lastDonationDate = user?.user?.lastDonationDate ? new Date(user?.user?.lastDonationDate) : null;
       const expiryDate = donationCheck ? new Date(donationCheck.expiry) : null;
       const currentDate = new Date();
@@ -63,7 +63,7 @@ const UpdateBloodDonationDate: React.FC<UpdateBloodDonationDateProps> = ({ Modal
   
 
   const handleYesClick = () => {
-    if(!decodedUser){
+    if(!userData){
         router.push('/login')
         return
     }

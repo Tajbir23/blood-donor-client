@@ -9,7 +9,6 @@ import QueryProvider from "@/components/QueryProvider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import UpdateBloodDonationDate from '@/components/home/UpdateBloodDonationDate';
 import BloodDonationModal from '@/components/modals/BloodDonationModal';
-import { verifyJwt } from './actions/authentication';
 import decodedJwtType from '@/lib/types/decodedJwtType';
 
 const inter = Inter({ subsets: ['latin'] })
@@ -22,9 +21,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   // Get decoded user and ensure it's serializable
-  const decodedUserRaw = await verifyJwt(false);
-  // Serialize and parse to ensure we have a plain object
-  const decodedUser = decodedUserRaw ? JSON.parse(JSON.stringify(decodedUserRaw)) : null;
   
   return (
     <html lang="bn" className="h-full">
@@ -32,7 +28,7 @@ export default async function RootLayout({
         <QueryProvider>
           <Navbar />
           <EmergencyHeadline />
-          <UpdateBloodDonationDate Modal={BloodDonationModal} decodedUser={decodedUser as decodedJwtType} />
+          <UpdateBloodDonationDate Modal={BloodDonationModal} />
           {children}
           <Footer />
           <Toaster 

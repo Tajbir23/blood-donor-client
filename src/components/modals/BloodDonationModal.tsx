@@ -43,8 +43,10 @@ const BloodDonationModal: React.FC<BloodDonationModalProps> = ({ isOpen, onClose
       setError('রক্তদানের স্থান/প্রাপক নির্বাচন করুন')
       return
     }
+
+    const userDonationDate = new Date(donationDate)
     
-    const response = await updateBloodDonationDate(donationDate, recipient, recipientName)
+    const response = await updateBloodDonationDate(userDonationDate, recipient, recipientName)
     if(response.success){
       const expiryDate = new Date()
       expiryDate.setDate(expiryDate.getDate() + 120)
