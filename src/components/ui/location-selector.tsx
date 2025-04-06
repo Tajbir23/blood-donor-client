@@ -10,6 +10,7 @@ interface LocationSelectorProps {
   defaultDivisionId?: string;
   defaultDistrictId?: string;
   defaultThanaId?: string;
+  className?: string;
 }
 
 export default function LocationSelector({
@@ -18,7 +19,8 @@ export default function LocationSelector({
   onThanaChange,
   defaultDivisionId = '',
   defaultDistrictId = '',
-  defaultThanaId = ''
+  defaultThanaId = '',
+  className = ''
 }: LocationSelectorProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDivision, setSelectedDivision] = useState<string>(defaultDivisionId);
@@ -129,12 +131,13 @@ export default function LocationSelector({
   if (loading) return <p>লোড হচ্ছে...</p>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 ${className}`}>
       <div>
         <label htmlFor="division" className="block text-sm font-medium text-gray-700 mb-1">
           বিভাগ
         </label>
         <select
+          required
           id="division"
           name="division"
           value={selectedDivision}
@@ -156,6 +159,7 @@ export default function LocationSelector({
           জেলা
         </label>
         <select
+          required
           id="district"
           name="district"
           value={selectedDistrict}
@@ -178,6 +182,7 @@ export default function LocationSelector({
           থানা
         </label>
         <select
+          required
           id="thana"
           name="thana"
           value={selectedThana}

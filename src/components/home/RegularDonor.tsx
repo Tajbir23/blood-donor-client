@@ -1,6 +1,5 @@
 'use client'
 import { getLeaderboardDonors } from '@/app/actions/bloodDonation';
-import baseUrl from '@/lib/api/baseUrl';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState, useEffect, useRef, useCallback } from 'react';
