@@ -31,6 +31,7 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
   
   const [formData, setFormData] = useState<BloodRequestType>({
     name: '',
+    email: '',
     patientName: '',
     patientProblem: '',
     mobile: '',
@@ -47,6 +48,10 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
     divisionId: '',
     districtId: '',
     thanaId: '',
+    seekerDivisionId: '',
+    seekerDistrictId: '',
+    seekerThanaId: '',
+    seekerBloodGroup: '',
     hospitalId: '',
     hospitalName: '',
     hospitalWard: '',
@@ -55,6 +60,8 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
     additionalInfo: '',
     latitude: '',
     longitude: '',
+    seekerLatitude: '',
+    seekerLongitude: '',
   });
 
   // ডিভিশনের ডাটা পাওয়ার পর জেলাগুলি সেট করি
@@ -139,6 +146,10 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
     if (latitude && longitude && type === 'thanaId') {
       setFormData(prev => ({ ...prev, latitude, longitude }));
     }
+
+    if (latitude && longitude && type === 'seekerThanaId') {
+      setFormData(prev => ({ ...prev, seekerLatitude: latitude, seekerLongitude: longitude }));
+    }
     
     if (type === 'districtId') {
       setFormData(prev => ({ ...prev, thanaId: '', hospitalId: '', hospitalName: '' }));
@@ -169,6 +180,11 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
     if (!formData.divisionId) newErrors.divisionId = 'বিভাগ নির্বাচন করুন';
     if (!formData.districtId) newErrors.districtId = 'জেলা নির্বাচন করুন';
     if (!formData.thanaId) newErrors.thanaId = 'থানা নির্বাচন করুন';
+    if (!formData.seekerDivisionId) newErrors.seekerDivisionId = 'আপনার বিভাগ নির্বাচন করুন';
+    if (!formData.seekerDistrictId) newErrors.seekerDistrictId = 'আপনার জেলা নির্বাচন করুন';
+    if (!formData.seekerThanaId) newErrors.seekerThanaId = 'আপনার থানা নির্বাচন করুন';
+    if (!formData.seekerBloodGroup) newErrors.seekerBloodGroup = 'আপনার রক্তের গ্রুপ নির্বাচন করুন';
+    
     
     // Mobile number format validation
     const mobileRegex = /^01[3-9]\d{8}$/;
@@ -435,9 +451,24 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
             </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">আপনার ইমেইল <span className="text-red-500">*</span></label>
+              <input 
+                type="email" 
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="আপনার ইমেইল" 
+                className={`w-full p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500`}
+                required
+              />
+              {renderError('email')}
+            </div>
             
             <div>
-              <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">প্রাথমিক মোবাইল নাম্বার <span className="text-red-500">*</span></label>
+              <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">আপনার মোবাইল নাম্বার <span className="text-red-500">*</span></label>
               <input 
                 type="tel" 
                 id="mobile"
@@ -449,6 +480,42 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
                 required
               />
               {renderError('mobile')}
+            </div>
+            
+            <LocationSelector 
+              onDivisionChange={(value) => handleLocationChange('seekerDivisionId', value)}
+              onDistrictChange={(value) => handleLocationChange('seekerDistrictId', value)}
+              onThanaChange={(value, lat, lng) => handleLocationChange('seekerThanaId', value, lat, lng)}
+              defaultDivisionId={formData.seekerDivisionId}
+              defaultDistrictId={formData.seekerDistrictId}
+              defaultThanaId={formData.seekerThanaId}
+            />
+            {renderError('seekerDivisionId')}
+            {renderError('seekerDistrictId')}
+            {renderError('seekerThanaId')}
+
+            <div>
+              <label htmlFor="seekerBloodGroup" className="block text-sm font-medium text-gray-700 mb-1">আপনার রক্তের গ্রুপ <span className="text-red-500">*</span></label>
+              <select 
+                id="seekerBloodGroup"
+                name="seekerBloodGroup"
+                value={formData.seekerBloodGroup}
+                onChange={handleChange}
+                aria-label="আপনার রক্তের গ্রুপ বাছাই করুন"
+                className={`w-full p-3 border ${errors.seekerBloodGroup ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500`}
+                required
+              >
+                <option value="">আপনার রক্তের গ্রুপ বাছাই করুন</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+              {renderError('seekerBloodGroup')}
             </div>
             
             <div>

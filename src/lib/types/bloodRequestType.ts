@@ -1,6 +1,7 @@
 interface BloodRequestType {
     _id?: string;
     name: string;
+    email: string;
     patientName: string;
     patientProblem: string;
     mobile: string;
@@ -17,6 +18,10 @@ interface BloodRequestType {
     divisionId: string;
     districtId: string;
     thanaId: string;
+    seekerDivisionId: string;
+    seekerDistrictId: string;
+    seekerThanaId: string;
+    seekerBloodGroup: string;
     hospitalId: string;
     hospitalName: string;
     hospitalWard: string;
@@ -25,6 +30,8 @@ interface BloodRequestType {
     additionalInfo: string;
     latitude?: string;
     longitude?: string;
+    seekerLatitude?: string;
+    seekerLongitude?: string;
     createdAt?: string;
     updatedAt?: string;
 }
