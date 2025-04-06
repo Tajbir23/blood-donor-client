@@ -64,3 +64,19 @@ export const getBloodDonors = async (page: number, limit: number, search: string
         }
     }
 }
+
+export const getLeaderboardDonors = async() => {
+    try {
+        const response = await baseUrl('/donor-leaderboard/highest-donor', {
+            method: "GET",
+        })
+        const data = await response.json()
+        return data
+    } catch (error) {
+        console.log(error)
+        return {
+            success: false,
+            message: "কিছু ভুল হয়েছে"
+        }
+    }
+}

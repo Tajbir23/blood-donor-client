@@ -1,41 +1,27 @@
 'use client'
+import { getLeaderboardDonors } from '@/app/actions/bloodDonation';
+import baseUrl from '@/lib/api/baseUrl';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const RegularDonor = () => {
-  const donors = [
-    {
-      id: 1,
-      name: 'রহিম আলী',
-      address: 'কুড়িগ্রাম সদর, কুড়িগ্রাম',
-      image: '/donors/donor1.jpg',
-    },
-    {
-      id: 2,
-      name: 'ফাতেমা বেগম',
-      address: 'উলিপুর, কুড়িগ্রাম',
-      image: '/donors/donor2.jpg',
-    },
-    {
-      id: 3,
-      name: 'করিম মিয়া',
-      address: 'রৌমারী, কুড়িগ্রাম',
-      image: '/donors/donor3.jpg',
-    },
-    {
-      id: 4,
-      name: 'আমিনা খাতুন',
-      address: 'চিলমারী, কুড়িগ্রাম',
-      image: '/donors/donor4.jpg',
-    },
-    {
-      id: 5,
-      name: 'জাহিদ হাসান',
-      address: 'নাগেশ্বরী, কুড়িগ্রাম',
-      image: '/donors/donor5.jpg',
-    },
-  ];
+
+  const { data: donorsData, error } = useQuery({
+    queryKey: ['regular-donors'],
+    queryFn: getLeaderboardDonors,
+    gcTime: 1000 * 60 * 60 * 24 * 10, // 10 days cache time
+  });
+
+  console.log(error);
+  const donors = donorsData?.data?.map((donor: any) => ({
+    id: donor._id,
+    name: donor.fullName,
+    address: `${donor.thanaId}, ${ donor.districtId}`,
+    image: `${process.env.NEXT_PUBLIC_API_URL}${donor.profileImageUrl}`,
+  }));
+
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(3);
@@ -58,7 +44,7 @@ const RegularDonor = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const totalSlides = donors.length;
+  const totalSlides = donorsData?.length;
   const maxIndex = totalSlides - slidesToShow;
 
   const nextSlide = useCallback(() => {
@@ -100,7 +86,7 @@ const RegularDonor = () => {
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
             >
-              {donors.map((donor) => (
+              {donors?.map((donor: any) => (
                 <div 
                   key={donor.id} 
                   className={`flex-shrink-0 px-3`}
