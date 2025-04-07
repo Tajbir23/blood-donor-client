@@ -1,4 +1,3 @@
-import { useRangpurDivision } from "@/hooks/useLocation";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa"
 import { User } from "@/lib/types/userType";
@@ -11,7 +10,6 @@ interface EditDetailsModalProps {
 }
 
 const EditDetailsModal = ({ setIsModalOpen, userProfile }: EditDetailsModalProps) => {
-    const { division, loading: loadingDivision } = useRangpurDivision();
     const [formData, setFormData] = useState({
         fullName: userProfile.fullName,
         bloodGroup: userProfile.bloodGroup,
@@ -23,10 +21,6 @@ const EditDetailsModal = ({ setIsModalOpen, userProfile }: EditDetailsModalProps
         latitude: userProfile.latitude || 0,
         longitude: userProfile.longitude || 0
     });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
     
     const handleLocationChange = (location: { lat: number, lng: number }) => {
       setFormData(prev => ({ ...prev, latitude: location.lat, longitude: location.lng }));

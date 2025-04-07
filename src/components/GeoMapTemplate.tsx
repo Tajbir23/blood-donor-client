@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import type { LatLngTuple } from 'leaflet';
+import type { LatLngTuple, LeafletMouseEvent } from 'leaflet';
 
 // Dynamically load the map components with no SSR
 const MapContainer = dynamic(
@@ -26,8 +26,19 @@ const Popup = dynamic(
   { ssr: false }
 );
 
-const SetViewOnClick = dynamic(
-  () => import('react-leaflet').then((mod) => mod.useMapEvents),
+// Define a custom component that uses useMapEvents
+const MapEventsComponent = dynamic(
+  () => 
+    import('react-leaflet').then((mod) => {
+      // Create a wrapper component
+      const MapEventsWrapper = ({ onClick }: { onClick: (e: LeafletMouseEvent) => void }) => {
+        mod.useMapEvents({
+          click: onClick,
+        });
+        return null;
+      };
+      return MapEventsWrapper;
+    }),
   { ssr: false }
 );
 
@@ -68,8 +79,8 @@ const GeoMapTemplate: React.FC<GeoMapTemplateProps> = ({
       // Dynamically import Leaflet to avoid SSR issues
       const L = await import('leaflet');
       
-      // Delete default icon to avoid issues
-      delete L.Icon.Default.prototype._getIconUrl;
+      // Delete default icon to avoid issues - follow TypeScript's suggestion of converting to unknown first
+      delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
       
       // Set up the default icon with proper paths
       L.Icon.Default.mergeOptions({
@@ -83,18 +94,6 @@ const GeoMapTemplate: React.FC<GeoMapTemplateProps> = ({
     
     fixLeafletIcon();
   }, []);
-
-  // Define the MapEvents component inside to avoid re-render issues
-  const MapEvents = () => {
-    SetViewOnClick({
-      click: (e) => {
-        if (allowLocationSelection && onLocationSelect) {
-          onLocationSelect([e.latlng.lat, e.latlng.lng]);
-        }
-      },
-    });
-    return null;
-  };
 
   // Custom marker icon setup inside useEffect to avoid SSR issues
   const [isClient, setIsClient] = useState(false);
@@ -120,7 +119,15 @@ const GeoMapTemplate: React.FC<GeoMapTemplateProps> = ({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       
-      <MapEvents />
+      {allowLocationSelection && onLocationSelect && (
+        <MapEventsComponent 
+          onClick={(e) => {
+            if (allowLocationSelection && onLocationSelect) {
+              onLocationSelect([e.latlng.lat, e.latlng.lng]);
+            }
+          }}
+        />
+      )}
       
       {selectedLocation && iconLoaded && (
         <Marker 

@@ -21,6 +21,17 @@ export async function GET() {
       return NextResponse.json({ success: false, message: 'Failed to fetch user' }, { status: response.status })
     }
 
+    const newToken = response.headers.get("set-cookie")?.split(";")[0]?.split("=")[1]
+
+        if(newToken){
+            cookieStore.set('token', newToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 60 * 60 * 24 * 30,
+                sameSite: 'strict'
+            })
+        }
+
     const data = await response.json()
     return NextResponse.json(data)
   } catch (error) {

@@ -5,6 +5,21 @@ import Image from 'next/image';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
+interface Donor {
+  _id: string;
+  fullName: string;
+  thanaId: string;
+  districtId: string;
+  profileImageUrl: string;
+}
+
+interface ProcessedDonor {
+  id: string;
+  name: string;
+  address: string;
+  image: string;
+}
+
 const RegularDonor = () => {
 
   const { data: donorsData, error } = useQuery({
@@ -14,10 +29,10 @@ const RegularDonor = () => {
   });
 
   console.log(error);
-  const donors = donorsData?.data?.map((donor: any) => ({
+  const donors = donorsData?.data?.map((donor: Donor): ProcessedDonor => ({
     id: donor._id,
     name: donor.fullName,
-    address: `${donor.thanaId}, ${ donor.districtId}`,
+    address: `${donor.thanaId}, ${donor.districtId}`,
     image: `${process.env.NEXT_PUBLIC_API_URL}${donor.profileImageUrl}`,
   }));
 
@@ -85,7 +100,7 @@ const RegularDonor = () => {
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
             >
-              {donors?.map((donor: any) => (
+              {donors?.map((donor: ProcessedDonor) => (
                 <div 
                   key={donor.id} 
                   className={`flex-shrink-0 px-3`}

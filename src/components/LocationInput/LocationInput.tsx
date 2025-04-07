@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import GeoMapTemplate from '@/components/GeoMapTemplate';
 import type { LatLngTuple } from 'leaflet';
 import { FaSearch, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
@@ -52,7 +52,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
       return;
@@ -80,7 +80,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [searchQuery]);
 
   const handleSelectSearchResult = (result: SearchResult) => {
     const newLocation = { 
@@ -132,7 +132,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
         clearTimeout(searchTimeout.current);
       }
     };
-  }, [searchQuery]);
+  }, [searchQuery, handleSearch]);
 
   return (
     <div className={`space-y-2 ${className}`} style={{ width }}>

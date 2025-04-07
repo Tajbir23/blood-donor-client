@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { XCircle } from 'lucide-react'
@@ -12,7 +12,8 @@ interface FailedTransaction {
   [key: string]: string | undefined
 }
 
-export default function Failed() {
+// Separate component that uses useSearchParams
+function FailedContent() {
   const searchParams = useSearchParams()
   const [transactionDetails, setTransactionDetails] = useState<FailedTransaction | null>(null)
   const [loading, setLoading] = useState(true)
@@ -119,4 +120,22 @@ export default function Failed() {
       </div>
     </div>
   )
+}
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="animate-spin h-12 w-12 border-4 border-red-500 rounded-full border-t-transparent"></div>
+    </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function Failed() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <FailedContent />
+    </Suspense>
+  );
 } 

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
@@ -11,7 +11,8 @@ interface CancelledTransaction {
   [key: string]: string | undefined
 }
 
-export default function Cancel() {
+// Separate component that uses useSearchParams
+function CancelContent() {
   const searchParams = useSearchParams()
   const [transactionDetails, setTransactionDetails] = useState<CancelledTransaction | null>(null)
   const [loading, setLoading] = useState(true)
@@ -116,4 +117,22 @@ export default function Cancel() {
       </div>
     </div>
   )
+}
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="animate-spin h-12 w-12 border-4 border-red-500 rounded-full border-t-transparent"></div>
+    </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function Cancel() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <CancelContent />
+    </Suspense>
+  );
 } 

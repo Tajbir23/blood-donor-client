@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import decodedJwtType from '@/lib/types/decodedJwtType';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/types/userType';
 interface UpdateBloodDonationDateProps {

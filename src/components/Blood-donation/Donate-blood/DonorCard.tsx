@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import { User } from '@/lib/types/userType'
-import { Phone, MapPin, Droplet, Calendar, Award } from 'lucide-react'
+import { Phone, MapPin, Droplet, Award } from 'lucide-react'
 
 const DonorCard = ({donor}: {donor: User}) => {
   // Access with type safety for optional properties
-  const lastDonated = 'lastDonated' in donor ? (donor as any).lastDonated : null;
-  const donationCount = 'donationCount' in donor ? (donor as any).donationCount : null;
+  const lastDonated = 'lastDonated' in donor ? donor.lastDonated as string : null;
+  const donationCount = 'donationCount' in donor ? donor.donationCount as number : null;
   
   return (
     <div className="rounded-xl overflow-hidden shadow-md hover:shadow-xl bg-white border border-gray-100 transition-all duration-300 flex flex-col relative group">

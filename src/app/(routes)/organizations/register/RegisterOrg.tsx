@@ -16,7 +16,7 @@ interface UserQueryData {
 }
 
 const RegisterOrg = () => {
-  const { division, loading: loadingDivision } = useRangpurDivision();
+  const { division } = useRangpurDivision();
   const {mutate: registerOrganization, isPending} = useRegisterOrganization()
   const queryClient = useQueryClient();
 
@@ -58,9 +58,6 @@ const RegisterOrg = () => {
     // শর্তাবলী
     agreedToTerms: true,
   });
-
-  const [thanas, setThanas] = useState<Array<{id: string, name: string}>>([]);
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -106,13 +103,7 @@ const RegisterOrg = () => {
     
     // Handle district selection to update thanas
     if (name === 'districtId' && division) {
-      const district = division.districts.find(d => d.id === value);
-      if (district) {
-        setThanas(district.thanas);
-        setFormData(prev => ({ ...prev, thanaId: '' }));
-      } else {
-        setThanas([]);
-      }
+      setFormData(prev => ({ ...prev, thanaId: '' }));
     }
   };
 

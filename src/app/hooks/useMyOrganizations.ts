@@ -15,4 +15,5 @@ const useMyOrganizations = () => {
         }
     })
 }
+
 export default useMyOrganizations

@@ -39,7 +39,7 @@ const DonateBlood = () => {
     return () => {
       isMounted = false
     }
-  },[page, limit])
+  },[page, limit, search])
 
   if(loading) {
     return <Loading size="large" fullScreen={true} />

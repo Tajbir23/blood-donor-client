@@ -1,7 +1,7 @@
 'use client'
-import baseUrl from '@/lib/api/baseUrl';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 interface DonationFormData {
   amount: string;
@@ -218,8 +218,8 @@ const SslCommerz: React.FC = () => {
       <div className="mt-6 text-center text-sm text-gray-600">
         <p>আপনার অনুদান রক্তদান কার্যক্রম চালিয়ে যেতে সাহায্য করবে।</p>
         <div className="flex justify-center mt-4 space-x-2">
-          <img src="/sslcommerz-logo.png" alt="SSLCommerz" className="h-8" />
-          <img src="/payment-cards.png" alt="Payment Methods" className="h-8" />
+          <Image src="/sslcommerz-logo.png" alt="SSLCommerz" width={100} height={32} className="h-8 w-auto" />
+          <Image src="/payment-cards.png" alt="Payment Methods" width={120} height={32} className="h-8 w-auto" />
         </div>
       </div>
     </div>

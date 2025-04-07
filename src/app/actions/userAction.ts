@@ -20,7 +20,7 @@ export const updateBloodDonationDate = async (lastDonation: Date, recipient: str
             body: JSON.stringify({lastDonation, recipient, recipientName})
         })
         return response.json()
-    } catch (error) {
+    } catch {
         return {success: false, message: 'Internal Server Error'}
     }
 }

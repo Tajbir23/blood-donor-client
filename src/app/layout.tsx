@@ -9,7 +9,6 @@ import QueryProvider from "@/components/QueryProvider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import UpdateBloodDonationDate from '@/components/home/UpdateBloodDonationDate';
 import BloodDonationModal from '@/components/modals/BloodDonationModal';
-import decodedJwtType from '@/lib/types/decodedJwtType';
 
 const inter = Inter({ subsets: ['latin'] })
 

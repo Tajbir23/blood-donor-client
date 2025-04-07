@@ -42,8 +42,6 @@ const Profile = () => {
     return () => clearTimeout(timeOut)
   },[queryClient, myOrganizations])
   
-  console.log(data)
-  console.log(userData?.badges)
   // This would come from your user data fetch
   const userProfile: User = {
     fullName: userData?.fullName ?? 'Profile Name',
@@ -69,8 +67,6 @@ const Profile = () => {
     reportCount: userData?.reportCount ?? 0, // Number of times this user has been reported
     organizationId: userData?.organizationId ?? []
   }
-
-  console.log(userProfile.organizationId)
 
   const donationHistory: Donation[] = [
     { date: '১০ মার্চ, ২০২৩', location: 'রংপুর মেডিকেল কলেজ হাসপাতাল', recipient: 'শামীমা বেগম', bloodGroup: 'B+' },

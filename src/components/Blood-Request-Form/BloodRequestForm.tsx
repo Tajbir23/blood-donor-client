@@ -13,11 +13,7 @@ interface BloodRequestFormProps {
 
 const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", title}) => {
   // ডিভিশনের ডাটা ফেচ করি
-  const { division, loading: loadingDivision, error: divisionError } = useRangpurDivision();
-  
-  // জেলা ও থানার স্টেট
-  const [districts, setDistricts] = useState<Array<{id: string, name: string}>>([]);
-  const [thanas, setThanas] = useState<Array<{id: string, name: string}>>([]);
+  const { division, error: divisionError } = useRangpurDivision();
   
   // হাসপাতালের স্টেট
   const [hospitals, setHospitals] = useState<Array<{id: string, name: string, location: string}>>([]);
@@ -67,7 +63,7 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
   // ডিভিশনের ডাটা পাওয়ার পর জেলাগুলি সেট করি
   useEffect(() => {
     if (division && division.districts) {
-      setDistricts(division.districts.map(d => ({ id: d.id, name: d.name })));
+      setFormData(prev => ({ ...prev, divisionId: division.id }));
     }
   }, [division]);
 
@@ -76,17 +72,12 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
     if (division && formData.districtId) {
       const selectedDistrict = division.districts.find(d => d.id === formData.districtId);
       if (selectedDistrict && selectedDistrict.thanas) {
-        setThanas(selectedDistrict.thanas);
-        
-        // জেলা পরিবর্তন হলে থানা রিসেট করি
-        if (formData.thanaId && !selectedDistrict.thanas.some(t => t.id === formData.thanaId)) {
-          setFormData(prev => ({ ...prev, thanaId: '' }));
-        }
+        setFormData(prev => ({ ...prev, thanaId: selectedDistrict.thanas[0].id }));
       }
     } else {
-      setThanas([]);
+      setFormData(prev => ({ ...prev, thanaId: '' }));
     }
-  }, [division, formData.districtId, formData.thanaId]);
+  }, [division, formData.districtId]);
 
   // থানা পরিবর্তনের পর হাসপাতালগুলি ফেচ করি
   useEffect(() => {

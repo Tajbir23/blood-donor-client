@@ -47,6 +47,9 @@ interface organizationType {
     isActive?: boolean;
     createdAt?: string;
     updatedAt?: string;
+
+    membersCount?: number;
+    campaignsCount?: number;
 }
 
 export default organizationType;

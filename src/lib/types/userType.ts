@@ -32,7 +32,7 @@ export interface User {
     isActive?: boolean;
     isVerified?: boolean;
     reportCount?: number;
-    distance?: Number;
+    distance?: number;
     distanceKm?: string;
     createdAt?: string;
     updatedAt?: string;

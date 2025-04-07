@@ -12,7 +12,7 @@ import LocationSelector from '@/components/ui/location-selector';
 
 const RegAsUser = () => {
   const {mutate: registerAsUser, isPending} = useRegisterAsUser()
-  const { division, loading: loadingDivision } = useRangpurDivision();
+  const { division } = useRangpurDivision();
   const { fingerprint } = useFingerprint();
   const [locationError, setLocationError] = useState<string>('');
 
@@ -73,8 +73,6 @@ const RegAsUser = () => {
     }
   }, [fingerprint]);
 
-  const [thanas, setThanas] = useState<Array<{id: string, name: string}>>([]);
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     
@@ -92,13 +90,7 @@ const RegAsUser = () => {
     
     // Handle district selection to update thanas
     if (name === 'districtId' && division) {
-      const district = division.districts.find(d => d.id === value);
-      if (district) {
-        setThanas(district.thanas);
-        setFormData(prev => ({ ...prev, thanaId: '' }));
-      } else {
-        setThanas([]);
-      }
+      setFormData(prev => ({ ...prev, thanaId: '' }));
     }
   };
 
