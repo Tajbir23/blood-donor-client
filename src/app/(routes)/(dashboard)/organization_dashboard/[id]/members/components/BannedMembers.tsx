@@ -6,6 +6,7 @@ import { FaSearch, FaUserShield, FaExclamationTriangle } from 'react-icons/fa'
 import Image from 'next/image'
 import { useQuery } from '@tanstack/react-query'
 import { getMembers } from '@/app/actions/organization'
+import { User } from '@/lib/types/userType'
 
 const BannedMembers = () => {
   const pathname = usePathname()
@@ -24,7 +25,7 @@ const BannedMembers = () => {
         // Filter for banned members only
         return {
           ...result,
-          members: result.members.filter((member: any) => member.status === 'banned')
+          members: result.members.filter((member: User) => member.isBanned)
         };
       }
       return { members: [], totalMembers: 0 };
@@ -81,7 +82,7 @@ const BannedMembers = () => {
           </div>
         
           <div className="grid gap-4 sm:grid-cols-2">
-            {data.members.map((member: any) => (
+            {data.members.map((member: User) => (
               <div key={member._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 relative overflow-hidden">
                 {/* Banned Banner */}
                 <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 transform rotate-45 translate-x-6 translate-y-2 w-28 text-center">
@@ -116,21 +117,12 @@ const BannedMembers = () => {
                       </div>
                     )}
                     
-                    <div className="text-xs text-gray-500 mb-1 flex items-center">
-                      <span className="font-medium">নিষিদ্ধের কারণ:</span>
-                      <span className="ml-1">{member.banReason || 'নিষিদ্ধের কারণ উল্লেখ নেই'}</span>
-                    </div>
-                    
-                    <div className="text-xs text-gray-500 flex items-center">
-                      <span className="font-medium">তারিখ:</span>
-                      <span className="ml-1">{member.bannedAt ? new Date(member.bannedAt).toLocaleDateString('bn-BD') : 'তারিখ উল্লেখ নেই'}</span>
-                    </div>
                   </div>
                 </div>
                 
                 <div className="border-t border-gray-100 mt-4 pt-3">
                   <button 
-                    onClick={() => handleRestore(member._id)}
+                    onClick={() => handleRestore(member._id || '')}
                     className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center"
                   >
                     <FaUserShield className="mr-2" /> পুনরায় সক্রিয় করুন

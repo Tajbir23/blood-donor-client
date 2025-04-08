@@ -1,31 +1,27 @@
 "use client"
-import { useEffect } from "react";
 import { getMembers } from "@/app/actions/organization";
 import { User } from "@/lib/types/userType";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FaSearch, FaUserPlus, FaBan, FaEye, FaUserCog, FaCalendarAlt } from "react-icons/fa";
+import { FaSearch, FaUserPlus, FaBan, FaEye, FaCalendarAlt } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
-import ChangeRole from "./ChangeRole";
 import UpdateLastDonation from "./UpdateLastDonation";
 import AddNewMember from "./AddNewMember";
+import { addMember, updateLastDonationDate } from "@/app/actions/administrator/organization/manageOrg";
+import toast from "react-hot-toast";
 
 const ActiveMembers = () => {
     const pathname = usePathname();
     const organizationId = pathname.split('/')[2];
-    const [members, setMembers] = useState<User[]>([]);
-    const [totalMembers, setTotalMembers] = useState<number>(0);
+    
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
     const [search, setSearch] = useState<string>("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [selectedMember, setSelectedMember] = useState<{ _id: string; fullName: string; role: string } | null>(null);
-    const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-    const [selectedDonationMember, setSelectedDonationMember] = useState<{ _id: string; fullName: string; lastDonationDate?: string } | null>(null);
+    const [selectedDonationMember, setSelectedDonationMember] = useState<User>();
     const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
     const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
@@ -37,19 +33,16 @@ const ActiveMembers = () => {
         }
     });
 
-    useEffect(() => {
-        if (data) {
-            setMembers(data.members)
-            setTotalMembers(data.totalMembers)
-        }
-    }, [data]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
+        setPage(1); // Reset to first page when searching
     };
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
+        // Scroll to top when changing pages
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleBanMember = async (memberId: string) => {
@@ -64,34 +57,19 @@ const ActiveMembers = () => {
         }
     };
 
-    const handleChangeRole = (member: any) => {
-        setSelectedMember({
-            _id: member._id,
-            fullName: member.fullName,
-            role: member.role || 'member'
-        });
-        setIsRoleModalOpen(true);
-    };
-
-    const handleRoleChangeSubmit = async (memberId: string, newRole: string) => {
+    const handleUpdateLastDonation = async (memberId: string, newDate: string, recipient: string, recipientName: string) => {
         try {
             setActionLoading(memberId);
-            // Implement the role change functionality here
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await refetch();
-        } catch (error) {
-            console.error("Failed to change member role:", error);
-        } finally {
-            setActionLoading(null);
-        }
-    };
-
-    const handleUpdateLastDonation = async (memberId: string, newDate: string) => {
-        try {
-            setActionLoading(memberId);
-            // Implement the update last donation date functionality here
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await refetch();
+            const userDonationDate = new Date(newDate)
+            console.log(memberId, userDonationDate)
+            
+            const response = await updateLastDonationDate(organizationId, memberId, userDonationDate, recipient, recipientName)
+            if (response.success) {
+                toast.success(response.message);
+                await refetch();
+            } else {
+                toast.error(response.message);
+            }
         } catch (error) {
             console.error("Failed to update last donation date:", error);
         } finally {
@@ -99,12 +77,8 @@ const ActiveMembers = () => {
         }
     };
 
-    const handleOpenDonationModal = (member: any) => {
-        setSelectedDonationMember({
-            _id: member._id,
-            fullName: member.fullName,
-            lastDonationDate: member.lastDonationDate
-        });
+    const handleOpenDonationModal = (member: User) => {
+        setSelectedDonationMember(member);
         setIsDonationModalOpen(true);
     };
 
@@ -112,14 +86,25 @@ const ActiveMembers = () => {
         try {
             setActionLoading(donorId);
             // TODO: Implement the add member functionality here
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await refetch();
+            const response = await addMember(organizationId, donorId);
+            if (response.success) {
+                toast.success(response.message);
+                await refetch();
+            } else {
+                toast.error(response.message);
+            }
         } catch (error) {
             console.error("Failed to add member:", error);
         } finally {
             setActionLoading(null);
         }
     };
+
+    // Calculate pagination information
+    const totalPages = data?.totalPages;
+    console.log(totalPages)
+    const showingFrom = data?.members?.length ? (page - 1) * limit + 1 : 0;
+    const showingTo = data?.members?.length ? Math.min(page * limit, data.totalMembers) : 0;
 
     return (
         <div className="p-6">
@@ -196,7 +181,6 @@ const ActiveMembers = () => {
                                                 </div>
                                                 <div className="ml-4">
                                                     <div className="text-sm font-medium text-gray-900">{member.fullName}</div>
-                                                    <div className="text-xs text-gray-500">{member.role || 'Member'}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -236,15 +220,15 @@ const ActiveMembers = () => {
                                                     <FaEye />
                                                 </Link>
                                                 <button 
-                                                    onClick={() => handleChangeRole(member)}
+                                                    onClick={() => handleOpenDonationModal(member)}
                                                     className="bg-green-100 hover:bg-green-200 text-green-600 p-2 rounded-md transition-colors"
-                                                    title="রোল পরিবর্তন করুন"
+                                                    title="শেষ রক্তদানের তারিখ আপডেট করুন"
                                                     disabled={actionLoading === member._id}
                                                 >
                                                     {actionLoading === member._id ? (
                                                         <div className="h-4 w-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
                                                     ) : (
-                                                        <FaUserCog />
+                                                        <FaCalendarAlt />
                                                     )}
                                                 </button>
                                                 <button 
@@ -267,17 +251,28 @@ const ActiveMembers = () => {
                         </table>
                     </div>
                     
-                    {/* Pagination */}
-                    {data.totalMembers > limit && (
-                        <div className="flex justify-between items-center mt-6">
+                    {/* Enhanced Pagination */}
+                    {data.totalMembers > 0 && (
+                        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
                             <div className="text-sm text-gray-700">
-                                মোট {data.totalMembers} জন সক্রিয় সদস্য
+                                <span className="font-medium">{showingFrom}</span> থেকে <span className="font-medium">{showingTo}</span> দেখানো হচ্ছে, মোট <span className="font-medium">{data.totalMembers}</span> জন সক্রিয় সদস্য
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex flex-wrap justify-center gap-2">
+                                <button
+                                    onClick={() => handlePageChange(1)}
+                                    disabled={page === 1}
+                                    className={`px-3 py-1 rounded-md transition-colors ${
+                                        page === 1
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    প্রথম
+                                </button>
                                 <button
                                     onClick={() => handlePageChange(page - 1)}
                                     disabled={page === 1}
-                                    className={`px-4 py-2 rounded-md transition-colors ${
+                                    className={`px-3 py-1 rounded-md transition-colors ${
                                         page === 1
                                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                             : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
@@ -285,20 +280,78 @@ const ActiveMembers = () => {
                                 >
                                     পূর্ববর্তী
                                 </button>
-                                <span className="px-4 py-2 bg-red-600 text-white rounded-md">
-                                    {page}
-                                </span>
+                                
+                                {/* Page Numbers */}
+                                {[...Array(totalPages)].map((_, index) => {
+                                    const pageNumber = index + 1;
+                                    // Show current page, first page, last page, and pages around current page
+                                    if (
+                                        pageNumber === 1 || 
+                                        pageNumber === totalPages || 
+                                        (pageNumber >= page - 1 && pageNumber <= page + 1)
+                                    ) {
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => handlePageChange(pageNumber)}
+                                                className={`px-3 py-1 rounded-md transition-colors ${
+                                                    page === pageNumber
+                                                        ? 'bg-red-600 text-white'
+                                                        : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                                                }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    } else if (
+                                        (pageNumber === page - 2 && page > 3) || 
+                                        (pageNumber === page + 2 && page < totalPages - 2)
+                                    ) {
+                                        // Show ellipsis
+                                        return <span key={pageNumber} className="px-2 py-1">...</span>;
+                                    }
+                                    return null;
+                                })}
+                                
                                 <button
                                     onClick={() => handlePageChange(page + 1)}
-                                    disabled={page * limit >= (data.totalMembers || 0)}
-                                    className={`px-4 py-2 rounded-md transition-colors ${
-                                        page * limit >= (data.totalMembers || 0)
+                                    disabled={page >= totalPages}
+                                    className={`px-3 py-1 rounded-md transition-colors ${
+                                        page >= totalPages
                                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                             : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
                                     }`}
                                 >
                                     পরবর্তী
                                 </button>
+                                <button
+                                    onClick={() => handlePageChange(totalPages)}
+                                    disabled={page >= totalPages}
+                                    className={`px-3 py-1 rounded-md transition-colors ${
+                                        page >= totalPages
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    শেষ
+                                </button>
+                            </div>
+                            
+                            {/* Page Size Selector */}
+                            <div className="flex items-center space-x-2">
+                                <span className="text-sm text-gray-600">প্রতি পৃষ্ঠায়:</span>
+                                <select 
+                                    value={limit}
+                                    onChange={(e) => {
+                                        setLimit(Number(e.target.value));
+                                        setPage(1); // Reset to first page when changing limit
+                                    }}
+                                    className="border border-gray-200 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                                >
+                                    {[5, 10, 25, 50].map(size => (
+                                        <option key={size} value={size}>{size}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                     )}
@@ -311,28 +364,19 @@ const ActiveMembers = () => {
                 </div>
             )}
 
-            {/* Role Change Modal */}
-            {selectedMember && (
-                <ChangeRole
-                    isOpen={isRoleModalOpen}
-                    onClose={() => {
-                        setIsRoleModalOpen(false);
-                        setSelectedMember(null);
-                    }}
-                    member={selectedMember}
-                    onRoleChange={handleRoleChangeSubmit}
-                />
-            )}
-
             {/* Last Donation Update Modal */}
             {selectedDonationMember && (
                 <UpdateLastDonation
                     isOpen={isDonationModalOpen}
                     onClose={() => {
                         setIsDonationModalOpen(false);
-                        setSelectedDonationMember(null);
+                        setSelectedDonationMember(undefined);
                     }}
-                    member={selectedDonationMember}
+                    member={{
+                        _id: selectedDonationMember._id || '',
+                        fullName: selectedDonationMember.fullName,
+                        lastDonationDate: selectedDonationMember.lastDonationDate
+                    }}
                     onUpdate={handleUpdateLastDonation}
                 />
             )}

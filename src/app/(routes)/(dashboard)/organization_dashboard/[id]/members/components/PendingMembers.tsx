@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useQuery } from '@tanstack/react-query'
 import {getPendingMembers, manageOrgMembers} from '@/app/actions/administrator/organization/manageOrg'
 import Link from 'next/link'
+import { User } from '@/lib/types/userType'
 
 const PendingMembers = () => {
   const pathname = usePathname()
@@ -78,8 +79,8 @@ const PendingMembers = () => {
         </div>
       ) : data?.pendingMembers?.length ? (
         <div className="space-y-4">
-          {data.pendingMembers.map((member: any) => (
-            <div key={member._id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {data.pendingMembers.map((member: {userId: User}) => (
+            <div key={member.userId._id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center">
                 <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                   {member.userId?.profileImageUrl ? (
@@ -114,19 +115,19 @@ const PendingMembers = () => {
               
               <div className="flex space-x-2 w-full sm:w-auto">
                 <button 
-                  onClick={() => handleApprove(member._id)}
+                  onClick={() => handleApprove(member.userId._id || '')}
                   className="flex-1 sm:flex-initial bg-green-100 hover:bg-green-200 text-green-600 font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center"
                 >
                   <FaCheck className="mr-1" /> অনুমোদন
                 </button>
                 <button 
-                  onClick={() => handleReject(member._id)}
+                  onClick={() => handleReject(member.userId._id || '')}
                   className="flex-1 sm:flex-initial bg-red-100 hover:bg-red-200 text-red-600 font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center"
                 >
                   <FaTimes className="mr-1" /> প্রত্যাখ্যান
                 </button>
                 <Link 
-                  href={`/members/${member._id}`}
+                  href={`/members/${member.userId._id}`}
                   target="_blank"
                   className="flex-1 sm:flex-initial bg-blue-100 hover:bg-blue-200 text-blue-600 font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center"
                 >

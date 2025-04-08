@@ -30,6 +30,7 @@ export interface User {
     agreedToTerms: boolean;
     fingerprint?: FingerprintData;
     isActive?: boolean;
+    isBanned?: boolean;
     isVerified?: boolean;
     reportCount?: number;
     distance?: number;

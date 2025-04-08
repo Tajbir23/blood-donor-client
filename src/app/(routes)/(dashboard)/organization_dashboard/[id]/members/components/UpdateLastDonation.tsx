@@ -11,11 +11,21 @@ interface UpdateLastDonationProps {
         fullName: string;
         lastDonationDate?: string;
     };
-    onUpdate: (memberId: string, newDate: string) => Promise<void>;
+    onUpdate: (memberId: string, newDate: string, recipient: string, recipientName: string) => Promise<void>;
 }
+
+const RECIPIENTS = [
+    { value: 'hospital', label: 'হাসপাতাল' },
+    { value: 'blood_bank', label: 'ব্লাড ব্যাংক' },
+    { value: 'patient', label: 'রোগীর জন্য সরাসরি' },
+    { value: 'charity', label: 'রক্তদান ক্যাম্প' },
+    { value: 'other', label: 'অন্যান্য' }
+  ]
 
 const UpdateLastDonation = ({ isOpen, onClose, member, onUpdate }: UpdateLastDonationProps) => {
     const [selectedDate, setSelectedDate] = useState(member.lastDonationDate || '');
+    const [recipient, setRecipient] = useState("");
+    const [recipientName, setRecipientName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -31,7 +41,7 @@ const UpdateLastDonation = ({ isOpen, onClose, member, onUpdate }: UpdateLastDon
         e.preventDefault();
         setIsLoading(true);
         try {
-            await onUpdate(member._id, selectedDate);
+            await onUpdate(member._id, selectedDate, recipient, recipientName);
             onClose();
         } catch (error) {
             console.error("Failed to update last donation date:", error);
@@ -42,6 +52,7 @@ const UpdateLastDonation = ({ isOpen, onClose, member, onUpdate }: UpdateLastDon
 
     if (!isOpen) return null;
 
+    const today = new Date().toISOString().split('T')[0]
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             {/* Backdrop */}
@@ -93,7 +104,40 @@ const UpdateLastDonation = ({ isOpen, onClose, member, onUpdate }: UpdateLastDon
                                 value={selectedDate}
                                 onChange={(e) => setSelectedDate(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                                max={new Date().toISOString().split('T')[0]}
+                                max={today}
+                            />
+                        </div>
+
+                        {/* Recipient type */}
+                            <div className="mb-4">
+                                <label className="block mb-2 text-sm font-medium text-gray-700">
+                                রক্তদানের স্থান/প্রাপক
+                                </label>
+                                <select
+                                value={recipient}
+                                onChange={(e) => setRecipient(e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
+                                >
+                                <option value="">নির্বাচন করুন</option>
+                                {RECIPIENTS.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                    {option.label}
+                                    </option>
+                                ))}
+                                </select>
+                            </div>
+
+                            {/* Recipient name */}
+                        <div className="mb-4">
+                            <label className="block mb-2 text-sm font-medium text-gray-700">
+                            প্রাপকের নাম/স্থানের নাম
+                            </label>
+                            <input
+                            type="text"
+                            value={recipientName}
+                            onChange={(e) => setRecipientName(e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
+                            placeholder="উদাহরণ: ঢাকা মেডিকেল কলেজ হাসপাতাল"
                             />
                         </div>
 
