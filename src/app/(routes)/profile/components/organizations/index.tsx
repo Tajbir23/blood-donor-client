@@ -126,7 +126,7 @@ const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) =
               সংস্থা পেইজ
             </Link>
           ) : (
-            <Link href={`/organizations/${org._id}/dashboard`}
+            <Link href={`/organization_dashboard/${org._id}`}
                   className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
               ড্যাশবোর্ড
             </Link>

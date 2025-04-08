@@ -5,7 +5,7 @@ import OrganizationCard from "@/components/dashboard/dashboard/organizations/Org
 import organizationType from "@/lib/types/organizationType"
 import { User } from "@/lib/types/userType"
 import { useQueryClient, useQuery } from "@tanstack/react-query"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 
 interface UserDataType {
     user: User

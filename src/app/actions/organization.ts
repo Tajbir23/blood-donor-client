@@ -71,3 +71,17 @@ export const joinOrganization = async(orgId: string) => {
         return error
     }
 }
+
+export const getMembers = async(organizationId: string, page?: number, limit?: number, search?: string) => {
+    try {
+        const response = await baseUrl(`/organization/members/${organizationId}?page=${page}&limit=${limit}&search=${search}`, {
+            method: "GET",
+        })
+
+        return await response.json()
+
+    } catch (error) {
+        console.log(error)
+        return error
+    }
+}

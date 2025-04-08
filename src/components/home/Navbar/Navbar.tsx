@@ -38,6 +38,11 @@ const Navbar = () => {
   const activeClass = "text-red-600 font-semibold"
   const inactiveClass = "text-gray-700 hover:text-red-600"
 
+  // Check if user has admin privileges
+  const hasAdminAccess = userData?.user?.role === 'superAdmin' || 
+                         userData?.user?.role === 'admin' || 
+                         userData?.user?.role === 'moderator'
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:py-3">
@@ -110,6 +115,15 @@ const Navbar = () => {
               </div>
             </Link> 
 
+            {/* Dashboard Link - Only for admin users */}
+            {userData?.user && hasAdminAccess && (
+              <Link href="/dashboard" passHref>
+                <div className={`flex items-center px-3 py-2 text-sm font-medium ${isActive('/dashboard') ? activeClass : inactiveClass}`}>
+                  ড্যাশবোর্ড
+                </div>
+              </Link>
+            )}
+
             {/* Profile or Login Button */}
             {userData?.user ? (
               <Profile userData={userData?.user} />
@@ -163,6 +177,15 @@ const Navbar = () => {
                 অনুদান করুন
               </div>
             </Link>
+
+            {/* Dashboard Link - Only for admin users (mobile) */}
+            {userData?.user && hasAdminAccess && (
+              <Link href="/dashboard" passHref>
+                <div className={`block px-3 py-2 text-base font-medium ${isActive('/dashboard') ? activeClass : inactiveClass}`}>
+                  ড্যাশবোর্ড
+                </div>
+              </Link>
+            )}
 
             {userData?.user ? (
               <div className="px-3 py-2">
