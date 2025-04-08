@@ -24,3 +24,8 @@ export const updateBloodDonationDate = async (lastDonation: Date, recipient: str
         return {success: false, message: 'Internal Server Error'}
     }
 }
+
+export const searchDonors = async (searchQuery: string) => {
+    const repsonse = await baseUrl(`/user/search-users?search=${searchQuery}`)
+    return repsonse.json()
+}

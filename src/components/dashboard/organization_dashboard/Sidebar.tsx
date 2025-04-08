@@ -1,11 +1,14 @@
+"use client"
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { FaCalendarAlt, FaChartBar, FaCog, FaHome, FaTint, FaUsers } from "react-icons/fa";
 
 
 const Sidebar = () => {
+    const params = useParams();
     const pathname = usePathname();
-    const organizationId = pathname.split('/')[2]; // Extract organization ID from URL
+    
+    const organizationId = params.id; // Extract organization ID from URL
     const navItems = [
         { name: 'ড্যাশবোর্ড', href: `/organization_dashboard/${organizationId}`, icon: FaHome },
         { name: 'সদস্যবৃন্দ', href: `/organization_dashboard/${organizationId}/members`, icon: FaUsers },
@@ -23,7 +26,7 @@ const Sidebar = () => {
         <nav className="mt-4">
           <ul className="space-y-1">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <li key={item.name}>
                   <Link
@@ -48,7 +51,7 @@ const Sidebar = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
         <div className="flex justify-around">
           {navItems.slice(0, 5).map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.name}

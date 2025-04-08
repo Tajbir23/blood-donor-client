@@ -23,7 +23,7 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile menu button - now at bottom left */}
+      {/* Mobile menu button */}
       <div className="lg:hidden fixed bottom-4 right-4 z-50">
         <button 
           onClick={toggleSidebar}
@@ -43,9 +43,9 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full bg-white shadow-xl z-40 transition-all duration-300 ease-in-out
+        fixed top-0 left-0 h-screen bg-white shadow-xl z-40 transition-all duration-300 ease-in-out
         ${isOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:translate-x-0'} 
-        lg:w-64 lg:static lg:z-0
+        lg:w-64 lg:sticky lg:top-0 lg:z-0
       `}>
         <div className="flex flex-col h-full">
           {/* Logo */}

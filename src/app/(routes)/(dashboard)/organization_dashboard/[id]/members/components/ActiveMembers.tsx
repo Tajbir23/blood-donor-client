@@ -5,10 +5,12 @@ import { User } from "@/lib/types/userType";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FaSearch, FaUserPlus, FaBan, FaEye, FaUserCog } from "react-icons/fa";
+import { FaSearch, FaUserPlus, FaBan, FaEye, FaUserCog, FaCalendarAlt } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import ChangeRole from "./ChangeRole";
+import UpdateLastDonation from "./UpdateLastDonation";
+import AddNewMember from "./AddNewMember";
 
 const ActiveMembers = () => {
     const pathname = usePathname();
@@ -23,6 +25,9 @@ const ActiveMembers = () => {
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [selectedMember, setSelectedMember] = useState<{ _id: string; fullName: string; role: string } | null>(null);
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [selectedDonationMember, setSelectedDonationMember] = useState<{ _id: string; fullName: string; lastDonationDate?: string } | null>(null);
+    const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+    const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['organization-active-members', organizationId, page, limit, search],
@@ -81,6 +86,41 @@ const ActiveMembers = () => {
         }
     };
 
+    const handleUpdateLastDonation = async (memberId: string, newDate: string) => {
+        try {
+            setActionLoading(memberId);
+            // Implement the update last donation date functionality here
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await refetch();
+        } catch (error) {
+            console.error("Failed to update last donation date:", error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleOpenDonationModal = (member: any) => {
+        setSelectedDonationMember({
+            _id: member._id,
+            fullName: member.fullName,
+            lastDonationDate: member.lastDonationDate
+        });
+        setIsDonationModalOpen(true);
+    };
+
+    const handleAddMember = async (donorId: string) => {
+        try {
+            setActionLoading(donorId);
+            // TODO: Implement the add member functionality here
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await refetch();
+        } catch (error) {
+            console.error("Failed to add member:", error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     return (
         <div className="p-6">
             <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
@@ -97,7 +137,10 @@ const ActiveMembers = () => {
                     </div>
                 </form>
                 
-                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200">
+                <button 
+                    onClick={() => setIsAddMemberModalOpen(true)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                >
                     <FaUserPlus className="mr-2" />
                     নতুন সদস্য যোগ করুন
                 </button>
@@ -126,12 +169,13 @@ const ActiveMembers = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">সদস্য</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">যোগাযোগ</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">রক্তের গ্রুপ</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">শেষ রক্তদান</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">যোগদানের তারিখ</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">অ্যাকশন</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {data.members.map((member: any) => (
+                                {data.members.map((member: User) => (
                                     <tr key={member._id} className="hover:bg-gray-50 transition-colors duration-150">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
@@ -165,6 +209,20 @@ const ActiveMembers = () => {
                                                 {member.bloodGroup || 'N/A'}
                                             </span>
                                         </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <span className="text-sm text-gray-900">
+                                                    {member.lastDonationDate ? new Date(member.lastDonationDate).toLocaleDateString('bn-BD') : 'N/A'}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleOpenDonationModal(member)}
+                                                    className="ml-2 p-1 text-gray-400 hover:text-red-600 transition-colors"
+                                                    title="শেষ রক্তদানের তারিখ আপডেট করুন"
+                                                >
+                                                    <FaCalendarAlt />
+                                                </button>
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {new Date(member.createdAt || Date.now()).toLocaleDateString('bn-BD')}
                                         </td>
@@ -190,7 +248,7 @@ const ActiveMembers = () => {
                                                     )}
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleBanMember(member._id)}
+                                                    onClick={() => handleBanMember(member._id || '')}
                                                     className="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-md transition-colors"
                                                     title="বাতিল করুন"
                                                     disabled={actionLoading === member._id}
@@ -265,6 +323,26 @@ const ActiveMembers = () => {
                     onRoleChange={handleRoleChangeSubmit}
                 />
             )}
+
+            {/* Last Donation Update Modal */}
+            {selectedDonationMember && (
+                <UpdateLastDonation
+                    isOpen={isDonationModalOpen}
+                    onClose={() => {
+                        setIsDonationModalOpen(false);
+                        setSelectedDonationMember(null);
+                    }}
+                    member={selectedDonationMember}
+                    onUpdate={handleUpdateLastDonation}
+                />
+            )}
+
+            {/* Add New Member Modal */}
+            <AddNewMember
+                isOpen={isAddMemberModalOpen}
+                onClose={() => setIsAddMemberModalOpen(false)}
+                onAddMember={handleAddMember}
+            />
         </div>
     );
 };
