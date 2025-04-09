@@ -4,15 +4,16 @@ import { User } from "@/lib/types/userType";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FaSearch, FaUserPlus, FaBan, FaEye, FaCalendarAlt } from "react-icons/fa";
+import { FaSearch, FaUserPlus, FaBan, FaEye, FaCalendarAlt, FaUserCog } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import UpdateLastDonation from "./UpdateLastDonation";
 import AddNewMember from "./AddNewMember";
-import { addMember, updateLastDonationDate } from "@/app/actions/administrator/organization/manageOrg";
+import ChangeRole from "./ChangeRole";
+import { addMember, roleChange, updateLastDonationDate } from "@/app/actions/administrator/organization/manageOrg";
 import toast from "react-hot-toast";
 
-const ActiveMembers = () => {
+const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
     const pathname = usePathname();
     const organizationId = pathname.split('/')[2];
     
@@ -22,7 +23,9 @@ const ActiveMembers = () => {
     
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [selectedDonationMember, setSelectedDonationMember] = useState<User>();
+    const [selectedRoleMember, setSelectedRoleMember] = useState<User>();
     const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+    const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
     const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
     const { data, isLoading, refetch } = useQuery({
@@ -80,6 +83,28 @@ const ActiveMembers = () => {
     const handleOpenDonationModal = (member: User) => {
         setSelectedDonationMember(member);
         setIsDonationModalOpen(true);
+    };
+
+    const handleOpenRoleModal = (member: User) => {
+        setSelectedRoleMember(member);
+        setIsRoleModalOpen(true);
+    };
+
+    const handleRoleChange = async (memberId: string, newRole: string) => {
+        try {
+            setActionLoading(memberId);
+            const data = await roleChange(memberId, newRole, organizationId)
+            if(data.success){
+                toast.success(`${data.message}`)
+                await refetch();
+            }else {
+                toast.error(`${data.message}`)
+            }
+        } catch (error) {
+            console.error("Failed to change role:", error);
+        } finally {
+            setActionLoading(null);
+        }
     };
 
     const handleAddMember = async (donorId: string) => {
@@ -232,6 +257,18 @@ const ActiveMembers = () => {
                                                     )}
                                                 </button>
                                                 <button 
+                                                    onClick={() => handleOpenRoleModal(member)}
+                                                    className="bg-purple-100 hover:bg-purple-200 text-purple-600 p-2 rounded-md transition-colors"
+                                                    title="রোল পরিবর্তন করুন"
+                                                    disabled={actionLoading === member._id}
+                                                >
+                                                    {actionLoading === member._id ? (
+                                                        <div className="h-4 w-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                                                    ) : (
+                                                        <FaUserCog />
+                                                    )}
+                                                </button>
+                                                <button 
                                                     onClick={() => handleBanMember(member._id || '')}
                                                     className="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-md transition-colors"
                                                     title="বাতিল করুন"
@@ -378,6 +415,24 @@ const ActiveMembers = () => {
                         lastDonationDate: selectedDonationMember.lastDonationDate
                     }}
                     onUpdate={handleUpdateLastDonation}
+                />
+            )}
+
+            {/* Role Change Modal */}
+            {selectedRoleMember && (
+                <ChangeRole
+                    isOpen={isRoleModalOpen}
+                    onClose={() => {
+                        setIsRoleModalOpen(false);
+                        setSelectedRoleMember(undefined);
+                    }}
+                    orgUserRole={orgUserRole}
+                    member={{
+                        _id: selectedRoleMember._id || '',
+                        fullName: selectedRoleMember.fullName,
+                        role: selectedRoleMember.role || 'member'
+                    }}
+                    onRoleChange={handleRoleChange}
                 />
             )}
 

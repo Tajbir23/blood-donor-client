@@ -6,6 +6,7 @@ import { FaTimes } from "react-icons/fa";
 interface ChangeRoleProps {
     isOpen: boolean;
     onClose: () => void;
+    orgUserRole: string;
     member: {
         _id: string;
         fullName: string;
@@ -14,13 +15,16 @@ interface ChangeRoleProps {
     onRoleChange: (memberId: string, newRole: string) => Promise<void>;
 }
 
-const roles = [
-    { value: "member", label: "সাধারণ সদস্য" },
-    { value: "moderator", label: "মডারেটর" },
-    { value: "admin", label: "অ্যাডমিন" }
-];
+// const roles = [
+//     { value: "moderator", label: "মডারেটর" },
+//     { value: "admin", label: "অ্যাডমিন" },
+//     { value: "superAdmin", label: "সুপার অ্যাডমিন"}
+// ];
 
-const ChangeRole = ({ isOpen, onClose, member, onRoleChange }: ChangeRoleProps) => {
+const roles: { value: string; label: string }[] = [];
+
+const ChangeRole = ({ isOpen, onClose, orgUserRole, member, onRoleChange }: ChangeRoleProps) => {
+    
     const [selectedRole, setSelectedRole] = useState(member.role || "member");
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -34,6 +38,34 @@ const ChangeRole = ({ isOpen, onClose, member, onRoleChange }: ChangeRoleProps) 
         }
     }, [isOpen]);
 
+    useEffect(() => {
+        // Clear roles array first to prevent multiple entries on re-renders
+        roles.length = 0;
+        
+        // Define role assignments based on user role
+        const roleAssignments = {
+            "owner": [
+                { value: "moderator", label: "মডারেটর" },
+                { value: "admin", label: "অ্যাডমিন" },
+                { value: "superAdmin", label: "সুপার অ্যাডমিন" },
+                { value: "owner", label: "মালিক" }
+            ],
+            "superAdmin": [
+                { value: "moderator", label: "মডারেটর" },
+                { value: "admin", label: "অ্যাডমিন" }
+            ],
+            "admin": [
+                { value: "moderator", label: "মডারেটর" }
+            ]
+        };
+        
+        console.log(member)
+        // Add appropriate roles based on user's role
+        const assignableRoles = roleAssignments[orgUserRole as keyof typeof roleAssignments];
+        if (assignableRoles) {
+            roles.push(...assignableRoles);
+        }
+    }, [orgUserRole])
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);

@@ -22,10 +22,10 @@ export const getPendingMembers = async (organizationId: string, page: number, li
     }
 }
 
-export const manageOrgMembers = async (organizationId: string, orgJoinRequest: string, status: string) => {
+export const manageOrgMembers = async (organizationId: string, userId: string, status: string) => {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')
-    console.log(organizationId, orgJoinRequest, status, 'accepted')
+    
     try {
         const response = await baseUrl(`/org_admin/manage_members/${organizationId}`, {
             headers: {
@@ -34,7 +34,7 @@ export const manageOrgMembers = async (organizationId: string, orgJoinRequest: s
             },
             method: 'POST',
             body: JSON.stringify({
-                orgJoinRequest,
+                userId,
                 status
             })
         })
@@ -102,4 +102,21 @@ export const updateLastDonationDate = async (organizationId: string, userId: str
     }
 }
 
+export const roleChange = async(userId: string, targetRole:string, organizationId: string) => {
+    const cookieStore = await cookies()
+    const token = await cookieStore.get("token")?.value
 
+    const response = await baseUrl(`/org_admin/manage_role/${organizationId}`,{
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId,
+            targetRole
+        })
+    })
+    const data = await response.json()
+    return data
+}

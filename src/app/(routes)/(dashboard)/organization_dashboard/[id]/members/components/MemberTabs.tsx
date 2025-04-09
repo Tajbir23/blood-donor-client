@@ -1,16 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { FaUserCheck, FaUserClock, FaUserSlash } from 'react-icons/fa'
+import { FaUserCheck, FaUserClock } from 'react-icons/fa'
 import ActiveMembers from './ActiveMembers'
 import PendingMembers from './PendingMembers'
-import BannedMembers from './BannedMembers'
+import useRole from '../hooks/useRole'
 
 
 
-const MemberTabs = () => {
+
+const MemberTabs = ({userId}: {userId: string}) => {
   const [activeTab, setActiveTab] = useState('active')
-
+  const {userRole} = useRole(userId)
+  
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       {/* Tab Headers */}
@@ -39,24 +41,13 @@ const MemberTabs = () => {
           অপেক্ষমান সদস্য
         </button>
         
-        <button
-          onClick={() => setActiveTab('banned')}
-          className={`flex items-center px-4 py-3 font-medium text-sm transition-colors duration-200 ${
-            activeTab === 'banned'
-              ? 'text-gray-800 border-b-2 border-gray-800 bg-gray-100'
-              : 'text-gray-600 hover:text-gray-700 hover:bg-gray-100/50'
-          }`}
-        >
-          <FaUserSlash className="mr-2" />
-          নিষিদ্ধ সদস্য
-        </button>
       </div>
       
       {/* Tab Content */}
       <div className="p-4">
-        {activeTab === 'active' && <ActiveMembers />}
+        {activeTab === 'active' && <ActiveMembers orgUserRole={userRole || 'member'} />}
         {activeTab === 'pending' && <PendingMembers />}
-        {activeTab === 'banned' && <BannedMembers />}
+        
       </div>
     </div>
   )
