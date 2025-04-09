@@ -120,3 +120,20 @@ export const roleChange = async(userId: string, targetRole:string, organizationI
     const data = await response.json()
     return data
 }
+
+export const removeMember = async(organizationId: string, userId: string) => {
+    const cookieStore = await cookies();
+    const token = await cookieStore.get("token")?.value
+
+    const response = await baseUrl(`/org_admin/remove_member/${organizationId}`,{
+        method: "POST",
+        headers: {
+            'Authorization' : `Bearer ${token}`,
+            'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({userId})
+    })
+
+    const data = await response.json()
+    return data
+}

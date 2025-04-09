@@ -10,7 +10,8 @@ import Link from "next/link";
 import UpdateLastDonation from "./UpdateLastDonation";
 import AddNewMember from "./AddNewMember";
 import ChangeRole from "./ChangeRole";
-import { addMember, roleChange, updateLastDonationDate } from "@/app/actions/administrator/organization/manageOrg";
+import RemoveMember from "./RemoveMember";
+import { addMember, removeMember, roleChange, updateLastDonationDate } from "@/app/actions/administrator/organization/manageOrg";
 import toast from "react-hot-toast";
 
 const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
@@ -24,8 +25,10 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [selectedDonationMember, setSelectedDonationMember] = useState<User>();
     const [selectedRoleMember, setSelectedRoleMember] = useState<User>();
+    const [selectedRemoveMember, setSelectedRemoveMember] = useState<User>();
     const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
     const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
     const { data, isLoading, refetch } = useQuery({
@@ -48,16 +51,19 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleBanMember = async (memberId: string) => {
-        try {
-            setActionLoading(memberId);
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await refetch();
-        } catch (error) {
-            console.error("Failed to ban member:", error);
-        } finally {
-            setActionLoading(null);
-        }
+    const handleOpenDonationModal = (member: User) => {
+        setSelectedDonationMember(member);
+        setIsDonationModalOpen(true);
+    };
+
+    const handleOpenRoleModal = (member: User) => {
+        setSelectedRoleMember(member);
+        setIsRoleModalOpen(true);
+    };
+
+    const handleOpenRemoveModal = (member: User) => {
+        setSelectedRemoveMember(member);
+        setIsRemoveModalOpen(true);
     };
 
     const handleUpdateLastDonation = async (memberId: string, newDate: string, recipient: string, recipientName: string) => {
@@ -78,16 +84,6 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
         } finally {
             setActionLoading(null);
         }
-    };
-
-    const handleOpenDonationModal = (member: User) => {
-        setSelectedDonationMember(member);
-        setIsDonationModalOpen(true);
-    };
-
-    const handleOpenRoleModal = (member: User) => {
-        setSelectedRoleMember(member);
-        setIsRoleModalOpen(true);
     };
 
     const handleRoleChange = async (memberId: string, newRole: string) => {
@@ -120,6 +116,25 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
             }
         } catch (error) {
             console.error("Failed to add member:", error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleRemoveMember = async (memberId: string) => {
+        try {
+            setActionLoading(memberId);
+            // TODO: Implement the ban functionality here
+            const data = await removeMember(organizationId, memberId)
+            if(data.success) {
+                await refetch();
+                toast.success("সদস্য সফলভাবে রিমুভ করা হয়েছে");
+            }else {
+                toast.error(`${data.message}`)
+            }
+        } catch (error) {
+            console.error("Failed to ban member:", error);
+            toast.error("সদস্য রিমুভ করা যায়নি");
         } finally {
             setActionLoading(null);
         }
@@ -269,7 +284,7 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
                                                     )}
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleBanMember(member._id || '')}
+                                                    onClick={() => handleOpenRemoveModal(member)}
                                                     className="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-md transition-colors"
                                                     title="বাতিল করুন"
                                                     disabled={actionLoading === member._id}
@@ -442,6 +457,22 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
                 onClose={() => setIsAddMemberModalOpen(false)}
                 onAddMember={handleAddMember}
             />
+
+            {/* Remove Member Modal */}
+            {selectedRemoveMember && (
+                <RemoveMember
+                    isOpen={isRemoveModalOpen}
+                    onClose={() => {
+                        setIsRemoveModalOpen(false);
+                        setSelectedRemoveMember(undefined);
+                    }}
+                    member={{
+                        _id: selectedRemoveMember._id || '',
+                        fullName: selectedRemoveMember.fullName
+                    }}
+                    onConfirm={handleRemoveMember}
+                />
+            )}
         </div>
     );
 };
