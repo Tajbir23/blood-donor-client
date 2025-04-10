@@ -25,7 +25,7 @@ const roles: { value: string; label: string }[] = [];
 
 const ChangeRole = ({ isOpen, onClose, orgUserRole, member, onRoleChange }: ChangeRoleProps) => {
     
-    const [selectedRole, setSelectedRole] = useState(member.role || "member");
+    const [selectedRole, setSelectedRole] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -48,14 +48,20 @@ const ChangeRole = ({ isOpen, onClose, orgUserRole, member, onRoleChange }: Chan
                 { value: "moderator", label: "মডারেটর" },
                 { value: "admin", label: "অ্যাডমিন" },
                 { value: "superAdmin", label: "সুপার অ্যাডমিন" },
-                { value: "owner", label: "মালিক" }
+                { value: "owner", label: "মালিক" },
+                { value: "member", label: "সদস্য" }
             ],
             "superAdmin": [
                 { value: "moderator", label: "মডারেটর" },
-                { value: "admin", label: "অ্যাডমিন" }
+                { value: "admin", label: "অ্যাডমিন" },
+                { value: "member", label: "সদস্য" }
             ],
             "admin": [
-                { value: "moderator", label: "মডারেটর" }
+                { value: "moderator", label: "মডারেটর" },
+                { value: "member", label: "সদস্য" }
+            ],
+            "moderator": [
+                { value: "member", label: "সদস্য" }
             ]
         };
         
@@ -70,7 +76,7 @@ const ChangeRole = ({ isOpen, onClose, orgUserRole, member, onRoleChange }: Chan
         e.preventDefault();
         setIsLoading(true);
         try {
-            await onRoleChange(member._id, selectedRole);
+            await onRoleChange(member._id, selectedRole as string);
             onClose();
         } catch (error) {
             console.error("Failed to change role:", error);
@@ -131,7 +137,8 @@ const ChangeRole = ({ isOpen, onClose, orgUserRole, member, onRoleChange }: Chan
                                 value={selectedRole}
                                 onChange={(e) => setSelectedRole(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                            >
+                            >   
+                                <option value="">রোল নির্বাচন করুন</option>
                                 {roles.map((role) => (
                                     <option key={role.value} value={role.value}>
                                         {role.label}

@@ -87,6 +87,7 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
     };
 
     const handleRoleChange = async (memberId: string, newRole: string) => {
+        console.log(memberId, newRole)
         try {
             setActionLoading(memberId);
             const data = await roleChange(memberId, newRole, organizationId)

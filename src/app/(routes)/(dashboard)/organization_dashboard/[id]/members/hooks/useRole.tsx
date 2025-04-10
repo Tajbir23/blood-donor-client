@@ -7,9 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
-interface organizationDataType {
-    organizations: organizationType[]
-}
+
 const useRole = (userId: string) => {
     const pathname = usePathname()
     const organizationId = pathname.split("/")[2]
