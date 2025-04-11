@@ -53,30 +53,80 @@ const getOrganizationTypeBangla = (type: string): string => {
 const Organizations = ({ initialData, decodedUser }: OrganizationsProps) => {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading: isQueryLoading, error: queryError } = useQuery({
     queryKey: ["allOrganizations", page, search],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/organization/organizations?search=${search}&page=${page}&limit=${ITEMS_PER_PAGE}`,
-        {
-          method: "GET",
-          headers: {
-            "content-type": 'application/json'
+      setIsLoading(true)
+      setError(null)
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/organization/organizations?search=${search}&page=${page}&limit=${ITEMS_PER_PAGE}`,
+          {
+            method: "GET",
+            headers: {
+              "content-type": 'application/json'
+            },
+            signal: controller.signal
           }
+        )
+
+        clearTimeout(timeoutId)
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch organizations')
         }
-      )
-      return res.json()
+
+        return res.json()
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+        throw err
+      } finally {
+        setIsLoading(false)
+      }
     },
     initialData,
     staleTime: 600000, // 10 minutes
+    retry: 2, // Retry failed requests twice
+    refetchOnWindowFocus: false // Don't refetch when window regains focus
   })
 
   const totalPages = Math.ceil((data?.totalOrganizations || 0) / ITEMS_PER_PAGE)
   const organizations = data?.organizations || []
 
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error loading organizations</div>
+  if (isLoading || isQueryLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">লোড হচ্ছে...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || queryError) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-4xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">একটি ত্রুটি ঘটেছে</h3>
+          <p className="text-gray-600 mb-4">সংগঠনগুলি লোড করতে সমস্যা হচ্ছে। দয়া করে আবার চেষ্টা করুন।</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+          >
+            আবার চেষ্টা করুন
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const handleJoinOrganization = async(orgId: string) => {
     
