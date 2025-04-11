@@ -3,6 +3,9 @@ import Organizations from "./components/Organizations"
 import { Metadata } from 'next'
 import decodedJwtType from "@/lib/types/decodedJwtType";
 
+// Add this line to make the page dynamic
+export const dynamic = 'force-dynamic'
+
 interface Organization {
   organizationName: string;
   organizationType: string;
