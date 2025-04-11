@@ -26,7 +26,7 @@ export async function GET() {
         if(newToken){
             cookieStore.set('token', newToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
                 maxAge: 60 * 60 * 24 * 30,
                 sameSite: 'strict'
             })

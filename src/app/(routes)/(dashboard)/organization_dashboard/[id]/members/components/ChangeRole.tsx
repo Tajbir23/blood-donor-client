@@ -65,7 +65,6 @@ const ChangeRole = ({ isOpen, onClose, orgUserRole, member, onRoleChange }: Chan
             ]
         };
         
-        console.log(member)
         // Add appropriate roles based on user's role
         const assignableRoles = roleAssignments[orgUserRole as keyof typeof roleAssignments];
         if (assignableRoles) {

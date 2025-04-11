@@ -3,7 +3,6 @@
 import baseUrl from "@/lib/api/baseUrl";
 import { User } from "@/lib/types/userType"
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import jwt from 'jsonwebtoken'
 
 export const registerAsUser = async (data: User) => {
@@ -114,13 +113,15 @@ export const logoutUser = async() => {
 
 export const verifyJwt = async(protection: boolean = true) => {
     const cookieStore = await cookies();
-    const token = cookieStore.get("token");
+    const token = await cookieStore.get("token");
 
-    if(!token && protection){
-        redirect("/login");
-    }
+    
 
     if(!token?.value){
+        if(protection){
+            await logoutUser()
+            return null;
+        }
         return null;
     }
 
@@ -132,8 +133,9 @@ export const verifyJwt = async(protection: boolean = true) => {
         return typeof decoded === 'object' ? Object.assign({}, decoded) : decoded;
     } catch (error) {
         console.log(error);
+        
         await logoutUser()
-        redirect("/login");
+        return null;
     }
 }
 

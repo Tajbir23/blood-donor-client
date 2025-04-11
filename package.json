@@ -18,6 +18,7 @@
     "@types/socket.io-client": "^1.4.36",
     "@types/uuid": "^10.0.0",
     "axios": "^1.8.4",
+    "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.487.0",

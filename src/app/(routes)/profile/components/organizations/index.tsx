@@ -153,7 +153,7 @@ const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) =
   return (
     <div className="space-y-8">
       {/* User's Organizations Section */}
-      {userOrganizations && userOrganizations.organizations && userOrganizations.organizations.length > 0 && (
+      
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -166,10 +166,10 @@ const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) =
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {userOrganizations.organizations.map(org => renderOrganizationCard(org))}
+            {userOrganizations.organizations?.map(org => renderOrganizationCard(org))}
           </div>
         </div>
-      )}
+      
 
       {/* Member Organizations Section */}
       {memberOforg && memberOforg.length > 0 && (
