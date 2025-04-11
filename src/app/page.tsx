@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://blooddonation-rangpur.com',
   },
+  other: {
+    'google-site-verification': '4r6L_E636xBF3hU6OjXMUdfSnfTKiwofEtBSHhxMHRw'
+  }
 };
 
 export default function Home() {

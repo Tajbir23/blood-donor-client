@@ -58,7 +58,7 @@ const defaultMetadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-site-verification',
+    google: '4r6L_E636xBF3hU6OjXMUdfSnfTKiwofEtBSHhxMHRw',
   },
   alternates: {
     canonical: 'https://blood-donor-rangpur.vercel.app',
