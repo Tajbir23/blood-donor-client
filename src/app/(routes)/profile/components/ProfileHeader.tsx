@@ -1,13 +1,22 @@
 import Image from 'next/image'
 import { FaMapMarkerAlt, FaExclamationTriangle, FaSignOutAlt } from 'react-icons/fa'
 import { User } from '@/lib/types/userType'
-
+import { useQueryClient } from '@tanstack/react-query'
 interface ProfileHeaderProps {
   userProfile: User
   onLogout: () => void
 }
 
 const ProfileHeader = ({ userProfile, onLogout }: ProfileHeaderProps) => {
+  const queryClient = useQueryClient()
+
+  const handleLogout = async(e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    queryClient.setQueryData(['user'], null);
+    queryClient.setQueryData(['organizations'], null);
+    
+    onLogout()
+  }
   // Function to display location from district and thana IDs
   const getDisplayLocation = () => {
     return userProfile?.address || 'অবস্থান উল্লেখ করা হয়নি'
@@ -21,7 +30,7 @@ const ProfileHeader = ({ userProfile, onLogout }: ProfileHeaderProps) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="bg-gradient-to-r from-red-500 to-red-700 h-32 relative">
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="absolute top-4 right-4 flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors"
         >
           <FaSignOutAlt className="mr-2" />
