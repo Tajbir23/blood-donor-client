@@ -6,6 +6,7 @@ import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, BarElement, T
 import { Doughnut, Bar } from 'react-chartjs-2'
 import { useQuery } from '@tanstack/react-query'
 import { getDashboardData } from '@/app/actions/administrator/system/dashboardAction'
+import Link from 'next/link'
 
 // TypeScript interfaces
 interface DonationRecord {
@@ -33,6 +34,17 @@ interface FormattedDonation {
   location: string;
 }
 
+interface TopOrganization {
+  _id: string;
+  organizationName: string;
+  organizationType: string;
+  description: string;
+  logoImage: string;
+  memberCount: number;
+  donations: number;
+  rating: number;
+}
+
 // Register ChartJS components
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
@@ -44,8 +56,6 @@ const Dashboard = () => {
     queryFn: async () => await getDashboardData(timeRange),
     staleTime: 1000 * 60 * 60 * 24
   })
-
-  console.log(data)
 
   // Format recent donations for display
   const formatRecentDonations = () => {
@@ -60,12 +70,22 @@ const Dashboard = () => {
         year: 'numeric'
       }).format(date)
       
+      // Determine location based on recipient type
+      const location = donation.recipient === 'hospital' 
+        ? donation.recipientName !== 'উল্লেখ নেই' ? donation.recipientName : 'হাসপাতাল'
+        : 'ব্যক্তিগত'
+      
+      // For demonstration, assign blood groups based on index
+      // In a real app, this would come from user data
+      const bloodGroups = ['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-']
+      const bloodGroup = bloodGroups[Math.floor(Math.random() * 4)]
+      
       return {
         id: donation._id.substring(0, 8),
-        donor: donation.recipientName !== 'উল্লেখ নেই' ? donation.recipientName : 'অজানা',
-        bloodGroup: 'O+', // Not provided in API, using placeholder
+        donor: 'রক্তদাতা', // Placeholder as donor name isn't in the donation record
+        bloodGroup,
         date: formattedDate,
-        location: donation.recipient === 'hospital' ? donation.recipientName : 'ব্যক্তিগত'
+        location
       }
     })
   }
@@ -160,7 +180,7 @@ const Dashboard = () => {
     activeDonors: data?.statistics?.totalActiveDonors || 0,
     totalDonations: data?.statistics?.totalDonationCount || 0,
     thisMonthDonations: data?.statistics?.thisMonthDonations || 0,
-    organizations: data?.totalOrganizations || 0, // Not provided in API, can be added later
+    organizations: data?.totalOrganizations || 0,
   }
 
   // Blood inventory data
@@ -173,7 +193,7 @@ const Dashboard = () => {
       {
         data: data?.bloodInventory?.bloodDistributionData?.data || [],
         backgroundColor: [
-          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF', '#999999'
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
         ],
         borderWidth: 1,
       },
@@ -195,21 +215,24 @@ const Dashboard = () => {
   // Recent donations
   const recentDonations = formatRecentDonations()
 
-  // Dummy data for recent activities (not provided in API)
-  const recentActivities = [
-    { type: 'registration', user: 'সাবিনা ইয়াসমিন', time: '১ ঘন্টা আগে', details: 'নতুন রক্তদাতা হিসেবে নিবন্ধন করেছেন' },
-    { type: 'donation', user: 'রাশেদ খান', time: '৩ ঘন্টা আগে', details: 'B+ রক্ত দান করেছেন' },
-    { type: 'request', user: 'ফারহানা হক', time: '৫ ঘন্টা আগে', details: 'AB- রক্তের জন্য অনুরোধ করেছেন' },
-    { type: 'organization', user: 'লাইফ সেভার রক্তদান সংগঠন', time: '১০ ঘন্টা আগে', details: 'নতুন সংগঠন যোগ করা হয়েছে' },
-    { type: 'event', user: 'রংপুর বিভাগীয় প্রশাসক', time: '১ দিন আগে', details: 'আগামী ৫ জুলাই, রক্তদান ক্যাম্পের আয়োজন করেছেন' }
-  ]
+  // Top organizations from API
+  const topOrganizations = data?.topOrgs?.map((org: TopOrganization) => ({
+    _id: org._id,
+    name: org.organizationName,
+    type: org.organizationType === 'volunteer' ? 'স্বেচ্ছাসেবী' : 'হাসপাতাল',
+    description: org.description || 'কোন বিবরণ নেই',
+    logo: `${process.env.NEXT_PUBLIC_API_URL}${org.logoImage}` || '/placeholder-logo.png',
+  })) || [];
 
-  // Organization cards data (not provided in API)
-  const topOrganizations = [
-    { name: 'রক্তদান সমিতি রংপুর', donors: 324, donations: 782, rating: 4.8 },
-    { name: 'জীবন বাঁচান ফাউন্ডেশন', donors: 276, donations: 635, rating: 4.7 },
-    { name: 'সেবা রক্ত সংগ্রহ কেন্দ্র', donors: 215, donations: 519, rating: 4.5 }
-  ]
+  // Add placeholder data if no organizations
+  if (topOrganizations.length === 0) {
+    topOrganizations.push({
+      name: 'রক্তদান সমিতি রংপুর',
+      type: 'স্বেচ্ছাসেবী',
+      description: 'রক্তদান সেবা প্রদানকারী সংগঠন',
+      logo: '/placeholder-logo.png',
+    });
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -308,8 +331,8 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Blood Inventory and Recent Activities */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      {/* Blood Inventory */}
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
         {/* Blood Inventory */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="p-6 border-b">
@@ -321,56 +344,21 @@ const Dashboard = () => {
                 <div key={item.bloodGroup} className="text-center">
                   <div className={`
                     w-16 h-16 mx-auto rounded-full flex items-center justify-center text-white font-bold
-                    ${item.status === 'sufficient' ? 'bg-green-500' : 
-                      item.status === 'medium' ? 'bg-amber-500' : 
-                      item.status === 'low' ? 'bg-orange-500' : 'bg-red-500'}
+                    ${item.status === 'critical' ? 'bg-red-500' : 
+                      item.status === 'low' ? 'bg-orange-500' : 
+                      item.status === 'medium' ? 'bg-amber-500' : 'bg-green-500'}
                   `}>
                     {item.bloodGroup}
                   </div>
                   <p className="mt-2 font-semibold">{item.units} ইউনিট</p>
                   <p className="text-xs text-gray-500">
-                    {item.status === 'sufficient' ? 'পর্যাপ্ত' : 
-                     item.status === 'medium' ? 'মধ্যম' : 
-                     item.status === 'low' ? 'কম' : 'সংকটজনক'}
+                    {item.status === 'critical' ? 'সংকটজনক' : 
+                     item.status === 'low' ? 'কম' : 
+                     item.status === 'medium' ? 'মধ্যম' : 'পর্যাপ্ত'}
                   </p>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-        
-        {/* Recent Activities */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-6 border-b">
-            <h2 className="text-lg font-semibold text-gray-800">সাম্প্রতিক কার্যক্রম</h2>
-          </div>
-          <div className="p-6">
-            <ul className="divide-y divide-gray-200">
-              {recentActivities.map((activity, index) => (
-                <li key={index} className="py-3 flex items-start">
-                  <div className={`
-                    rounded-full p-2 mr-3
-                    ${activity.type === 'registration' ? 'bg-green-100' : 
-                      activity.type === 'donation' ? 'bg-blue-100' : 
-                      activity.type === 'request' ? 'bg-red-100' : 
-                      activity.type === 'organization' ? 'bg-purple-100' : 'bg-amber-100'}
-                  `}>
-                    <FaCheckCircle className={`
-                      text-sm
-                      ${activity.type === 'registration' ? 'text-green-600' : 
-                        activity.type === 'donation' ? 'text-blue-600' : 
-                        activity.type === 'request' ? 'text-red-600' : 
-                        activity.type === 'organization' ? 'text-purple-600' : 'text-amber-600'}
-                    `} />
-                  </div>
-                  <div>
-                    <p className="font-medium">{activity.user}</p>
-                    <p className="text-sm text-gray-600">{activity.details}</p>
-                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>
@@ -423,26 +411,32 @@ const Dashboard = () => {
           <div className="p-6 border-b">
             <h2 className="text-lg font-semibold text-gray-800">শীর্ষ সংগঠন</h2>
           </div>
-          <div className="p-6 space-y-4">
-            {topOrganizations.map((org, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-medium text-gray-800">{org.name}</h3>
-                <div className="mt-2 grid grid-cols-3 gap-2 text-center text-xs">
-                  <div>
-                    <p className="text-gray-500">রক্তদাতা</p>
-                    <p className="font-semibold text-gray-800">{org.donors}</p>
+          <div className="p-6">
+            <div className="grid gap-4">
+              {topOrganizations.map((org: { _id: string, name: string, type: string, description: string, logo: string }, index: number) => (
+                <div key={index} className="bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-3">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden flex-shrink-0 mr-3">
+                      {org.logo && <img src={org.logo} alt={org.name} className="w-full h-full object-cover" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-gray-900 text-sm truncate">{org.name}</h3>
+                      <span className="inline-block px-1.5 py-0.5 text-xs bg-red-50 text-red-600 rounded-full">{org.type}</span>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-gray-500">রক্তদান</p>
-                    <p className="font-semibold text-gray-800">{org.donations}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">রেটিং</p>
-                    <p className="font-semibold text-gray-800">{org.rating}/5</p>
-                  </div>
+                  <p className="text-xs text-gray-600 mt-2 mb-2 line-clamp-1">{org.description}</p>
+                  <Link 
+                    href={`/organizations/${org._id}`} 
+                    className="inline-flex items-center text-xs font-medium text-red-600 hover:text-red-800"
+                  >
+                    বিস্তারিত
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </Link>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
