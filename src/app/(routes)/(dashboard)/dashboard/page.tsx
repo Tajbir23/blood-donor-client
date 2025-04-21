@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { FaUsers, FaTint, FaHospital, FaCheckCircle } from 'react-icons/fa'
+import { FaUsers, FaTint, FaHospital } from 'react-icons/fa'
 import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
 import { Doughnut, Bar } from 'react-chartjs-2'
 import { useQuery } from '@tanstack/react-query'
 import { getDashboardData } from '@/app/actions/administrator/system/dashboardAction'
 import Link from 'next/link'
+import Image from 'next/image'
 
 // TypeScript interfaces
 interface DonationRecord {
@@ -417,7 +418,7 @@ const Dashboard = () => {
                 <div key={index} className="bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-3">
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden flex-shrink-0 mr-3">
-                      {org.logo && <img src={org.logo} alt={org.name} className="w-full h-full object-cover" />}
+                      {org.logo && <Image height={100} width={100} src={org.logo} alt={org.name} className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 text-sm truncate">{org.name}</h3>

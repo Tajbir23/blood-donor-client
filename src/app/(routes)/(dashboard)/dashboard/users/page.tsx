@@ -6,6 +6,7 @@ import { getAllUsers } from '@/app/actions/administrator/system/dashboardAction'
 import { FaEye, FaLock, FaUnlock, FaTrash } from 'react-icons/fa'
 import Link from 'next/link'
 import { User } from '@/lib/types/userType'
+import Image from 'next/image'
 
 type UserTab = 'active' | 'inactive' | 'banned' | 'all'
 type TabType = 'isActive' | 'isBanned' | 'isVerified'
@@ -18,7 +19,7 @@ interface UserTabState {
 const UsersPage = () => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(10)
+  const limit = 10
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState<UserTabState>({tab: 'active', tabType: 'isActive'})
   
@@ -230,7 +231,9 @@ const UsersPage = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <img 
+                          <Image 
+                            height={100}
+                            width={100}
                             className="h-10 w-10 rounded-full object-cover" 
                             src={`${process.env.NEXT_PUBLIC_API_URL}${user.profileImageUrl}` || '/placeholder-avatar.png'} 
                             alt={user.fullName} 

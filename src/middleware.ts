@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
     const {payload} = await jwtVerify(token, secret)
     const decodedJwt = payload as unknown as decodedJwtType
 
-    const isAdmin = decodedJwt.role === "admin" || decodedJwt.role === "superAdmin" || decodedJwt.role === "moderator";
+    const isAdmin = decodedJwt.role === "admin" || decodedJwt.role === "superAdmin" || decodedJwt.role === "moderator" || decodedJwt.role === "owner";
     const isOrgAdmin = decodedJwt.orgRole?.isAdmin || false;
     const accessOrgId = decodedJwt.orgRole?.data?.map((item) => item.organizationId) || [];
 
