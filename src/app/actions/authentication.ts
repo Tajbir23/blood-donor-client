@@ -132,7 +132,7 @@ export const verifyJwt = async(protection: boolean = true) => {
         // Ensure we return a plain serializable object
         return typeof decoded === 'object' ? Object.assign({}, decoded) : decoded;
     } catch (error) {
-        console.log(error);
+        console.log("line 135", error);
         
         await logoutUser()
         return null;
