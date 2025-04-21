@@ -7,15 +7,44 @@ import { FaEye, FaLock, FaUnlock, FaTrash } from 'react-icons/fa'
 import Link from 'next/link'
 import { User } from '@/lib/types/userType'
 
+type UserTab = 'active' | 'inactive' | 'banned' | 'all'
+type TabType = 'isActive' | 'isBanned' | 'isVerified'
+
+interface UserTabState {
+  tab: UserTab;
+  tabType: TabType;
+}
+
 const UsersPage = () => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [currentTab, setCurrentTab] = useState<UserTabState>({tab: 'active', tabType: 'isActive'})
   
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['dashboard-users', page, limit],
-    queryFn: () => getAllUsers({ search, page, limit }),
+    queryKey: ['dashboard-users', page, limit, currentTab],
+    queryFn: () => {
+      // Set proper boolean values based on tab
+      let isActive = true;
+      let isBanned = false;
+      let allUser = true;
+      // Set default values
+      if (currentTab.tab === 'active' && currentTab.tabType === 'isActive') {
+        isActive = true;
+        allUser = false;
+      } else if (currentTab.tab === 'inactive' && currentTab.tabType === 'isActive') {
+        isActive = false;
+        allUser = false;
+      } else if (currentTab.tab === 'banned' && currentTab.tabType === 'isBanned') {
+        isBanned = true;
+        allUser = false;
+      } else if (currentTab.tab === 'all') {
+        allUser = true;
+      }
+      
+      return getAllUsers({ search, page, limit, isActive, isBanned, allUser });
+    },
     staleTime: 1000 * 60 * 5,
   })
 
@@ -47,12 +76,24 @@ const UsersPage = () => {
     refetch()
   }
 
+  const handleTabChange = (tab: UserTab, tabType: TabType) => {
+    setCurrentTab({tab, tabType})
+    setPage(1) // Reset to first page on tab change
+  }
+
   if(isLoading){
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex justify-between items-center">
           <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
           <div className="h-10 w-64 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+        
+        {/* Skeleton for tabs */}
+        <div className="flex mb-6 border-b">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="mr-2 h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
+          ))}
         </div>
         
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -119,6 +160,55 @@ const UsersPage = () => {
         </div>
       </div>
       
+      {/* Tab Navigation */}
+      <div className="mb-6 border-b border-gray-200">
+        <div className="flex flex-wrap -mb-px">
+          <button
+            className={`inline-block py-3 px-4 text-sm font-medium ${
+              currentTab.tab === 'active'
+                ? 'border-b-2 border-red-500 text-red-600'
+                : 'text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent'
+            }`}
+            onClick={() => handleTabChange('active', 'isActive')}
+          >
+            সক্রিয় ব্যবহারকারী
+          </button>
+          
+          <button
+            className={`inline-block py-3 px-4 text-sm font-medium ${
+              currentTab.tab === 'inactive'
+                ? 'border-b-2 border-red-500 text-red-600'
+                : 'text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent'
+            }`}
+            onClick={() => handleTabChange('inactive', 'isActive')}
+          >
+            অপেক্ষমাণ ব্যবহারকারী
+          </button>
+          
+          <button
+            className={`inline-block py-3 px-4 text-sm font-medium ${
+              currentTab.tab === 'banned'
+                ? 'border-b-2 border-red-500 text-red-600'
+                : 'text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent'
+            }`}
+            onClick={() => handleTabChange('banned', 'isBanned')}
+          >
+            নিষিদ্ধ ব্যবহারকারী
+          </button>
+          
+          <button
+            className={`inline-block py-3 px-4 text-sm font-medium ${
+              currentTab.tab === 'all'
+                ? 'border-b-2 border-red-500 text-red-600'
+                : 'text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent'
+            }`}
+            onClick={() => handleTabChange('all', 'isActive')}
+          >
+            সকল ব্যবহারকারী
+          </button>
+        </div>
+      </div>
+      
       <div className="bg-white shadow-md rounded-lg">
         <div className="overflow-x-auto lg:overflow-visible">
           <table className="w-full divide-y divide-gray-200">
@@ -134,115 +224,135 @@ const UsersPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {data?.users?.map((user: User) => (
-                <tr key={user._id} className={user.isBanned ? 'bg-red-50' : user.isActive ? '' : 'bg-gray-50'}>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <img 
-                          className="h-10 w-10 rounded-full object-cover" 
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${user.profileImageUrl}` || '/placeholder-avatar.png'} 
-                          alt={user.fullName} 
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">{user.fullName}</div>
-                        <div className="text-xs text-gray-500">{user.role}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 max-w-[150px] truncate">{user.email}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{user.phone}</td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                      {user.bloodGroup}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 max-w-[120px]">
-                    {user.address ? (
-                      <span className="truncate block">{user.address}</span>
-                    ) : (
-                      <span className="text-gray-400">অনির্দিষ্ট</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    {user.isBanned ? (
-                      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                        নিষিদ্ধ
-                      </span>
-                    ) : user.isActive ? (
-                      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        সক্রিয়
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                        নিষ্ক্রিয়
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-sm font-medium">
-                    <div className="relative">
-                      <button 
-                        className="text-gray-500 hover:text-gray-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleDropdown(user._id as string);
-                        }}
-                      >
-                        <span className="sr-only">পদক্ষেপ</span>
-                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                        </svg>
-                      </button>
-                      {activeDropdown === user._id && (
-                        <div className="absolute right-0 z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" 
-                             onClick={(e) => e.stopPropagation()}
-                             style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                          <div className="py-1" role="menu" aria-orientation="vertical">
-                            <Link 
-                              href={`/user/${user._id}`}
-                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              onClick={() => setActiveDropdown(null)}
-                            >
-                              <FaEye className="mr-2" /> বিস্তারিত দেখুন
-                            </Link>
-                            {user.isBanned ? (
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction(user._id as string, 'unblock');
-                                }}
-                                className="flex w-full items-center px-4 py-2 text-sm text-green-700 hover:bg-gray-100"
-                              >
-                                <FaUnlock className="mr-2" /> অবরোধ মুক্ত করুন
-                              </button>
-                            ) : (
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction(user._id as string, 'block');
-                                }}
-                                className="flex w-full items-center px-4 py-2 text-sm text-orange-700 hover:bg-gray-100"
-                              >
-                                <FaLock className="mr-2" /> অবরোধ করুন
-                              </button>
-                            )}
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAction(user._id as string, 'delete');
-                              }}
-                              className="flex w-full items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100"
-                            >
-                              <FaTrash className="mr-2" /> মুছে ফেলুন
-                            </button>
-                          </div>
+              {data?.users?.length > 0 ? (
+                data.users.map((user: User) => (
+                  <tr key={user._id} className={user.isBanned ? 'bg-red-50' : user.isActive ? '' : 'bg-gray-50'}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <img 
+                            className="h-10 w-10 rounded-full object-cover" 
+                            src={`${process.env.NEXT_PUBLIC_API_URL}${user.profileImageUrl}` || '/placeholder-avatar.png'} 
+                            alt={user.fullName} 
+                          />
                         </div>
+                        <div className="ml-3">
+                          <div className="text-sm font-medium text-gray-900">{user.fullName}</div>
+                          <div className="text-xs text-gray-500">{user.role}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-500 max-w-[150px] truncate">{user.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">{user.phone}</td>
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                        {user.bloodGroup}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-500 max-w-[120px]">
+                      {user.address ? (
+                        <span className="truncate block">{user.address}</span>
+                      ) : (
+                        <span className="text-gray-400">অনির্দিষ্ট</span>
                       )}
-                    </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {user.isBanned ? (
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                          নিষিদ্ধ
+                        </span>
+                      ) : user.isActive ? (
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          সক্রিয়
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                          নিষ্ক্রিয়
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium">
+                      <div className="relative">
+                        <button 
+                          className="text-gray-500 hover:text-gray-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown(user._id as string);
+                          }}
+                        >
+                          <span className="sr-only">পদক্ষেপ</span>
+                          <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                          </svg>
+                        </button>
+                        {activeDropdown === user._id && (
+                          <div className="absolute right-0 z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" 
+                               onClick={(e) => e.stopPropagation()}
+                               style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                            <div className="py-1" role="menu" aria-orientation="vertical">
+                              <Link 
+                                href={`/user/${user._id}`}
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() => setActiveDropdown(null)}
+                              >
+                                <FaEye className="mr-2" /> বিস্তারিত দেখুন
+                              </Link>
+                              {user.isBanned ? (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAction(user._id as string, 'unblock');
+                                  }}
+                                  className="flex w-full items-center px-4 py-2 text-sm text-green-700 hover:bg-gray-100"
+                                >
+                                  <FaUnlock className="mr-2" /> Unblock
+                                </button>
+                              ) : !user.isActive ? (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAction(user._id as string, 'unblock');
+                                  }}
+                                  className="flex w-full items-center px-4 py-2 text-sm text-green-700 hover:bg-gray-100"
+                                >
+                                  <FaUnlock className="mr-2" /> সক্রিয় করুন
+                                </button>
+                              ) : (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAction(user._id as string, 'block');
+                                  }}
+                                  className="flex w-full items-center px-4 py-2 text-sm text-orange-700 hover:bg-gray-100"
+                                >
+                                  <FaLock className="mr-2" /> Block
+                                </button>
+                              )}
+                              {user.isActive || user.isBanned ? (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAction(user._id as string, 'delete');
+                                  }}
+                                  className="flex w-full items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100"
+                                >
+                                  <FaTrash className="mr-2" /> Delete
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
+                    কোন ব্যবহারকারী পাওয়া যায়নি
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

@@ -33,7 +33,7 @@ export const getDashboardData = async (timeRange: string) => {
 }
 
 
-export const getAllUsers = async ({search, page, limit}: {search: string, page: number, limit: number}) => {
+export const getAllUsers = async ({search, page, limit, isActive, isBanned, allUser}: {search: string, page: number, limit: number, isActive?: boolean, isBanned?: boolean, allUser?: boolean}) => {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
 
@@ -52,7 +52,7 @@ export const getAllUsers = async ({search, page, limit}: {search: string, page: 
         redirect('/')
     }
 
-    const users = await baseUrl(`/system/dashboard/users?search=${search}&page=${page}&limit=${limit}`,{
+    const users = await baseUrl(`/system/dashboard/users?search=${search}&page=${page}&limit=${limit}&isActive=${isActive}&isBanned=${isBanned}&allUser=${allUser}`,{
         headers: {
             'Authorization': `Bearer ${token}`
         }

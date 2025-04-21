@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { title: 'Dashboard', path: '/dashboard', icon: <FaHome className="mr-3" /> },
-    { title: 'Profile', path: '/dashboard/profile', icon: <FaUser className="mr-3" /> },
+    { title: 'Users', path: '/dashboard/users', icon: <FaUser className="mr-3" /> },
     { title: 'Blood Donations', path: '/dashboard/donations', icon: <FaTint className="mr-3" /> },
     { title: 'Appointments', path: '/dashboard/appointments', icon: <FaCalendarAlt className="mr-3" /> },
     { title: 'Organizations', path: '/dashboard/organizations', icon: <FaBuilding className="mr-3" /> },
