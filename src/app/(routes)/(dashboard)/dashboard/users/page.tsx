@@ -8,6 +8,7 @@ import RoleChange from '../components/RoleChange'
 import LoadingSkelaton from '../components/LoadingSkelaton'
 import UserTable from '../components/UserTable'
 import SearchUsers from '../components/SearchUsers'
+import ManageUser from '../components/ManageUser'
 
 type UserTab = 'active' | 'inactive' | 'banned' | 'all'
 type TabType = 'isActive' | 'isBanned' | 'isVerified'
@@ -29,12 +30,12 @@ const UsersPage = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState<UserTabState>({tab: 'active', tabType: 'isActive'})
   const [selectedUser, setSelectedUser] = useState<{ userId: string, fullName: string, role: string, currentRole: string } | null>(null)
+  const [selectedAction, setSelectedAction] = useState<{ userId: string, fullName: string, isOpen: boolean, action: 'block' | 'unblock' | 'delete' } | null>(null)
 
   const user = useMemo(() => {
     return queryClient.getQueryData<UserQueryData>(["user"])
   },[queryClient])
 
-  console.log(user)
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['dashboard-users', page, limit, currentTab],
     queryFn: () => {
@@ -61,9 +62,15 @@ const UsersPage = () => {
     staleTime: 1000 * 60 * 5,
   })
 
-  const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete') => {
+  const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete', fullName: string) => {
     // Implement action handlers here
     console.log(`Action ${action} for user ${userId}`)
+    setSelectedAction({
+      userId: userId,
+      fullName: fullName,
+      isOpen: true,
+      action: action
+    })
     // After successful action, refetch the data
     refetch()
     setActiveDropdown(null)
@@ -143,7 +150,19 @@ const UsersPage = () => {
           refetch={refetch}
         />
       )}
+      {selectedAction && (
+        <ManageUser
+          userId={selectedAction.userId}
+          fullName={selectedAction.fullName}
+          action={selectedAction.action}
+          isOpen={selectedAction.isOpen}
+          refetch={refetch}
+          setIsOpen={(isOpen) => setSelectedAction({...selectedAction, isOpen})}
+          queryKey={'dashboard-users'}
+        />
+      )}
       
+
       <SearchUsers search={search} handleSearch={handleSearch} handleSearchSubmit={handleSearchSubmit} />
       
       {/* Tab Navigation */}

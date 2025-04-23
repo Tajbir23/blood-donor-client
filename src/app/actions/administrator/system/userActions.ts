@@ -18,3 +18,19 @@ export const roleChangeUser = async (userId: string, newRole: string) => {
     
     return response.json()
 }
+
+export const manageUser = async (userId: string, action: string) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
+
+    const response = await baseUrl(`/system/dashboard/manage-user`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, action })
+    })
+    
+    return response.json()
+}

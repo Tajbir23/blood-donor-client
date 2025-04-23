@@ -11,7 +11,7 @@ interface UserTableProps {
     totalUsers: number;
   };
   handleRoleChange: (userId: string, newRole: string, fullName: string, currentRole: string) => void;
-  handleAction: (userId: string, action: 'block' | 'unblock' | 'delete') => void;
+  handleAction: (userId: string, action: 'block' | 'unblock' | 'delete', fullName: string) => void;
   toggleDropdown: (userId: string) => void;
   activeDropdown: string | null;
   setActiveDropdown: (userId: string | null) => void;
@@ -136,7 +136,7 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                                 <button 
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleAction(user._id as string, 'unblock');
+                                    handleAction(user._id as string, 'unblock', user.fullName as string);
                                   }}
                                   className="flex w-full items-center px-4 py-2 text-sm text-green-700 hover:bg-gray-100"
                                 >
@@ -146,7 +146,7 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                                 <button 
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleAction(user._id as string, 'unblock');
+                                    handleAction(user._id as string, 'unblock', user.fullName as string);
                                   }}
                                   className="flex w-full items-center px-4 py-2 text-sm text-green-700 hover:bg-gray-100"
                                 >
@@ -156,7 +156,7 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                                 <button 
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleAction(user._id as string, 'block');
+                                    handleAction(user._id as string, 'block', user.fullName as string);
                                   }}
                                   className="flex w-full items-center px-4 py-2 text-sm text-orange-700 hover:bg-gray-100"
                                 >
@@ -167,7 +167,7 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                                 <button 
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleAction(user._id as string, 'delete');
+                                    handleAction(user._id as string, 'delete', user.fullName as string);
                                   }}
                                   className="flex w-full items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100"
                                 >
