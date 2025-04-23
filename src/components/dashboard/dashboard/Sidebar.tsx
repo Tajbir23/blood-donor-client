@@ -1,16 +1,29 @@
 "use client"
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaHome, FaUser, FaTint, FaCalendarAlt, FaBuilding, FaCog, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
+import { useQueryClient } from '@tanstack/react-query';
+import { User } from '@/lib/types/userType';
 
+interface UserQueryData {
+  user: User
+}
 const Sidebar = () => {
+  const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
+  const user = useMemo(() => {
+    return queryClient.getQueryData<UserQueryData>(["user"])
+  },[queryClient])
+
+  const isSuperAdmin = user?.user.role === 'superAdmin'
+  const isAdmin = user?.user.role === 'admin'
 
   const menuItems = [
     { title: 'Dashboard', path: '/dashboard', icon: <FaHome className="mr-3" /> },
@@ -20,6 +33,11 @@ const Sidebar = () => {
     { title: 'Organizations', path: '/dashboard/organizations', icon: <FaBuilding className="mr-3" /> },
     { title: 'Settings', path: '/dashboard/settings', icon: <FaCog className="mr-3" /> },
   ];
+
+  if(isSuperAdmin || isAdmin){
+    menuItems.splice(2, 0, { title: 'Admins', path: '/dashboard/admins', icon: <FaUser className="mr-3" /> })
+  }
+  
 
   return (
     <>

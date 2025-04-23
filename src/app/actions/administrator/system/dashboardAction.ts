@@ -60,3 +60,30 @@ export const getAllUsers = async ({search, page, limit, isActive, isBanned, allU
 
     return await users.json()
 }
+
+
+export const getAllAdmins = async ({search, page, limit}: {search: string, page: number, limit: number}) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) {
+        logoutUser()
+        redirect('/')
+    }
+
+    const {role} = await verifyJwt() as decodedJwtType
+
+    const isAdmin = role === 'admin' || role === 'superAdmin';
+
+    if(!isAdmin){
+        redirect('/')
+    }
+    
+    const admins = await baseUrl(`/system/dashboard/admins?search=${search}&page=${page}&limit=${limit}`,{
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    return await admins.json()
+}
