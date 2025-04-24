@@ -36,6 +36,7 @@ const Sidebar = () => {
 
   if(isSuperAdmin || isAdmin){
     menuItems.splice(2, 0, { title: 'Admins', path: '/dashboard/admins', icon: <FaUser className="mr-3" /> })
+    menuItems.splice(3, 0, { title: 'Moderators', path: '/dashboard/moderators', icon: <FaUser className="mr-3" /> })
   }
   
 

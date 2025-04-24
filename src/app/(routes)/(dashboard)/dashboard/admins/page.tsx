@@ -8,17 +8,21 @@ import LoadingSkelaton from "../components/LoadingSkelaton"
 import UserTable from "../components/UserTable"
 import RoleChange from "../components/RoleChange"
 import SearchUsers from "../components/SearchUsers"
+import ManageUser from "../components/ManageUser"
 
 
 interface UserQueryData {
     user: User
   }
+  
 const AdminsPage = () => {
     const queryClient = useQueryClient()
     const [selectedUser, setSelectedUser] = useState<{ userId: string, fullName: string, role: string, currentRole: string } | null>(null)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(1)
+    const [selectedAction, setSelectedAction] = useState<{ userId: string, fullName: string, action: 'block' | 'unblock' | 'delete' } | null>(null)
+
     const limit = 5
     const user = useMemo(() => {
         return queryClient.getQueryData<UserQueryData>(["user"])
@@ -68,9 +72,14 @@ const AdminsPage = () => {
         refetch()
       }
 
-    const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete') => {
+    const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete', fullName: string) => {
         console.log(`Action ${action} for user ${userId}`)
-        refetch()
+        setSelectedAction({
+            userId: userId,
+            fullName: fullName,
+            action: action
+        })
+        
         setActiveDropdown(null)
     }
     
@@ -96,6 +105,17 @@ const AdminsPage = () => {
           currentRole={selectedUser.currentRole}
           onClose={closeRoleChangeModal}
           refetch={refetch}
+        />
+      )}
+      {selectedAction && (
+        <ManageUser
+          userId={selectedAction.userId}
+          fullName={selectedAction.fullName}
+          action={selectedAction.action}
+          refetch={refetch}
+          queryKey={'dashboard-admins'}
+          isOpen={true}
+          setIsOpen={() => setSelectedAction(null)}
         />
       )}
         <SearchUsers search={search} handleSearch={handleSearch} handleSearchSubmit={handleSearchSubmit} />

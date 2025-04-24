@@ -87,3 +87,31 @@ export const getAllAdmins = async ({search, page, limit}: {search: string, page:
 
     return await admins.json()
 }
+
+
+export const getAllModerators = async ({search, page, limit}: {search: string, page: number, limit: number}) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) {
+        logoutUser()
+        redirect('/')
+    }
+    
+    const {role} = await verifyJwt() as decodedJwtType
+
+    const isAdmin = role === 'admin' || role === 'superAdmin';
+
+    if(!isAdmin){
+        redirect('/')
+    }
+    
+    const moderators = await baseUrl(`/system/dashboard/moderators?search=${search}&page=${page}&limit=${limit}`,{
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    return await moderators.json()
+
+}

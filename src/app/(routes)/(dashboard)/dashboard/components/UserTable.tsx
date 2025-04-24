@@ -37,8 +37,8 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">রক্তের গ্রুপ</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ঠিকানা</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">অবস্থা</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ভূমিকা</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">পদক্ষেপ</th>
+                {isAccessActions && <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ভূমিকা</th>}
+                {isAccessActions && <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">পদক্ষেপ</th>}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
