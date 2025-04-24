@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaUser, FaTint, FaCalendarAlt, FaBuilding, FaCog, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
+import { FaHome, FaUser, FaTint, FaCalendarAlt, FaBuilding, FaCog, FaSignOutAlt, FaBars, FaTimes, FaImage } from 'react-icons/fa';
 import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/lib/types/userType';
 
@@ -28,6 +28,7 @@ const Sidebar = () => {
   const menuItems = [
     { title: 'Dashboard', path: '/dashboard', icon: <FaHome className="mr-3" /> },
     { title: 'Users', path: '/dashboard/users', icon: <FaUser className="mr-3" /> },
+    { title: 'Slider', path: '/dashboard/slider', icon: <FaImage className="mr-3" /> },
     { title: 'Blood Donations', path: '/dashboard/donations', icon: <FaTint className="mr-3" /> },
     { title: 'Appointments', path: '/dashboard/appointments', icon: <FaCalendarAlt className="mr-3" /> },
     { title: 'Organizations', path: '/dashboard/organizations', icon: <FaBuilding className="mr-3" /> },
