@@ -8,12 +8,11 @@ const baseUrl = async(path: string, options = {}) => {
     try {
        
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+            cache: 'force-cache',
             ...options,
-            
             credentials: 'include'
         })
 
-        console.log("Response Headers:", res.headers.get("set-cookie"));
 
         const token = res.headers.get("set-cookie")?.split(";")[0]?.split("=")[1]
 
