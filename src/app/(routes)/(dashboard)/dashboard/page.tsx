@@ -222,7 +222,7 @@ const Dashboard = () => {
     name: org.organizationName,
     type: org.organizationType === 'volunteer' ? 'স্বেচ্ছাসেবী' : 'হাসপাতাল',
     description: org.description || 'কোন বিবরণ নেই',
-    logo: `${process.env.NEXT_PUBLIC_API_URL}${org.logoImage}` || '/placeholder-logo.png',
+    logo: `${org.logoImage}` || '/placeholder-logo.png',
   })) || [];
 
   // Add placeholder data if no organizations

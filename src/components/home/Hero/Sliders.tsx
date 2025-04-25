@@ -63,7 +63,7 @@ const Sliders = ({ slides }: { slides: SlideProps[] }) => {
           >
             <div className="relative h-full w-full overflow-hidden">
               <Image 
-                src={`${process.env.NEXT_PUBLIC_API_URL}${slide.image}`} 
+                src={`${slide.image}`} 
                 alt={slide.title}
                 fill
                 priority={index === 0}

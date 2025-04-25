@@ -19,7 +19,7 @@ const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) =
       <div className="relative h-32 bg-gray-100">
         {org.logoImage && (
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}${org.logoImage}`}
+            src={`${org.logoImage}`}
             alt={org.organizationName}
             fill
             className="object-cover object-center"

@@ -31,6 +31,8 @@ export async function middleware(request: NextRequest) {
     }
     
     if(request.nextUrl.pathname.startsWith('/organization_dashboard')){
+      console.log("line 34 organization dashboard")
+      console.log(decodedJwt)
       if(isOrgAdmin){
         const orgId = request.nextUrl.pathname.split('/')[2];
         if(accessOrgId.includes(orgId)){

@@ -72,7 +72,7 @@ const Sliders = ({sliders, refetch, setIsDeleteModal, setDeleteSlider}: SlidersP
               <Image 
                 width={500} 
                 height={300} 
-                src={`${process.env.NEXT_PUBLIC_API_URL}${slider.image}`} 
+                src={`${slider.image}`} 
                 alt={slider.title || 'Slider Image'} 
                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" 
               />

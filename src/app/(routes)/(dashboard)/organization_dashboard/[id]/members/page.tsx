@@ -3,6 +3,7 @@ import MemberTabs from "./components/MemberTabs"
 import { JwtPayload } from "jsonwebtoken"
 
 const page = async() => {
+
   const decodedUser = await verifyJwt()
 
   

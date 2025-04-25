@@ -24,8 +24,13 @@ export const getDashboardData = async (timeRange: string) => {
     }
     
     const dashboardData = await baseUrl(`/system/dashboard/dashboard?timeRange=${timeRange}`,{
+        cache: 'force-cache',
         headers: {
             'Authorization': `Bearer ${token}`
+        },
+        next: {
+            tags: ['dashboard'],
+            revalidate: 60 * 60 * 24
         }
     })
 
@@ -53,8 +58,13 @@ export const getAllUsers = async ({search, page, limit, isActive, isBanned, allU
     }
 
     const users = await baseUrl(`/system/dashboard/users?search=${search}&page=${page}&limit=${limit}&isActive=${isActive}&isBanned=${isBanned}&allUser=${allUser}`,{
+        cache: 'force-cache',
         headers: {
             'Authorization': `Bearer ${token}`
+        },
+        next: {
+            tags: ['users'],
+            revalidate: 60 * 60 * 24
         }
     })
 
@@ -80,8 +90,13 @@ export const getAllAdmins = async ({search, page, limit}: {search: string, page:
     }
     
     const admins = await baseUrl(`/system/dashboard/admins?search=${search}&page=${page}&limit=${limit}`,{
+        cache: 'force-cache',
         headers: {
             'Authorization': `Bearer ${token}`
+        },
+        next: {
+            tags: ['admins'],
+            revalidate: 60 * 60 * 24
         }
     })
 
@@ -107,8 +122,13 @@ export const getAllModerators = async ({search, page, limit}: {search: string, p
     }
     
     const moderators = await baseUrl(`/system/dashboard/moderators?search=${search}&page=${page}&limit=${limit}`,{
+        cache: 'force-cache',
         headers: {
             'Authorization': `Bearer ${token}`
+        },
+        next: {
+            tags: ['moderators'],
+            revalidate: 60 * 60 * 24
         }
     })
 

@@ -18,7 +18,7 @@ const Profile: React.FC<ProfileProps> = ({ userData }) => {
       </Link>
       <Link href="/profile" passHref>
         <div className="text-gray-700 hover:text-red-600">
-          <Image height={100} width={100} className="h-6 w-6 rounded-full" src={`${process.env.NEXT_PUBLIC_API_URL}${userData?.profileImageUrl}`} alt="profile" />
+          <Image height={100} width={100} className="h-6 w-6 rounded-full" src={`${userData?.profileImageUrl}`} alt="profile" />
           {/* <FaUser className="h-6 w-6" title="Profile" /> */}
         </div>
       </Link>

@@ -45,7 +45,7 @@ const Profile = () => {
   // This would come from your user data fetch
   const userProfile: User = {
     fullName: userData?.fullName ?? 'Profile Name',
-    profileImageUrl: userData?.profileImageUrl ? `${process.env.NEXT_PUBLIC_API_URL}${userData.profileImageUrl}` : '/assets/profile-placeholder.jpg',
+    profileImageUrl: userData?.profileImageUrl ? `${userData.profileImageUrl}` : '/assets/profile-placeholder.jpg',
     bloodGroup: userData?.bloodGroup ?? "",
     phone: userData?.phone ?? '',
     email: userData?.email ?? '',

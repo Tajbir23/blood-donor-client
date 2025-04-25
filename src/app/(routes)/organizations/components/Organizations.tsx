@@ -158,7 +158,7 @@ const Organizations = ({ initialData, decodedUser }: OrganizationsProps) => {
                   <Image
                     height={100}
                     width={100}
-                    src={org.logoImage ? `${process.env.NEXT_PUBLIC_API_URL}${org.logoImage}` : '/assets/default-org.png'}
+                    src={org.logoImage ? `${org.logoImage}` : '/assets/default-org.png'}
                     alt={org.organizationName}
                     className="object-cover"
                   />

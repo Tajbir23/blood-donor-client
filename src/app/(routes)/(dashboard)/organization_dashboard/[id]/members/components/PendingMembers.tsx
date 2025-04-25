@@ -85,7 +85,7 @@ const PendingMembers = () => {
                 <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                   {member.userId?.profileImageUrl ? (
                     <Image 
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${member.userId.profileImageUrl}`}
+                      src={`${member.userId.profileImageUrl}`}
                       alt={member.userId.fullName || 'Member'} 
                       width={48} 
                       height={48}

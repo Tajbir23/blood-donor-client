@@ -26,7 +26,7 @@ const DonorCard = ({donor}: {donor: User}) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-70 group-hover:opacity-90 transition-opacity"></div>
         <Image 
           className="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700" 
-          src={`${process.env.NEXT_PUBLIC_API_URL}${donor.profileImageUrl}` || "/images/dummy-image.jpg"} 
+          src={`${donor.profileImageUrl}` || "/images/dummy-image.jpg"} 
           alt={donor.fullName || "Donor Image"} 
           width={400} 
           height={300} 

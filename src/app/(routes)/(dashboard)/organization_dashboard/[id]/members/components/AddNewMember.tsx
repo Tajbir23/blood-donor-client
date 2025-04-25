@@ -140,7 +140,7 @@ const AddNewMember = ({ isOpen, onClose, onAddMember }: AddNewMemberProps) => {
                                         <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                                             {donor.profileImageUrl ? (
                                                 <Image 
-                                                    src={`${process.env.NEXT_PUBLIC_API_URL}${donor.profileImageUrl}`}
+                                                    src={`${donor.profileImageUrl}`}
                                                     alt={donor.fullName}
                                                     width={48}
                                                     height={48}

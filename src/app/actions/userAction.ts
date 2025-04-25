@@ -29,3 +29,23 @@ export const searchDonors = async (searchQuery: string) => {
     const repsonse = await baseUrl(`/user/search-users?search=${searchQuery}`)
     return repsonse.json()
 }
+
+
+export const updateProfileImage = async (formData: FormData) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')
+    if(!token){
+        return {success: false, message: 'Unauthorized'}
+    }
+
+    
+        const response = await baseUrl('/user/update-profile-image', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token.value}`,
+            },
+            body: formData
+        })
+        return response.json()
+    
+}

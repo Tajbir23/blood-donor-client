@@ -42,9 +42,14 @@ export const myOrganizations = async() => {
     const token = await cookieStore.get("token")?.value
     try {
         const response = await baseUrl('/organization/my_organizations', {
+            cache: 'force-cache',
             method: "GET",
             headers: {
                 "Authorization" : `Bearer ${token}`
+            },
+            next: {
+                tags: ['organizations'],
+                revalidate: 60 * 60 * 24
             }
         })
 
@@ -75,7 +80,12 @@ export const joinOrganization = async(orgId: string) => {
 export const getMembers = async(organizationId: string, page?: number, limit?: number, search?: string) => {
     try {
         const response = await baseUrl(`/organization/members/${organizationId}?page=${page}&limit=${limit}&search=${search}`, {
+            cache: 'force-cache',
             method: "GET",
+            next: {
+                tags: ['organization-members'],
+                revalidate: 60 * 60 * 24
+            }
         })
 
         return await response.json()

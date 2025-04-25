@@ -208,7 +208,7 @@ const ActiveMembers = ({orgUserRole}: {orgUserRole: string}) => {
                                                 <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                                                     {member.profileImageUrl ? (
                                                         <Image 
-                                                            src={`${process.env.NEXT_PUBLIC_API_URL}${member.profileImageUrl}`} 
+                                                            src={`${member.profileImageUrl}`} 
                                                             alt={member.fullName || 'Member'} 
                                                             width={40} 
                                                             height={40}

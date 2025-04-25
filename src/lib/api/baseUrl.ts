@@ -3,14 +3,34 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-const baseUrl = async(path: string, options = {}) => {
+type FetchOptions = {
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+    headers?: HeadersInit
+    body?: BodyInit | null
+    cache?: RequestCache
+    credentials?: RequestCredentials
+    mode?: RequestMode
+    redirect?: RequestRedirect
+    referrer?: string
+    referrerPolicy?: ReferrerPolicy
+    integrity?: string
+    keepalive?: boolean
+    signal?: AbortSignal | null
+    next?: {
+      revalidate?: number
+      tags?: string[]
+    }
+  }
+
+const baseUrl = async(path: string, options: FetchOptions = {}) => {
     const cookieStore = await cookies()
     try {
        
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
-            cache: 'force-cache',
+            cache: options.cache || 'no-store',
             ...options,
-            credentials: 'include'
+            credentials: 'include',
+            next: options.next
         })
 
 

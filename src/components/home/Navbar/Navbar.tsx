@@ -137,7 +137,7 @@ const Navbar = () => {
                   <div className="flex items-center">
                     {userData.user.profileImageUrl ? (
                       <Image 
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${userData.user.profileImageUrl}`} 
+                        src={`${userData.user.profileImageUrl}`} 
                         alt={userData.user.fullName} 
                         width={32} 
                         height={32} 
@@ -233,7 +233,7 @@ const Navbar = () => {
                 <div className="flex items-center px-3 py-2">
                   {userData.user.profileImageUrl ? (
                     <Image 
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${userData.user.profileImageUrl}`} 
+                      src={`${userData.user.profileImageUrl}`} 
                       alt={userData.user.fullName} 
                       width={40} 
                       height={40} 

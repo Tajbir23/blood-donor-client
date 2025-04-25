@@ -52,7 +52,7 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                             height={100}
                             width={100}
                             className="h-10 w-10 rounded-full object-cover" 
-                            src={`${process.env.NEXT_PUBLIC_API_URL}${user.profileImageUrl}` || '/placeholder-avatar.png'} 
+                            src={`${user.profileImageUrl}` || '/placeholder-avatar.png'} 
                             alt={user.fullName} 
                           />
                         </div>

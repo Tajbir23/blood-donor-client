@@ -33,7 +33,7 @@ const RegularDonor = () => {
     id: donor._id,
     name: donor.fullName,
     address: `${donor.thanaId}, ${donor.districtId}`,
-    image: `${process.env.NEXT_PUBLIC_API_URL}${donor.profileImageUrl}`,
+    image: `${donor.profileImageUrl}`,
   }));
 
 

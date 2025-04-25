@@ -1,13 +1,17 @@
 import Image from 'next/image'
-import { FaMapMarkerAlt, FaExclamationTriangle, FaSignOutAlt } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaExclamationTriangle, FaSignOutAlt, FaCamera } from 'react-icons/fa'
 import { User } from '@/lib/types/userType'
 import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import ProfileImageUpdateModal from './profileImageUpdateModal'
 interface ProfileHeaderProps {
   userProfile: User
   onLogout: () => void
 }
 
 const ProfileHeader = ({ userProfile, onLogout }: ProfileHeaderProps) => {
+  const [isImageUpload, setIsImageUpload] = useState(false)
+
   const queryClient = useQueryClient()
 
   const handleLogout = async(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -40,13 +44,18 @@ const ProfileHeader = ({ userProfile, onLogout }: ProfileHeaderProps) => {
       <div className="px-4 sm:px-6 lg:px-8 pb-8">
         <div className="flex flex-col sm:flex-row items-center">
           <div className="-mt-16 sm:mr-6 flex-shrink-0">
-            <div className="relative h-32 w-32 rounded-full border-4 border-white overflow-hidden bg-gray-100">
+            <div className="relative h-32 w-32 rounded-full border-4 border-white overflow-hidden bg-gray-100 group">
               <Image 
                 src={userProfile?.profileImageUrl || '/assets/default-profile.jpg'} 
                 alt={userProfile?.fullName || 'User'}
                 fill
                 className="object-cover"
               />
+              <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all duration-200">
+                <button onClick={() => setIsImageUpload(!isImageUpload)} className="opacity-0 group-hover:opacity-100 cursor-pointer bg-white rounded-full p-2 shadow-md transform translate-y-2 group-hover:translate-y-0 transition-all duration-200">
+                  <FaCamera className="text-red-600 text-xl" />
+                </button>
+              </div>
             </div>
           </div>
           <div className="mt-6 sm:mt-0 text-center sm:text-left flex-1">
@@ -91,6 +100,7 @@ const ProfileHeader = ({ userProfile, onLogout }: ProfileHeaderProps) => {
           </div>
         </div>
       </div>
+      {isImageUpload && <ProfileImageUpdateModal onClose={() => setIsImageUpload(false)} />}
     </div>
   )
 }

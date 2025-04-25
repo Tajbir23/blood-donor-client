@@ -30,9 +30,14 @@ export const requestForBlood = async (data: BloodRequestType) => {
 export const getBloodRequest = async (page: number, limit: number) => {
     try {
         const response = await baseUrl(`/blood_request/requests?page=${page}&limit=${limit}`, {
+            cache: 'force-cache',
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
+            },
+            next: {
+                tags: ['blood-requests'],
+                revalidate: 60 * 60 * 3
             }
         })
         const data = await response.json()
@@ -49,9 +54,14 @@ export const getBloodRequest = async (page: number, limit: number) => {
 export const getBloodDonors = async (page: number, limit: number, search: string) => {
     try {
         const response = await baseUrl(`/blood_request/donors?page=${page}&limit=${limit}&search=${search}`, {
+            cache: 'force-cache',
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
+            },
+            next: {
+                tags: ['blood-donors'],
+                revalidate: 60 * 60 * 3
             }
         })
         const data = await response.json()
