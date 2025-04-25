@@ -1,3 +1,6 @@
+export const dynamic = 'force-static'; // Cache UI as static
+export const revalidate = 86400;
+
 import BloodRequestForm from "@/components/Blood-Request-Form/BloodRequestForm"
 import { Metadata } from 'next'
 

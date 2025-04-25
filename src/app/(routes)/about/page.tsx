@@ -1,3 +1,6 @@
+export const dynamic = 'force-static'; // Cache UI as static
+export const revalidate = 86400;
+
 const AboutPage = () => {
   return (
     <div className="container mx-auto px-4 py-12">

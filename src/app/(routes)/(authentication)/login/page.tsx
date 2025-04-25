@@ -1,3 +1,6 @@
+export const dynamic = 'force-static'; // Cache UI as static
+export const revalidate = 86400;
+
 import Image from "next/image";
 import { Suspense } from "react";
 import LoginFormWrapper from "./LoginFormWrapper";

@@ -1,3 +1,6 @@
+export const dynamic = 'force-static'; // Cache UI as static
+export const revalidate = 86400;
+
 import { Metadata } from 'next';
 import Blogs from '@/components/home/Blogs';
 import CallToAction from '@/components/home/CallToAction';

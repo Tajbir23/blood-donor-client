@@ -1,4 +1,5 @@
-import React from 'react';
+export const dynamic = 'force-static'; // Cache UI as static
+export const revalidate = 86400;
 
 const AdvicePage = () => {
   return (

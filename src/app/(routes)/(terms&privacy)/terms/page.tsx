@@ -1,4 +1,6 @@
-import React from "react";
+export const dynamic = 'force-static'; // Cache UI as static
+export const revalidate = 86400;
+
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

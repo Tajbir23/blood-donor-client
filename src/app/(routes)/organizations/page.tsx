@@ -1,3 +1,4 @@
+
 import { verifyJwt } from "@/app/actions/authentication";
 import Organizations from "./components/Organizations"
 import { Metadata } from 'next'
