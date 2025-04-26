@@ -4,15 +4,18 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'localhost',
-        port: '4000',
+        hostname: '**',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+        port: '',
         pathname: '/**',
       },
     ],
-  },
-  // experimental: {
-  //   turbo: false, // যদি Turbopack ব্যবহার করে থাকো, এটা বন্ধ করে দাও
-  // },
+  }
 }
 
 module.exports = nextConfig
