@@ -1,6 +1,7 @@
 'use client'
 
 import { getAllOrganizations } from "@/app/actions/administrator/system/organization"
+import revalidateTags from "@/app/actions/revalidateTags"
 import OrganizationCard from "@/components/dashboard/dashboard/organizations/OrganizationCard"
 import organizationType from "@/lib/types/organizationType"
 import { User } from "@/lib/types/userType"
@@ -113,6 +114,7 @@ const Organization = () => {
             setOrganizations(cachedOrganizationsData.organizations || []);
             setTotalPages(cachedOrganizationsData.totalPages || 0);
         } else {
+            revalidateTags('organizations')
             refetch();
         }
     };
@@ -143,6 +145,7 @@ const Organization = () => {
         if (isSearchActive) {
             searchOrganizations(searchInput, page, orgType);
         } else {
+            revalidateTags('organizations')
             refetch();
         }
     };

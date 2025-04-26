@@ -45,7 +45,7 @@ const ProfileImageUpdateModal = ({ onClose }: { onClose: () => void }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-md">
                 <div className="flex justify-between items-center p-4 border-b">
                     <h3 className="text-lg font-medium text-gray-900">প্রোফাইল ছবি আপডেট করুন</h3>

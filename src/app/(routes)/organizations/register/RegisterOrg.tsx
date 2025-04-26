@@ -5,9 +5,11 @@ import { useRangpurDivision } from '@/hooks/useLocation';
 import { UploadImage } from '@/app/libs';
 import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/lib/types/userType';
-import useRegisterOrganization from '@/app/hooks/useRegisterOrganization';
 import organizationType from '@/lib/types/organizationType';
 import LocationSelector from '@/components/ui/location-selector';
+import { registerOrganization } from '@/app/actions/organization';
+import toast from 'react-hot-toast';
+import revalidateTags from '@/app/actions/revalidateTags';
 
 
 interface UserQueryData {
@@ -17,7 +19,7 @@ interface UserQueryData {
 
 const RegisterOrg = () => {
   const { division } = useRangpurDivision();
-  const {mutate: registerOrganization, isPending} = useRegisterOrganization()
+  const [isPending, setIsPending] = useState(false);
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<organizationType>({
@@ -115,10 +117,19 @@ const RegisterOrg = () => {
     setFormData(prev => ({ ...prev, [type]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsPending(true);
     // Form validation and submission logic
-    registerOrganization(formData)
+    const response = await registerOrganization(formData)
+    if(response.success){
+      toast.success(response.message)
+      revalidateTags('my_organizations')
+      queryClient.invalidateQueries({ queryKey: ['my_organizations'] })
+    }else{
+      toast.error(response.message)
+    }
+    setIsPending(false);
   };
 
   return (
