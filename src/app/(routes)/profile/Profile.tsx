@@ -9,12 +9,12 @@ import DonationHistory from './components/donations/DonationHistory'
 import Organizations from './components/organizations'
 import ProfileSettings from './components/settings'
 import { User } from '@/lib/types/userType'
-import { useQueryClient } from '@tanstack/react-query'
-import useMyOrganizations from '@/app/hooks/useMyOrganizations'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import organizationType from '@/lib/types/organizationType'
 import { logoutUser } from '@/app/actions/authentication'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { myOrganizations } from '@/app/actions/organization'
 
 interface userQueryData {
   success: boolean;
@@ -30,17 +30,21 @@ const Profile = () => {
   const [userData, setUserData] = useState<User>()
   const router = useRouter()
   const queryClient = useQueryClient()
-  const {mutate: myOrganizations, data} = useMyOrganizations()
+  // const {mutate: myOrganizations, data} = useMyOrganizations()
   
+  const {data: myOrganizationsData, refetch: refetchMyOrganizations} = useQuery({
+    queryKey: ["my_organizations"],
+    queryFn:async() => await myOrganizations(),
+    staleTime: 60 * 60 * 24 
+  })
   useEffect(() => {
     const timeOut = setTimeout(() => {
       const user = queryClient.getQueryData<userQueryData>(['user'])
       setUserData(user?.user)
-      myOrganizations()
     }, 500)
     
     return () => clearTimeout(timeOut)
-  },[queryClient, myOrganizations])
+  },[queryClient])
   
   // This would come from your user data fetch
   const userProfile: User = {
@@ -85,7 +89,7 @@ const Profile = () => {
     }
   }
   // Sample organization data
-  const userOrganizations: myOrganizationType = data
+  const userOrganizations: myOrganizationType = myOrganizationsData
 
   return (
     <div className="bg-gray-50 min-h-screen pt-8 pb-12">
@@ -101,7 +105,7 @@ const Profile = () => {
           <div className="mt-6">
             {activeTab === 'overview' && <ProfileOverview userProfile={userProfile} />}
             {activeTab === 'donations' && <DonationHistory userProfile={userProfile} donationHistory={donationHistory} />}
-            {activeTab === 'organizations' && <Organizations userOrganizations={userOrganizations} memberOforg={userProfile.organizationId || []} />}
+            {activeTab === 'organizations' && <Organizations userOrganizations={userOrganizations} memberOforg={userProfile.organizationId || []} refetchMyOrganizations={refetchMyOrganizations} />}
             {activeTab === 'settings' && <ProfileSettings />}
           </div>
         </div>

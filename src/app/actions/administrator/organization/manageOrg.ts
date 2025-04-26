@@ -137,3 +137,22 @@ export const removeMember = async(organizationId: string, userId: string) => {
     const data = await response.json()
     return data
 }
+
+export const updateOrgCover = async (orgId: string, image: File) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')
+
+    const formData = new FormData()
+    formData.append('organization', image)
+
+    const response = await baseUrl(`/org_admin/update_org_cover/${orgId}`, {
+        headers: {
+            'Authorization': `Bearer ${token?.value}`
+        },
+        method: 'PUT',
+        body: formData
+    })
+
+    const data = await response.json()
+    return data
+}

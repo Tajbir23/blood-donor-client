@@ -48,7 +48,7 @@ export const myOrganizations = async() => {
                 "Authorization" : `Bearer ${token}`
             },
             next: {
-                tags: ['organizations'],
+                tags: ['my_organizations'],
                 revalidate: 60 * 60 * 24
             }
         })

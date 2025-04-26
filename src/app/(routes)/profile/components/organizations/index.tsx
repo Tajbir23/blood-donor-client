@@ -1,8 +1,10 @@
-import React from 'react';
+'use client'
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaGlobe, FaCalendarAlt, FaHospital, FaTint, FaUserShield, FaUsers } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaGlobe, FaCalendarAlt, FaHospital, FaTint, FaUserShield, FaUsers, FaCamera } from 'react-icons/fa';
 import organizationType from '@/lib/types/organizationType';
+import UpdateOrgCover from './UpdateOrgCover';
 
 interface OrganizationsProps {
   userOrganizations: {
@@ -10,13 +12,15 @@ interface OrganizationsProps {
     organizations: organizationType[];
   };
   memberOforg: organizationType[];
+  refetchMyOrganizations: () => void;
 }
 
-const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) => {
+const Organizations = ({ userOrganizations, memberOforg, refetchMyOrganizations }: OrganizationsProps) => {
+  const [isOpenModal, setIsOpenModal] = useState({isOpen: false, orgId: ''});
   // Function to render organization card to avoid duplicating code
   const renderOrganizationCard = (org: organizationType, isMember: boolean = false) => (
     <div key={org._id} className={`bg-white rounded-lg shadow-md overflow-hidden border ${isMember ? 'border-blue-100' : 'border-gray-100'} hover:shadow-lg transition-shadow`}>
-      <div className="relative h-32 bg-gray-100">
+      <div className="relative h-32 bg-gray-100 group">
         {org.logoImage && (
           <Image
             src={`${org.logoImage}`}
@@ -49,6 +53,14 @@ const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) =
           <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full flex items-center">
             <FaUsers className="mr-1" size={10} />
             সদস্য
+          </div>
+        )}
+        
+        {!isMember && (
+          <div onClick={() => setIsOpenModal({isOpen: !isOpenModal.isOpen, orgId: org._id || ''})} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+            <div className="bg-white rounded-full p-3">
+              <FaCamera className="text-gray-700 text-xl" />
+            </div>
           </div>
         )}
       </div>
@@ -184,6 +196,7 @@ const Organizations = ({ userOrganizations, memberOforg }: OrganizationsProps) =
           </div>
         </div>
       )}
+      {isOpenModal.isOpen && <UpdateOrgCover orgId={isOpenModal.orgId} setIsOpenModal={setIsOpenModal} refetchMyOrganizations={refetchMyOrganizations} />}
     </div>
   );
 };

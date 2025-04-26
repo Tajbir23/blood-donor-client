@@ -10,7 +10,7 @@ const useMyOrganizations = () => {
         mutationFn: myOrganizations,
         onSuccess: (data) => {
             if(data.success){
-                queryClient.setQueryData(["organizations"], data)
+                queryClient.setQueryData(["my_organizations"], data)
             }
         }
     })
