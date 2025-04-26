@@ -27,8 +27,9 @@ const ProfileImageUpdateModal = ({ onClose }: { onClose: () => void }) => {
             const formData = new FormData()
             formData.append('profileImage', image)
             const response = await updateProfileImage(formData)
-            queryClient.invalidateQueries({ queryKey: ['user'] })
             await revalidateTags('user')
+            queryClient.invalidateQueries({ queryKey: ['user'] })
+            
             if(response.success){
                 toast.success(response.message || "প্রোফাইল ছবি সফলভাবে আপডেট হয়েছে")
                 onClose()
