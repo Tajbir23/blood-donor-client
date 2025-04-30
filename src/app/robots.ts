@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/private/', '/admin/'],
+      disallow: ['/organization_dashboard/', '/admin/', '/dasboard/'],
     },
-    sitemap: 'https://blooddonation-rangpur.com/sitemap.xml',
+    sitemap: 'https://blood-donor-rangpur.vercel.app/sitemap.xml',
   };
-} 
+}

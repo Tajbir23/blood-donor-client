@@ -8,6 +8,7 @@ import FindBlood from '@/components/home/FindBlood';
 import Hero from '@/components/home/Hero/Hero';
 import OurServices from '@/components/home/OurServices';
 import RegularDonor from '@/components/home/RegularDonor';
+import Script from 'next/script';
 
 // Define metadata for SEO
 export const metadata: Metadata = {
@@ -38,32 +39,24 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main>
-      {/* Schema.org structured data for Organization */}
-      <script
+    <>
+      <Script 
+        id="schema-org-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            "name": "রক্তদান রংপুর বিভাগ",
-            "url": "https://blooddonation-rangpur.com",
-            "logo": "https://blooddonation-rangpur.com/logo.png",
-            "description": "রংপুর বিভাগের সবচেয়ে বড় রক্তদাতা নেটওয়ার্ক",
-            "sameAs": [
-              "https://facebook.com/blooddonationrangpur",
-              "https://twitter.com/rangpurblooddonation",
-              "https://instagram.com/blooddonationrangpur"
-            ],
-            "address": {
-              "@type": "PostalAddress",
-              "addressRegion": "Rangpur Division",
-              "addressCountry": "Bangladesh"
+            "url": "https://blood-donor-bangladesh.vercel.app",
+            "name": "Blood Donor Kurigram",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://blood-donor-bangladesh.vercel.app/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
             }
           })
         }}
       />
-
       {/* Hero Component */}
       <Hero />
       
@@ -81,6 +74,6 @@ export default function Home() {
       
       {/* Blogs Component */}
       <Blogs />
-    </main>
+    </>
   );
 }

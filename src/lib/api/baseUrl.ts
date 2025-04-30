@@ -2,7 +2,6 @@
 
 import getRefreshToken from "@/app/actions/getRefreshToken"
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
 
 type FetchOptions = {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'

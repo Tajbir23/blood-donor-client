@@ -1,25 +1,67 @@
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = 'https://blood-donor-rangpur.vercel.app';
+  
+  // Define static routes with their properties
+  const staticRoutes = [
     {
-      url: 'https://blooddonation-rangpur.com',
+      url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'daily' as const,
       priority: 1,
     },
     {
-      url: 'https://blooddonation-rangpur.com/find-blood',
+      url: `${baseUrl}/blood-donation`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'daily' as const,
       priority: 0.9,
     },
     {
-      url: 'https://blooddonation-rangpur.com/register',
+      url: `${baseUrl}/register`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
-    // অন্যান্য পেজ যোগ করুন...
+    {
+      url: `${baseUrl}/organizations`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/advice`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/donation`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
   ];
-} 
+
+  // Here you could fetch dynamic routes from your database or API
+  // For example, blog posts, user profiles, etc.
+  // const blogPosts = await fetchBlogPosts();
+  // const dynamicBlogRoutes = blogPosts.map(post => ({
+  //   url: `${baseUrl}/blog/${post.slug}`,
+  //   lastModified: new Date(post.updatedAt),
+  //   changeFrequency: 'weekly' as const,
+  //   priority: 0.7,
+  // }));
+
+  // Combine static and dynamic routes
+  // return [...staticRoutes, ...dynamicBlogRoutes];
+  
+  // For now, just return static routes
+  return staticRoutes;
+}

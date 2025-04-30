@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /organization_dashboard/
+Disallow: /admin/
+Disallow: /dasboard/
+
+Sitemap: https://blood-donor-bangladesh.vercel.app/sitemap.xml
