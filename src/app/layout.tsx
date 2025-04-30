@@ -12,6 +12,7 @@ import QueryProvider from "@/components/QueryProvider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import UpdateBloodDonationDate from '@/components/home/UpdateBloodDonationDate';
 import BloodDonationModal from '@/components/modals/BloodDonationModal';
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,21 @@ export default async function RootLayout({
   
   return (
     <html lang="bn" className="h-full">
+      <head>
+        {/* Google Analytics Script */}
+        <Script 
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZJ4DF1GY9H" 
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-ZJ4DF1GY9H');
+          `}
+        </Script>
+      </head>
       <body className={`${inter.className} h-full`}>
         <QueryProvider>
           <Navbar />
