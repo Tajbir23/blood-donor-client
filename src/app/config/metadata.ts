@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 
 const defaultMetadata: Metadata = {
   metadataBase: new URL('https://blood-donor-rangpur.vercel.app'),
+  themeColor: '#000000',
   title: {
     default: 'রক্তদান রংপুর বিভাগ',
     template: '%s | রক্তদান রংপুর বিভাগ'
@@ -63,6 +64,7 @@ const defaultMetadata: Metadata = {
   alternates: {
     canonical: 'https://blood-donor-rangpur.vercel.app',
   },
+  manifest: '/manifest.json',
 }
 
 export function generateMetadata({

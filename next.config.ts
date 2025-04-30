@@ -1,22 +1,34 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
 
-const nextConfig: NextConfig = {
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+});
+
+const nextConfig = {
   images: {
     remotePatterns: [
       {
         protocol: 'http',
         hostname: '**',
         port: '',
-        pathname: '**',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: '**',
         port: '',
-        pathname: '**',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4000',
+        pathname: '/uploads/**',
       },
     ],
   }
-};
+}
 
-export default nextConfig;
+module.exports = withPWA(nextConfig)

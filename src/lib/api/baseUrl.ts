@@ -1,5 +1,6 @@
 'use server'
 
+import getRefreshToken from "@/app/actions/getRefreshToken"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -47,8 +48,7 @@ const baseUrl = async(path: string, options: FetchOptions = {}) => {
         
 
         if(res.status === 401){
-            cookieStore.delete('token')
-            redirect('/login')
+            await getRefreshToken()
         }
 
         return res
