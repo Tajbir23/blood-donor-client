@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   description: "রংপুর রক্তদান সিস্টেমের নিয়ম ও শর্তাবলী - যোগ্যতা, দায়িত্ব, ও নীতিমালা সম্পর্কে বিস্তারিত জানুন। রক্তদান করার আগে আমাদের শর্তাবলী অবশ্যই পড়ুন।",
   keywords: ["রক্তদান", "নিয়ম ও শর্তাবলী", "রংপুর", "রক্তদান সিস্টেম", "রক্তদানের নিয়মাবলী", "ব্যবহারের শর্ত"],
   alternates: {
-    canonical: "https://blooddonation-rangpur.org/terms"
+    canonical: "https://blood-donor-bangladesh.vercel.app/terms"
   },
   openGraph: {
     title: "নিয়ম ও শর্তাবলী | রংপুর রক্তদান সিস্টেম",
     description: "রংপুর রক্তদান সিস্টেমের নিয়ম ও শর্তাবলী - যোগ্যতা, দায়িত্ব, ও নীতিমালা সম্পর্কে বিস্তারিত জানুন।",
-    url: "https://blooddonation-rangpur.org/terms",
+    url: "https://blood-donor-bangladesh.vercel.app/terms",
     siteName: "রংপুর রক্তদান সিস্টেম",
     locale: "bn_BD",
     type: "website",

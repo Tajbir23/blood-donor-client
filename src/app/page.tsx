@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: 'রক্তদান রংপুর বিভাগ | জীবন বাঁচাতে রক্ত দিন',
     description: 'রংপুর বিভাগের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
     type: 'website',
-    url: 'https://blooddonation-rangpur.com',
+    url: 'https://blood-donor-bangladesh.vercel.app',
     images: [
       {
         url: '/images/home-og.jpg',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: 'https://blooddonation-rangpur.com',
+    canonical: 'https://blood-donor-bangladesh.vercel.app',
   },
   other: {
     'google-site-verification': '4r6L_E636xBF3hU6OjXMUdfSnfTKiwofEtBSHhxMHRw'

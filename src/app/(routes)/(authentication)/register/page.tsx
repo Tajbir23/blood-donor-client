@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   description: "রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। একটি অ্যাকাউন্ট তৈরি করুন এবং রক্তদান সেবা দিন বা গ্রহণ করুন।",
   keywords: "রক্তদান, রংপুর, নিবন্ধন, রেজিস্ট্রেশন, রক্তদাতা, ব্লাড ডোনেশন, blood donation, rangpur, registration",
   alternates: {
-    canonical: 'https://blooddonation-rangpur.com/register',
+    canonical: 'https://blood-donor-bangladesh.vercel.app/register',
   },
   openGraph: {
     title: "নিবন্ধন করুন | রক্তদান রংপুর বিভাগ",
     description: "রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। আপনার অ্যাকাউন্ট তৈরি করুন।",
-    url: 'https://blooddonation-rangpur.com/register',
+    url: 'https://blood-donor-bangladesh.vercel.app/register',
     siteName: 'রক্তদান রংপুর বিভাগ',
     images: [
       {

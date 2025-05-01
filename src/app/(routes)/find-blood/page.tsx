@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'রংপুর বিভাগের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন। জরুরি প্রয়োজনে দ্রুত রক্ত সংগ্রহের জন্য এখনই যোগাযোগ করুন।',
   keywords: ['রক্ত অনুসন্ধান', 'blood search', 'রক্তদাতা', 'রংপুর বিভাগ', 'blood donors', 'Rangpur Division'],
   alternates: {
-    canonical: 'https://blooddonation-rangpur.com/find-blood',
+    canonical: 'https://blood-donor-bangladesh.vercel.app/blood-donation',
   },
 };
 
@@ -26,7 +26,7 @@ const FindBloodPage = () => {
             "provider": {
               "@type": "Organization",
               "name": "রক্তদান রংপুর বিভাগ",
-              "url": "https://blooddonation-rangpur.com"
+              "url": "https://blood-donor-bangladesh.vercel.app"
             },
             "areaServed": {
               "@type": "State",

@@ -38,7 +38,7 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-ZJ4DF1GY9H');
+            gtag('config', 'G-ZJ4DF1GY9H', { 'debug_mode': true });
           `}
         </Script>
       </head>
