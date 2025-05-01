@@ -12,12 +12,12 @@ import Script from 'next/script';
 
 // Define metadata for SEO
 export const metadata: Metadata = {
-  title: 'রক্তদান রংপুর বিভাগ | জীবন বাঁচাতে রক্ত দিন',
-  description: 'রংপুর বিভাগের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
-  keywords: ['রক্তদান', 'রংপুর বিভাগ', 'blood donation', 'Rangpur Division', 'blood donors', 'emergency blood', 'blood bank', 'রক্তদাতা', 'জরুরি রক্ত', 'রক্ত সংগ্রহ'],
+  title: 'রক্তদান বাংলাদেশ | জীবন বাঁচাতে রক্ত দিন',
+  description: 'বাংলাদেশের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
+  keywords: ['রক্তদান', 'বাংলাদেশ', 'blood donation', 'Bangladesh', 'blood donors', 'emergency blood', 'blood bank', 'রক্তদাতা', 'জরুরি রক্ত', 'রক্ত সংগ্রহ'],
   openGraph: {
-    title: 'রক্তদান রংপুর বিভাগ | জীবন বাঁচাতে রক্ত দিন',
-    description: 'রংপুর বিভাগের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
+    title: 'রক্তদান বাংলাদেশ | জীবন বাঁচাতে রক্ত দিন',
+    description: 'বাংলাদেশের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
     type: 'website',
     url: 'https://blood-donor-bangladesh.vercel.app',
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: '/images/home-og.jpg',
         width: 1200,
         height: 630,
-        alt: 'রক্তদান রংপুর বিভাগ হোম পেজ',
+        alt: 'রক্তদান বাংলাদেশ হোম পেজ',
       },
     ],
   },
@@ -48,7 +48,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "Organization",
             "url": "https://blood-donor-bangladesh.vercel.app",
-            "name": "Blood Donor Kurigram",
+            "name": "Blood Donor Bangladesh",
             "potentialAction": {
               "@type": "SearchAction",
               "target": "https://blood-donor-bangladesh.vercel.app/search?q={search_term_string}",

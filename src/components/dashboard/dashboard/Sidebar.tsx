@@ -70,7 +70,7 @@ const Sidebar = () => {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-5 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-red-600">রক্তদান রংপুর বিভাগ</h1>
+            <h1 className="text-xl font-bold text-red-600">রক্তদান বাংলাদেশ</h1>
             <p className="text-sm text-gray-500">Dashboard</p>
           </div>
 

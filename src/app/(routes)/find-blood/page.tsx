@@ -4,9 +4,9 @@ export const revalidate = 86400;
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'রক্ত অনুসন্ধান | রক্তদান রংপুর বিভাগ',
-  description: 'রংপুর বিভাগের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন। জরুরি প্রয়োজনে দ্রুত রক্ত সংগ্রহের জন্য এখনই যোগাযোগ করুন।',
-  keywords: ['রক্ত অনুসন্ধান', 'blood search', 'রক্তদাতা', 'রংপুর বিভাগ', 'blood donors', 'Rangpur Division'],
+  title: 'রক্ত অনুসন্ধান | রক্তদান বাংলাদেশ',
+  description: 'বাংলাদেশের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন। জরুরি প্রয়োজনে দ্রুত রক্ত সংগ্রহের জন্য এখনই যোগাযোগ করুন।',
+  keywords: ['রক্ত অনুসন্ধান', 'blood search', 'রক্তদাতা', 'বাংলাদেশ', 'blood donors', 'Bangladesh'],
   alternates: {
     canonical: 'https://blood-donor-bangladesh.vercel.app/blood-donation',
   },
@@ -25,14 +25,14 @@ const FindBloodPage = () => {
             "serviceType": "Blood Donor Search",
             "provider": {
               "@type": "Organization",
-              "name": "রক্তদান রংপুর বিভাগ",
+              "name": "রক্তদান বাংলাদেশ",
               "url": "https://blood-donor-bangladesh.vercel.app"
             },
             "areaServed": {
               "@type": "State",
-              "name": "Rangpur Division"
+              "name": "Bangladesh"
             },
-            "description": "রংপুর বিভাগের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন"
+            "description": "বাংলাদেশের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন"
           })
         }}
       />
@@ -42,7 +42,7 @@ const FindBloodPage = () => {
         
         <div className="max-w-4xl mx-auto">
           <p className="text-center text-lg mb-8">
-            রংপুর বিভাগের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন।
+            বাংলাদেশের যেকোনো জেলায় রক্তের গ্রুপ অনুযায়ী রক্তদাতা খুঁজুন।
           </p>
           
           {/* ... search form and results ... */}

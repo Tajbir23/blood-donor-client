@@ -8,7 +8,7 @@ import { generateMetadata } from "@/app/config/metadata";
 
 export const metadata = generateMetadata({
   title: "লগইন করুন",
-  description: "রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। লগইন করে আপনার অ্যাকাউন্টে প্রবেশ করুন এবং রক্তদান সেবা গ্রহণ করুন।",
+  description: "বাংলাদেশের রক্তদান কমিউনিটিতে যোগ দিন। লগইন করে আপনার অ্যাকাউন্টে প্রবেশ করুন এবং রক্তদান সেবা গ্রহণ করুন।",
   path: "/login",
 });
 
@@ -19,17 +19,17 @@ function LoginContent() {
         <div className="text-center">
           <Image 
             src="/logo.png" 
-            alt="রক্তদান রংপুর বিভাগ" 
+            alt="রক্তদান বাংলাদেশ" 
             width={80} 
             height={80}
             className="mx-auto h-20 w-auto"
             priority
           />
           <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            রক্তদান রংপুর বিভাগে স্বাগতম
+            রক্তদান বাংলাদেশে স্বাগতম
           </h1>
           <p className="mt-2 text-center text-sm text-gray-600">
-            রংপুর বিভাগের রক্তদান কমিউনিটিতে যোগ দিন
+            বাংলাদেশের রক্তদান কমিউনিটিতে যোগ দিন
           </p>
         </div>
         

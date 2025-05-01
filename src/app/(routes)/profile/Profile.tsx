@@ -73,7 +73,7 @@ const Profile = () => {
   }
 
   const donationHistory: Donation[] = [
-    { date: '১০ মার্চ, ২০২৩', location: 'রংপুর মেডিকেল কলেজ হাসপাতাল', recipient: 'শামীমা বেগম', bloodGroup: 'B+' },
+    { date: '১০ মার্চ, ২০২৩', location: 'মেডিকেল কলেজ হাসপাতাল', recipient: 'শামীমা বেগম', bloodGroup: 'B+' },
     { date: '১২ ডিসেম্বর, ২০২২', location: 'আদর্শ হাসপাতাল, রংপুর', recipient: 'রফিক আলী', bloodGroup: 'B+' },
     { date: '০৫ সেপ্টেম্বর, ২০২২', location: 'শিশু হাসপাতাল, রংপুর', recipient: 'তাসনিম আক্তার', bloodGroup: 'B+' },
     { date: '১৮ জুন, ২০২২', location: 'ডক্টরস ক্লিনিক, রংপুর', recipient: 'আরিফ হোসেন', bloodGroup: 'B+' },

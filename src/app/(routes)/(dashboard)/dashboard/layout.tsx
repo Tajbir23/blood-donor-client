@@ -3,8 +3,8 @@ import { Metadata } from 'next'
 import Sidebar from '@/components/dashboard/dashboard/Sidebar'
 
 export const metadata: Metadata = {
-  title: 'Dashboard | রক্তদান রংপুর বিভাগ',
-  description: 'System dashboard for রক্তদান রংপুর বিভাগ platform'
+  title: 'Dashboard | রক্তদান বাংলাদেশ',
+  description: 'System dashboard for রক্তদান বাংলাদেশ platform'
 }
 
 const DashboardLayout = ({
