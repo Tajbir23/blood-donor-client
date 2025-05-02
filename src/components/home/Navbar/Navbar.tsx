@@ -1,16 +1,19 @@
 'use client'
 import Link from 'next/link'
-import { FaBars, FaTimes, FaUser, FaChevronDown } from 'react-icons/fa'
+import { FaBars, FaTimes, FaUser, FaChevronDown, FaDownload } from 'react-icons/fa'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import InstallButton from './InstallButton'
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
   const pathname = usePathname()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const servicesDropdownRef = useRef<HTMLDivElement>(null)
 
   const { data: userData } = useQuery({
     queryKey: ['user'],
@@ -28,19 +31,29 @@ const Navbar = () => {
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen)
+    if (servicesDropdownOpen) setServicesDropdownOpen(false)
+  }
+
+  const toggleServicesDropdown = () => {
+    setServicesDropdownOpen(!servicesDropdownOpen)
+    if (profileDropdownOpen) setProfileDropdownOpen(false)
   }
 
   // Close mobile menu when changing routes
   useEffect(() => {
     setMobileMenuOpen(false)
     setProfileDropdownOpen(false)
+    setServicesDropdownOpen(false)
   }, [pathname])
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setProfileDropdownOpen(false)
+      }
+      if (servicesDropdownRef.current && !servicesDropdownRef.current.contains(event.target as Node)) {
+        setServicesDropdownOpen(false)
       }
     }
     
@@ -59,9 +72,14 @@ const Navbar = () => {
                          userData?.user?.role === 'admin' || 
                          userData?.user?.role === 'moderator'
 
-  const navItems = [
+  // Primary navigation items
+  const primaryNavItems = [
     { path: '/blood-donation', label: 'রক্তদান সেবা' },
     { path: '/sos', label: 'জরুরি রক্তের আবেদন' },
+  ]
+
+  // Secondary navigation items (moved to dropdown)
+  const secondaryNavItems = [
     { path: '/organizations', label: 'প্রতিষ্ঠান সমূহ' },
     { path: '/advice', label: 'পরামর্শ দিন' },
     { path: '/blog', label: 'ব্লগ' },
@@ -98,7 +116,8 @@ const Navbar = () => {
 
           {/* Navigation Items - Desktop */}
           <div className="hidden md:flex md:items-center md:space-x-1">
-            {navItems.map((item) => (
+            {/* Primary Nav Items */}
+            {primaryNavItems.map((item) => (
               <Link key={item.path} href={item.path} passHref>
                 <div className={`relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out
                   ${isActive(item.path) 
@@ -111,6 +130,33 @@ const Navbar = () => {
                 </div>
               </Link>
             ))}
+
+            {/* Services Dropdown */}
+            <div className="relative" ref={servicesDropdownRef}>
+              <button 
+                onClick={toggleServicesDropdown}
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 rounded-md hover:bg-red-50 transition-all duration-200"
+              >
+                <span className="mr-1">আরও সেবা</span>
+                <FaChevronDown className={`transition-transform duration-200 ${servicesDropdownOpen ? 'rotate-180' : ''}`} size={12} />
+              </button>
+              
+              {servicesDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 transition-opacity duration-200">
+                  {secondaryNavItems.map((item) => (
+                    <Link key={item.path} href={item.path} passHref>
+                      <div className={`block px-4 py-2 text-sm ${
+                        isActive(item.path) 
+                          ? "text-red-600 bg-red-50" 
+                          : "text-gray-700 hover:bg-red-50 hover:text-red-600"
+                      }`}>
+                        {item.label}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Dashboard Link - Only for admin users */}
             {userData?.user && hasAdminAccess && (
@@ -126,6 +172,10 @@ const Navbar = () => {
                 </div>
               </Link>
             )}
+
+            {/* Install App Button */}
+            <InstallButton />
+            
 
             {/* Profile or Login Button */}
             {userData?.user ? (
@@ -203,7 +253,8 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden transition-all duration-300 ease-in-out">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
-            {navItems.map((item) => (
+            {/* Primary Nav Items (Mobile) */}
+            {primaryNavItems.map((item) => (
               <Link key={item.path} href={item.path} passHref>
                 <div className={`block px-3 py-2 rounded-md text-base font-medium ${
                   isActive(item.path) 
@@ -214,6 +265,22 @@ const Navbar = () => {
                 </div>
               </Link>
             ))}
+
+            {/* Secondary Nav Items (Mobile) */}
+            <div className="border-t border-gray-100 pt-2 mt-2">
+              <div className="px-3 py-1 text-sm text-gray-500">আরও সেবা</div>
+              {secondaryNavItems.map((item) => (
+                <Link key={item.path} href={item.path} passHref>
+                  <div className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    isActive(item.path) 
+                      ? "text-red-600 bg-red-50" 
+                      : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                  }`}>
+                    {item.label}
+                  </div>
+                </Link>
+              ))}
+            </div>
 
             {/* Dashboard Link - Only for admin users (mobile) */}
             {userData?.user && hasAdminAccess && (
@@ -227,6 +294,14 @@ const Navbar = () => {
                 </div>
               </Link>
             )}
+
+            {/* Install App Button (mobile) */}
+            <Link href="/install" passHref>
+              <div className="flex items-center px-3 py-2 rounded-md text-base font-medium text-green-600 border border-green-600 hover:bg-green-50 mt-2">
+                <FaDownload className="mr-2" />
+                অ্যাপ ইনস্টল করুন
+              </div>
+            </Link>
 
             {userData?.user ? (
               <div className="border-t border-gray-200 pt-4 mt-4">
