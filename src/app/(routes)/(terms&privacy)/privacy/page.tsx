@@ -144,6 +144,69 @@ const PrivacyPage = () => {
         </p>
       </section>
 
+      <section className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">LifeDrop Messenger Bot Privacy Policy (English)</h2>
+        <p className="mb-2 text-gray-700">
+          <strong>Effective Date:</strong> {new Date().toLocaleDateString()}
+        </p>
+        <p className="mb-2 text-gray-700">
+          <strong>App Name:</strong> LifeDrop Messenger Bot
+        </p>
+        <p className="mb-4 text-gray-700">
+          <strong>Developer:</strong> Tajbir Islam
+        </p>
+        
+        <h3 className="text-lg font-medium mb-2 text-gray-800">1. Information We Collect</h3>
+        <p className="mb-2 text-gray-700">
+          We collect the following information through the Messenger chat:
+        </p>
+        <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+          <li>Your Facebook name and ID</li>
+          <li>Your responses to questions (e.g., blood group, location)</li>
+          <li>Your preferences (e.g., donor search filters)</li>
+        </ul>
+        
+        <h3 className="text-lg font-medium mb-2 text-gray-800">2. How We Use the Information</h3>
+        <p className="mb-2 text-gray-700">
+          We use the collected information to:
+        </p>
+        <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+          <li>Match users with potential blood donors</li>
+          <li>Improve our chatbot experience</li>
+          <li>Contact users with relevant updates (if required)</li>
+        </ul>
+        
+        <h3 className="text-lg font-medium mb-2 text-gray-800">3. Data Storage</h3>
+        <p className="mb-4 text-gray-700">
+          All data is securely stored in a protected MongoDB database. We do not sell or share your data with third parties.
+        </p>
+        
+        <h3 className="text-lg font-medium mb-2 text-gray-800">4. User Control</h3>
+        <p className="mb-2 text-gray-700">
+          If you want to delete your data or stop receiving messages, you can:
+        </p>
+        <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
+          <li>Type "STOP" in Messenger</li>
+          <li>Contact us at the email address below</li>
+        </ul>
+        
+        <h3 className="text-lg font-medium mb-2 text-gray-800">5. Changes to This Policy</h3>
+        <p className="mb-4 text-gray-700">
+          We may update this policy from time to time. All changes will be posted here.
+        </p>
+        
+        <h3 className="text-lg font-medium mb-2 text-gray-800">6. Contact</h3>
+        <p className="mb-1 text-gray-700">
+          If you have any questions, contact:
+        </p>
+        <p className="mb-1 text-gray-700">
+          📧 Email: <a href="mailto:studenttajbirislam@gmail.com" className="text-red-600 hover:underline">studenttajbirislam@gmail.com</a>
+        </p>
+        <p className="mb-4 text-gray-700">
+          🌐 Website: <a href="https://blood-donor-bangladesh.vercel.app" className="text-red-600 hover:underline">https://blood-donor-bangladesh.vercel.app</a>
+        </p>
+      </section>
+
       <footer className="text-center mt-8 text-gray-600 text-sm">
         <p>সর্বশেষ আপডেট: <time dateTime="2023-05-25">২৫ মে, ২০২৩</time></p>
       </footer>
