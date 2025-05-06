@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 const defaultMetadata: Metadata = {
-  metadataBase: new URL('https://blood-donor-rangpur.vercel.app'),
+  metadataBase: new URL('https://blood-donor-bangladesh.vercel.app'),
   title: {
     default: 'LifeDrop | বাংলাদেশের সকল বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। রক্তদাতা খুঁজুন, রক্তদান করুন, জীবন বাঁচান।',
     template: '%s | LifeDrop'
@@ -284,7 +284,7 @@ const defaultMetadata: Metadata = {
     google: '4r6L_E636xBF3hU6OjXMUdfSnfTKiwofEtBSHhxMHRw',
   },
   alternates: {
-    canonical: 'https://blood-donor-rangpur.vercel.app',
+    canonical: 'https://blood-donor-bangladesh.vercel.app',
   },
   manifest: '/manifest.json',
 }
@@ -300,7 +300,7 @@ export function generateMetadata({
   path: string
   noIndex?: boolean
 }): Metadata {
-  const url = `https://blood-donor-rangpur.vercel.app${path}`
+  const url = `https://blood-donor-bangladesh.vercel.app${path}`
   
   return {
     ...defaultMetadata,

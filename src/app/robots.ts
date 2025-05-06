@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/organization_dashboard/', '/admin/', '/dashboard/'],
     },
-    sitemap: 'https://blood-donor-rangpur.vercel.app/sitemap.xml',
+    sitemap: 'https://blood-donor-bangladesh.vercel.app/sitemap.xml',
   };
 }

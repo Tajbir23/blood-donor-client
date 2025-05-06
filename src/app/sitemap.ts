@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://blood-donor-rangpur.vercel.app';
+  const baseUrl = 'https://blood-donor-bangladesh.vercel.app';
   
   // Define static routes with their properties
   const staticRoutes = [
