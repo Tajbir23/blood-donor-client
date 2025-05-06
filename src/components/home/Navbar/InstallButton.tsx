@@ -1,47 +1,77 @@
-import React from 'react'
-import { FaDownload } from 'react-icons/fa'
+import { useState, useEffect, useRef } from "react";
+import { BsDownload } from "react-icons/bs";
 
-const InstallButton = () => {
-    // Define the type for the beforeinstallprompt event
-    let deferredPrompt: any;
-
-    React.useEffect(() => {
-        const handleBeforeInstallPrompt = (e: Event) => {
-            // Prevent the default mini-infobar
-            e.preventDefault();
-            
-            // Store the event for later use
-            deferredPrompt = e;
-            
-            // Show the install button
-            const installBtn = document.getElementById('installBtn');
-            if (installBtn) {
-                installBtn.hidden = false;
-                
-                // Add click event listener inside the effect
-                installBtn.addEventListener('click', async () => {
-                    installBtn.hidden = true;
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response: ${outcome}`);
-                    deferredPrompt = null;
-                });
-            }
-        };
-        
-        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        
-        return () => {
-            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        };
-    }, []);
-
-    return (
-        <button id='installBtn' hidden className="flex items-center px-3 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 transition-colors duration-200 ml-2">
-            <FaDownload className="mr-1" />
-            অ্যাপ ইনস্টল
-        </button>
-    )
+// Define a type for the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
 }
 
-export default InstallButton
+const InstallButton = () => {
+  const [showInstallButton, setShowInstallButton] = useState<boolean>(false);
+  // Replace let deferredPrompt with useRef
+  const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Store the event so it can be triggered later
+      deferredPromptRef.current = e as BeforeInstallPromptEvent;
+      // Show the install button
+      setShowInstallButton(true);
+    };
+
+    // Add the event listener
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    // Check if app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setShowInstallButton(false);
+    }
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    // If there's no deferred prompt, do nothing
+    if (!deferredPromptRef.current) return;
+
+    // Show the install prompt
+    deferredPromptRef.current.prompt();
+
+    // Wait for the user to respond to the prompt
+    const choiceResult = await deferredPromptRef.current.userChoice;
+    
+    // User accepted the installation
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+      setShowInstallButton(false);
+    } else {
+      console.log('User dismissed the install prompt');
+    }
+    
+    // Clear the saved prompt as it can't be used again
+    deferredPromptRef.current = null;
+  };
+
+  if (!showInstallButton) return null;
+
+  return (
+    <button
+      onClick={handleInstallClick}
+      className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded-md text-sm"
+    >
+      <BsDownload /> Install
+    </button>
+  );
+};
+
+export default InstallButton;

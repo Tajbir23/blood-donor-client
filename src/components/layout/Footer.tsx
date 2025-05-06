@@ -12,7 +12,7 @@ const Footer = () => {
               বাংলাদেশের জন্য একটি অলাভজনক রক্তদান প্ল্যাটফর্ম। আমরা রক্তদাতা এবং রক্তের প্রয়োজনে থাকা রোগীদের মধ্যে সেতুবন্ধন তৈরি করি।
             </p>
             <div className="mt-auto">
-              <p className="text-sm italic">"একটি রক্তদান তিনটি জীবন বাঁচাতে পারে"</p>
+              <p className="text-sm italic">&quot;একটি রক্তদান তিনটি জীবন বাঁচাতে পারে&quot;</p>
             </div>
           </div>
           
@@ -36,16 +36,16 @@ const Footer = () => {
             <div className="mt-6">
               <h4 className="text-md font-semibold mb-2">আমাদের অনুসরণ করুন</h4>
               <div className="flex space-x-4">
-                <a href="#" className="hover:text-red-300 transition-colors">
+                <a href="https://facebook.com" className="hover:text-red-300 transition-colors">
                   <FaFacebook size={20} />
                 </a>
-                <a href="#" className="hover:text-red-300 transition-colors">
+                <a href="https://twitter.com" className="hover:text-red-300 transition-colors">
                   <FaTwitter size={20} />
                 </a>
-                <a href="#" className="hover:text-red-300 transition-colors">
+                <a href="https://instagram.com" className="hover:text-red-300 transition-colors">
                   <FaInstagram size={20} />
                 </a>
-                <a href="#" className="hover:text-red-300 transition-colors">
+                <a href="https://linkedin.com" className="hover:text-red-300 transition-colors">
                   <FaLinkedin size={20} />
                 </a>
               </div>
@@ -55,13 +55,12 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4 border-b border-red-500 pb-2">দ্রুত লিঙ্ক</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">আমাদের সম্পর্কে</a></li>
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">রক্তদাতা হোন</a></li>
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">রক্তের জন্য অনুরোধ</a></li>
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">স্বেচ্ছাসেবক হোন</a></li>
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">ব্লগ</a></li>
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">গোপনীয়তা নীতি</a></li>
-              <li><a href="#" className="text-sm hover:text-red-300 transition-colors">শর্তাবলী</a></li>
+              <li><a href="/about" className="text-sm hover:text-red-300 transition-colors">আমাদের সম্পর্কে</a></li>
+              <li><a href="/become-donor" className="text-sm hover:text-red-300 transition-colors">রক্তদাতা হোন</a></li>
+              <li><a href="/blood-request" className="text-sm hover:text-red-300 transition-colors">রক্তের জন্য অনুরোধ</a></li>
+              <li><a href="/volunteer" className="text-sm hover:text-red-300 transition-colors">স্বেচ্ছাসেবক হোন</a></li>
+              <li><a href="/privacy" className="text-sm hover:text-red-300 transition-colors">গোপনীয়তা নীতি</a></li>
+              <li><a href="/terms" className="text-sm hover:text-red-300 transition-colors">শর্তাবলী</a></li>
             </ul>
           </div>
         </div>

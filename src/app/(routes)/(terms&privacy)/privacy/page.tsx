@@ -186,7 +186,7 @@ const PrivacyPage = () => {
           If you want to delete your data or stop receiving messages, you can:
         </p>
         <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-1">
-          <li>Type "STOP" in Messenger</li>
+          <li>Type &quot;STOP&quot; in Messenger</li>
           <li>Contact us at the email address below</li>
         </ul>
         
