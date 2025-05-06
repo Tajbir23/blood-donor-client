@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { defaultMetadata } from './config/metadata'
+import { viewport } from './viewport'
 import './globals.css'
 import Navbar from "@/components/home/Navbar/Navbar";
 import EmergencyHeadline from "@/components/Emergency-headline/Emergency-headline";
@@ -17,6 +18,7 @@ import Script from 'next/script'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = defaultMetadata
+export { viewport }
 
 export default async function RootLayout({
   children,

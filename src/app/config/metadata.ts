@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 
 const defaultMetadata: Metadata = {
   metadataBase: new URL('https://blood-donor-rangpur.vercel.app'),
-  themeColor: '#000000',
   title: {
     default: 'LifeDrop | বাংলাদেশের সকল বিভাগের রক্তদান কমিউনিটিতে যোগ দিন। রক্তদাতা খুঁজুন, রক্তদান করুন, জীবন বাঁচান।',
     template: '%s | LifeDrop'

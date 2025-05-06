@@ -49,19 +49,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Here you could fetch dynamic routes from your database or API
-  // For example, blog posts, user profiles, etc.
-  // const blogPosts = await fetchBlogPosts();
-  // const dynamicBlogRoutes = blogPosts.map(post => ({
-  //   url: `${baseUrl}/blog/${post.slug}`,
-  //   lastModified: new Date(post.updatedAt),
-  //   changeFrequency: 'weekly' as const,
-  //   priority: 0.7,
-  // }));
-
-  // Combine static and dynamic routes
-  // return [...staticRoutes, ...dynamicBlogRoutes];
-  
-  // For now, just return static routes
-  return staticRoutes;
+  // Fetch dynamic routes where possible
+  try {
+    // Example: Fetch blog posts
+    // You may need to adjust this based on your actual API structure
+    const blogResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/all`);
+    let dynamicBlogRoutes: MetadataRoute.Sitemap = [];
+    
+    if (blogResponse.ok) {
+      const blogPosts = await blogResponse.json();
+      dynamicBlogRoutes = blogPosts.blogs?.map((post: any) => ({
+        url: `${baseUrl}/blog/${post.slug || post._id}`,
+        lastModified: new Date(post.updatedAt || post.createdAt),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      })) || [];
+    }
+    
+    // Example: Fetch organization pages
+    const orgsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations/all`);
+    let dynamicOrgRoutes: MetadataRoute.Sitemap = [];
+    
+    if (orgsResponse.ok) {
+      const orgs = await orgsResponse.json();
+      dynamicOrgRoutes = orgs.organizations?.map((org: any) => ({
+        url: `${baseUrl}/organization/${org._id}`,
+        lastModified: new Date(org.updatedAt || org.createdAt),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      })) || [];
+    }
+    
+    // Combine all routes
+    return [...staticRoutes, ...dynamicBlogRoutes, ...dynamicOrgRoutes];
+    
+  } catch (error) {
+    console.error('Error generating dynamic sitemap routes:', error);
+    // Fallback to static routes only if there's an error
+    return staticRoutes;
+  }
 }
