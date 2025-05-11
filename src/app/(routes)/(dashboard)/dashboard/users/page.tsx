@@ -30,7 +30,7 @@ const UsersPage = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState<UserTabState>({tab: 'active', tabType: 'isActive'})
   const [selectedUser, setSelectedUser] = useState<{ userId: string, fullName: string, role: string, currentRole: string } | null>(null)
-  const [selectedAction, setSelectedAction] = useState<{ userId: string, fullName: string, isOpen: boolean, action: 'block' | 'unblock' | 'delete' } | null>(null)
+  const [selectedAction, setSelectedAction] = useState<{ userId: string, fullName: string, isOpen: boolean, action: 'block' | 'unblock' | 'delete' | 'verify' } | null>(null)
 
   const user = useMemo(() => {
     return queryClient.getQueryData<UserQueryData>(["user"])
@@ -62,7 +62,7 @@ const UsersPage = () => {
     staleTime: 1000 * 60 * 5,
   })
 
-  const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete', fullName: string) => {
+  const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete' | 'verify', fullName: string) => {
     // Implement action handlers here
     console.log(`Action ${action} for user ${userId}`)
     setSelectedAction({

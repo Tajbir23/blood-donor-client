@@ -1,6 +1,6 @@
 import { User } from "@/lib/types/userType";
 import Image from "next/image";
-import { FaEye, FaLock, FaTrash } from "react-icons/fa";
+import { FaCheck, FaEye, FaLock, FaTrash } from "react-icons/fa";
 import Link from "next/link";
 import { FaUnlock } from "react-icons/fa";
 
@@ -11,7 +11,7 @@ interface UserTableProps {
     totalUsers: number;
   };
   handleRoleChange: (userId: string, newRole: string, fullName: string, currentRole: string) => void;
-  handleAction: (userId: string, action: 'block' | 'unblock' | 'delete', fullName: string) => void;
+  handleAction: (userId: string, action: 'block' | 'unblock' | 'delete' | 'verify', fullName: string) => void;
   toggleDropdown: (userId: string) => void;
   activeDropdown: string | null;
   setActiveDropdown: (userId: string | null) => void;
@@ -81,9 +81,9 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                         <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                           নিষিদ্ধ
                         </span>
-                      ) : user.isActive ? (
+                      ) : user.isVerified ? (
                         <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          সক্রিয়
+                          verified
                         </span>
                       ) : (
                         <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
@@ -175,6 +175,18 @@ const UserTable = ({data, handleRoleChange, handleAction, toggleDropdown, active
                                 </button>
                               ) : null}
                             </div>
+                            {user.isVerified ? null : <div className="py-1" role="menu" aria-orientation="vertical">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAction(user._id as string, 'verify', user.fullName as string);
+                                }}
+                                className="flex w-full items-center px-4 py-2 text-sm text-green-700 hover:bg-gray-100"
+                              >
+                                <FaCheck className="mr-2" /> Verify
+                              </button>
+                            </div>}
+
                           </div>
                         )}
                       </div>

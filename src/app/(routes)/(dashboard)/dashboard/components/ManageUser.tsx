@@ -5,11 +5,12 @@ import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { manageUser } from '@/app/actions/administrator/system/userActions';
 import { useQueryClient } from '@tanstack/react-query';
+import revalidateTags from '@/app/actions/revalidateTags';
 
 interface ManageUserProps {
   userId: string;
   fullName: string;
-  action: 'block' | 'unblock' | 'delete';
+  action: 'block' | 'unblock' | 'delete' | 'verify';
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   refetch: () => void;
@@ -25,6 +26,7 @@ const ManageUser = ({ userId, fullName, action, isOpen, setIsOpen, refetch, quer
       case 'block': return 'ব্লক';
       case 'unblock': return 'আনব্লক';
       case 'delete': return 'মুছে ফেলা';
+      case 'verify': return 'verify করুন';
       default: return action;
     }
   };
@@ -36,8 +38,9 @@ const ManageUser = ({ userId, fullName, action, isOpen, setIsOpen, refetch, quer
       if(response.success){
         toast.success(`${fullName} ${getActionText()} করা হয়েছে`);
         setIsOpen(false);
-        refetch();
+        revalidateTags('users');
         queryClient.invalidateQueries({ queryKey: [queryKey] });
+        refetch();
       }else{
         toast.error(response.message);
       }
