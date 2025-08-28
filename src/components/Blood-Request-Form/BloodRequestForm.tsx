@@ -655,11 +655,7 @@ const BloodRequestForm: React.FC<BloodRequestFormProps> = ({type = "normal", tit
         </div>
       </form>
       
-      {type === "sos" && !isSubmitting && (
-        <div className="w-full p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-center mt-4">
-          <p className="text-lg font-semibold">আপনার অনুরধটি ১০ জন রক্তদাতার কাছে পাঠানো হয়েছে</p>
-        </div>
-      )}
+      
     </div>
   );
 };

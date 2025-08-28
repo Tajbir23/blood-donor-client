@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+input, select, textarea {
+  color: black;
+  background-color: white;
+}
+
+
+
 @keyframes marquee {
   0% {
     transform: translateX(100%);

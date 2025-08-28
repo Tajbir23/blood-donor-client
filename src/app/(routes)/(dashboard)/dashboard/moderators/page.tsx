@@ -20,7 +20,7 @@ const ModeratorsPage = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedAction, setSelectedAction] = useState<{ userId: string, fullName: string, action: 'block' | 'unblock' | 'delete' } | null>(null)
+  const [selectedAction, setSelectedAction] = useState<{ userId: string, fullName: string, action: 'block' | 'unblock' | 'delete' | 'verify' } | null>(null)
 
   const limit = 5
   const user = useMemo(() => {
@@ -70,7 +70,7 @@ const ModeratorsPage = () => {
       refetch()
     }
 
-  const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete', fullName: string) => {
+  const handleAction = async (userId: string, action: 'block' | 'unblock' | 'delete' | 'verify', fullName: string) => {
       console.log(`Action ${action} for user ${userId}`)
       setSelectedAction({
           userId: userId,

@@ -3,14 +3,18 @@ import Link from 'next/link'
 import { FaBars, FaTimes, FaUser, FaChevronDown, FaDownload } from 'react-icons/fa'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { usePathname, useRouter } from 'next/navigation'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import InstallButton from './InstallButton'
+import { logoutUser } from '@/app/actions/authentication'
+import toast from 'react-hot-toast'
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const pathname = usePathname()
   const dropdownRef = useRef<HTMLDivElement>(null)
   const servicesDropdownRef = useRef<HTMLDivElement>(null)
@@ -85,6 +89,15 @@ const Navbar = () => {
     { path: '/blog', label: 'ব্লগ' },
     { path: '/donation', label: 'অনুদান করুন' },
   ]
+
+  const handleLogout = async() => {
+    const data = await logoutUser();
+    if(data.success){
+      toast.success(data.message)
+      queryClient.removeQueries({queryKey : ["user", "organizations"]})
+      router.push("/")
+    }
+  }
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -223,11 +236,11 @@ const Navbar = () => {
                       </div>
                     </Link>
                     <div className="border-t border-gray-100 my-1"></div>
-                    <Link href="/api/auth/logout" passHref>
+                    <button onClick={handleLogout} className='w-full cursor-pointer'>
                       <div className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                         লগআউট
                       </div>
-                    </Link>
+                    </button>
                   </div>
                 )}
               </div>
@@ -340,11 +353,11 @@ const Navbar = () => {
                       সেটিংস
                     </div>
                   </Link>
-                  <Link href="/api/auth/logout" passHref>
+                  <button onClick={handleLogout}>
                     <div className="block px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">
                       লগআউট
                     </div>
-                  </Link>
+                  </button>
                 </div>
               </div>
             ) : (
