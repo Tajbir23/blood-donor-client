@@ -1,107 +1,143 @@
-# LifeDrop - Blood Donation Platform
+# LifeDrop — Blood Donation Platform (Frontend)
 
-LifeDrop is a comprehensive blood donation platform built for Kurigram district, connecting blood donors with those in need during emergencies. The platform facilitates quick and efficient blood donation matching, making it easier for people to find blood donors in critical situations.
-
-![LifeDrop Platform](public/hero-image.jpg)
+LifeDrop is a full-featured blood donation platform built for Bangladesh, connecting blood donors with those in need during emergencies. This repository contains the **Next.js frontend** client application.
 
 ## Features
 
-- **Find Blood Donors**: Quickly search for donors by blood type and location
-- **Emergency SOS**: Request urgent blood donation in critical situations
-- **Donor Registration**: Register as a blood donor to help save lives
-- **Health Advice**: Get professional advice about blood donation
-- **Blog**: Read informative articles about blood donation and health
-- **Donation**: Support the platform through financial contributions
+- 🩸 **Find Blood Donors** — Search donors by blood type, location and district
+- 🚨 **Emergency SOS** — Send urgent blood requests to nearby eligible donors
+- 📋 **Donor Registration** — Register as a donor with medical history & location
+- 🏢 **Organization Dashboard** — Manage blood donation organizations and members
+- 📊 **Admin Dashboard** — Manage users, sliders, admins and moderators
+- 🏆 **Donor Leaderboard** — Recognize top blood donors publicly
+- 📝 **Blog & Health Advice** — Informative articles on blood donation
+- 💳 **Online Donation** — Support the platform via SSLCommerz payment
+- 🗺️ **Map Integration** — Leaflet-based interactive location picker
+- 💬 **Real-time Updates** — Socket.IO for live notifications
+- 📱 **PWA Support** — Installable as a Progressive Web App
+- 📧 **Email Verification** — OTP-based account verification flow
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14, React, TailwindCSS
-- **Language**: TypeScript
-- **UI Components**: Custom components with responsive design
-- **Icons**: React Icons
-- **Maps**: Leaflet for location services
-- **Authentication**: NextAuth.js
-- **Form Handling**: React Hook Form
-- **Validation**: Zod
-- **State Management**: React Context API
+| Category | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Styling | TailwindCSS 4 |
+| Data Fetching | TanStack Query v5 |
+| Rich Text Editor | Tiptap |
+| Maps | Leaflet + React-Leaflet |
+| Charts | Chart.js + React-ChartJS-2 |
+| Animations | Framer Motion |
+| Icons | Lucide React + React Icons |
+| HTTP Client | Axios |
+| Real-time | Socket.IO Client |
+| Auth | JWT (jose) |
+| PWA | next-pwa |
+| Runtime | React 19 |
 
 ## Getting Started
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/tajbir23/blood-donor-client.git
-   cd lifedrop
-   ```
+### Prerequisites
 
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+- Node.js >= 18.x
+- npm >= 9.x
+- Running instance of [blood-donor-server](../blood-donor-server)
 
-3. Run the development server:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+### Installation
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+```bash
+# Clone the repository
+git clone https://github.com/Tajbir23/blood-donor-client.git
+cd blood-donor-client
 
-## Environment Variables
+# Install dependencies
+npm install
+```
 
-Create a `.env.local` file in the root directory with the following variables:
+### Environment Variables
+
+Create a `.env` file in the root directory:
 
 ```env
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-
-# Authentication
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-nextauth-secret
-
-# Google Maps (if using)
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
-
-# File Upload (if using cloud storage)
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your-upload-preset
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+NEXT_PUBLIC_JWT_TOKEN=your_jwt_secret
+NEXT_PUBLIC_NODE_ENV=development
 ```
+
+### Running the App
+
+```bash
+# Development (Turbopack)
+npm run dev
+
+# Production build (webpack)
+npm run build
+npm start
+
+# Lint
+npm run lint
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
 ```
 src/
-├── app/                    # Next.js app directory
-│   ├── (routes)/          # Route groups
-│   ├── actions/           # Server actions
-│   └── libs/              # Utility functions
-├── components/            # React components
-├── hooks/                 # Custom React hooks
-├── lib/                   # Shared libraries
-│   └── types/            # TypeScript type definitions
-└── styles/               # Global styles
+├── app/
+│   ├── (routes)/              # App route groups
+│   │   ├── (authentication)/  # Login, Register, Verify
+│   │   └── .../               # All other pages
+│   ├── actions/               # Next.js server actions
+│   ├── api/                   # API route handlers
+│   ├── config/                # App configuration
+│   ├── hooks/                 # App-level hooks
+│   ├── libs/                  # Utility functions
+│   └── utils/                 # Helper utilities
+├── components/
+│   ├── auth/                  # Auth components
+│   ├── dashboard/             # Admin dashboard UI
+│   ├── home/                  # Home page sections
+│   ├── layout/                # Header, Footer, Nav
+│   ├── modals/                # Modal dialogs
+│   └── ui/                    # Reusable UI components
+├── hooks/                     # Global custom hooks
+└── lib/
+    ├── api/                   # API call functions
+    ├── constants/             # App constants
+    ├── data/                  # Static data
+    ├── types/                 # TypeScript types
+    └── utils/                 # Shared utilities
 ```
+
+## Available Routes
+
+| Route | Description |
+|---|---|
+| `/` | Home page |
+| `/find-blood` | Search blood donors |
+| `/sos` | Emergency blood request |
+| `/register` | User registration |
+| `/login` | Login |
+| `/profile` | User profile |
+| `/dashboard` | Admin dashboard |
+| `/organizations` | Organization listing |
+| `/organization_dashboard/[id]` | Org admin panel |
+| `/blood-donation` | Donation info |
+| `/donation` | Financial donation |
+| `/blog` | Blog listing |
+| `/advice` | Health advice |
+| `/events` | Events |
 
 ## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, email support@lifedrop.com or join our Slack channel.
-
-## Acknowledgments
-
-- Thanks to all contributors who have helped shape LifeDrop
-- Special thanks to the blood donation community
-- Inspired by the need for efficient blood donation systems in rural areas
+This project is licensed under the MIT License.
