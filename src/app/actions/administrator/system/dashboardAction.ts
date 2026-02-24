@@ -38,7 +38,7 @@ export const getDashboardData = async (timeRange: string) => {
 }
 
 
-export const getAllUsers = async ({search, page, limit, isActive, isBanned, allUser}: {search: string, page: number, limit: number, isActive?: boolean, isBanned?: boolean, allUser?: boolean}) => {
+export const getAllUsers = async ({search, page, limit, isActive, isBanned, isVerified, allUser}: {search: string, page: number, limit: number, isActive?: boolean, isBanned?: boolean, isVerified?: boolean, allUser?: boolean}) => {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
 
@@ -49,22 +49,28 @@ export const getAllUsers = async ({search, page, limit, isActive, isBanned, allU
 
     const { role } = await verifyJwt() as decodedJwtType
 
-    console.log("line 43", role)
-
     const isAdmin = role === 'admin' || role === 'superAdmin' || role === 'moderator';
 
     if(!isAdmin){
         redirect('/')
     }
 
-    const users = await baseUrl(`/system/dashboard/users?search=${search}&page=${page}&limit=${limit}&isActive=${isActive}&isBanned=${isBanned}&allUser=${allUser}`,{
-        cache: 'force-cache',
+    const params = new URLSearchParams();
+    params.set('search', search);
+    params.set('page', String(page));
+    params.set('limit', String(limit));
+    if (isActive !== undefined) params.set('isActive', String(isActive));
+    if (isBanned !== undefined) params.set('isBanned', String(isBanned));
+    if (isVerified !== undefined) params.set('isVerified', String(isVerified));
+    if (allUser !== undefined) params.set('allUser', String(allUser));
+
+    const users = await baseUrl(`/system/dashboard/users?${params.toString()}`,{
+        cache: 'no-store',
         headers: {
             'Authorization': `Bearer ${token}`
         },
         next: {
             tags: ['users'],
-            revalidate: 60 * 60 * 24
         }
     })
 

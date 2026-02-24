@@ -28,7 +28,12 @@ const nextConfig = {
         pathname: '/uploads/**',
       },
     ],
-  }
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb',
+    },
+  },
 }
 
 module.exports = withPWA(nextConfig)

@@ -80,7 +80,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const emergencyBloodCount = organizations.filter(org => org.providesEmergencyBlood).length;
     const allBloodGroups = [...new Set(organizations.flatMap(org => org.availableBloodGroups))];
     
-    const title = `${totalOrganizations}টি রক্তদাতা সংগঠন | Blood Donor Organizations`;
+    const title = `${totalOrganizations}টি রক্তদাতা সংগঠন | LifeDrop`;
     const description = `বাংলাদেশে ${totalOrganizations}টি রক্তদাতা সংগঠন রয়েছে। ${bloodBankCount}টি রক্তের ব্যাংক এবং ${emergencyBloodCount}টি জরুরি রক্ত সরবরাহকারী সংগঠন। উপলব্ধ রক্তের গ্রুপ: ${allBloodGroups.join(', ')}।`;
 
     return {
@@ -92,7 +92,7 @@ export async function generateMetadata(): Promise<Metadata> {
         description,
         type: 'website',
         locale: 'bn_BD',
-        siteName: 'Blood Donor',
+        siteName: 'LifeDrop',
       },
       twitter: {
         card: 'summary_large_image',
@@ -106,7 +106,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'Organizations | Blood Donor',
+      title: 'Organizations | LifeDrop',
       description: 'Find and join blood donation organizations',
     };
   }
@@ -120,17 +120,16 @@ const page = async () => {
     ]);
     
     return (
-      <div>
-        <Organizations decodedUser={user} initialData={initialData} />
-      </div>
+      <Organizations decodedUser={user} initialData={initialData} />
     );
   } catch (error) {
     console.error('Error in organizations page:', error);
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Organizations</h1>
-          <p className="text-gray-600">Please try again later or contact support if the problem persists.</p>
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="text-center px-4">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h1 className="font-serif text-xl font-bold text-stone-800 mb-2">লোড করতে সমস্যা হয়েছে</h1>
+          <p className="text-stone-500 text-sm">দয়া করে পেজটি রিফ্রেশ করুন অথবা পরে আবার চেষ্টা করুন।</p>
         </div>
       </div>
     );

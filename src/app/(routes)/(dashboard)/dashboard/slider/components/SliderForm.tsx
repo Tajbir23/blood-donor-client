@@ -68,8 +68,19 @@ const SliderForm = ({ isOpen, onClose, refetch }: SliderFormProps) => {
         setSlider(prev => ({ ...prev, [name]: value }))
     }
 
-    const handleSubmit =async(e: React.FormEvent) => {
+    const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault()
+        
+        // Validate description
+        if (!slider.description || slider.description.length < 10) {
+            toast.error('Description must be at least 10 characters long')
+            return
+        }
+        if (slider.description.length > 500) {
+            toast.error('Description cannot exceed 500 characters')
+            return
+        }
+
         // Add form submission logic here
         console.log(slider)
         const response = await createSlider(slider)
@@ -144,8 +155,21 @@ const SliderForm = ({ isOpen, onClose, refetch }: SliderFormProps) => {
                                     onChange={handleChange}
                                     placeholder="Enter slider description" 
                                     rows={3}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                                        slider.description && (slider.description.length < 10 || slider.description.length > 500) 
+                                        ? 'border-red-500' 
+                                        : 'border-gray-300'
+                                    }`}
                                 />
+                                {slider.description && slider.description.length < 10 && (
+                                    <p className="mt-1 text-sm text-red-500">Description must be at least 10 characters long</p>
+                                )}
+                                {slider.description && slider.description.length > 500 && (
+                                    <p className="mt-1 text-sm text-red-500">Description cannot exceed 500 characters</p>
+                                )}
+                                <p className="mt-1 text-sm text-gray-500">
+                                    {slider.description ? `${slider.description.length}/500 characters` : '0/500 characters'}
+                                </p>
                             </div>
                         </div>
                         

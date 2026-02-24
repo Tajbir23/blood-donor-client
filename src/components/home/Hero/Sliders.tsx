@@ -1,172 +1,136 @@
 'use client'
-import { User } from "@/lib/types/userType";
-import { useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-
-interface UserQuery {
-    user: User
-}
+import { useMemo, useEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import Image from 'next/image'
+import Link from 'next/link'
 
 interface SlideProps {
-  image: string;
-  title: string;
-  description: string;
-  isRoute?: boolean;
-  route?: string;
-  buttonText?: string;
+  image: string
+  title: string
+  description: string
+  isRoute?: boolean
+  route?: string
+  buttonText?: string
 }
 
-const Sliders = ({ slides }: { slides: SlideProps[] }) => {
-  const [current, setCurrent] = useState(0);
-  const queryClient = useQueryClient();
+interface UserQuery {
+  user: { _id?: string }
+}
 
-  const user = useMemo(() => queryClient.getQueryData<UserQuery>(['user']), [queryClient]);
-  const isLoggedIn = useMemo(() => user?.user._id, [user]);
+export default function Sliders({ slides }: { slides: SlideProps[] }) {
+  const [current, setCurrent] = useState(0)
+  const qc       = useQueryClient()
+  const user     = useMemo(() => qc.getQueryData<UserQuery>(['user']), [qc])
+  const loggedIn = !!user?.user?._id
 
-  // Auto-advance slides
+  /* Auto-advance */
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent(current => (current === slides.length - 1 ? 0 : current + 1));
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [slides.length]);
+    if (!slides?.length) return
+    const t = setInterval(() => setCurrent(c => (c + 1) % slides.length), 5500)
+    return () => clearInterval(t)
+  }, [slides?.length])
 
-  // Go to specific slide
-  const goToSlide = (index: number) => {
-    setCurrent(index);
-  };
-
-  // Go to next slide
-  const nextSlide = () => {
-    setCurrent(current => current === slides.length - 1 ? 0 : current + 1);
-  };
-
-  // Go to previous slide
-  const prevSlide = () => {
-    setCurrent(current => current === 0 ? slides.length - 1 : current - 1);
-  };
+  if (!slides?.length) {
+    /* Fallback static hero when slider data unavailable */
+    return (
+      <section className="relative overflow-hidden rounded-xl bg-gradient-to-br from-red-900 via-red-800 to-stone-900 min-h-[480px] flex items-center justify-center text-white text-center px-6">
+        <div>
+          <h1 className="font-serif text-4xl md:text-6xl font-bold mb-4 text-shadow-md">
+            রক্ত দিন, জীবন বাঁচান
+          </h1>
+          <p className="text-red-100 text-lg mb-8 max-w-xl mx-auto">বাংলাদেশের সবচেয়ে বড় রক্তদান প্ল্যাটফর্মে স্বাগতম</p>
+          <Link href="/register" className="bg-white text-red-700 font-semibold px-8 py-3 rounded hover:bg-red-50 transition-colors text-sm">
+            এখনই যোগ দিন
+          </Link>
+        </div>
+      </section>
+    )
+  }
 
   return (
-    <section className="relative h-[500px] md:h-[600px] overflow-hidden rounded-xl shadow-2xl">
+    <section className="relative overflow-hidden rounded-xl shadow-lg" style={{ height: 'clamp(360px, 55vw, 600px)' }}>
       {/* Slides */}
-      <div className="h-full w-full relative">
-        {slides.map((slide, index) => (
-          <div 
-            key={index}
-            className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
-              index === current ? 'opacity-100 z-10 translate-x-0' : 
-              index < current ? 'opacity-0 z-0 -translate-x-full' : 'opacity-0 z-0 translate-x-full'
-            }`}
-          >
-            <div className="relative h-full w-full overflow-hidden">
-              <Image 
-                src={`${slide.image}`} 
-                alt={slide.title}
-                fill
-                priority={index === 0}
-                loading={index === 0 ? "eager" : "lazy"}
-                className="object-cover object-center transition-transform duration-10000 hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 100vw"
-                quality={95}
-              />
-              
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30"></div>
-              
-              {/* Slide content */}
-              <div className="container mx-auto px-4 h-full relative z-10">
-                <div className="flex flex-col items-center justify-center text-center text-white h-full max-w-4xl mx-auto">
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fadeIn tracking-tight leading-tight">
-                    <span className="text-white drop-shadow-[0_2px_8px_rgba(255,0,0,0.6)] font-serif relative">
-                      {slide.title}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent"></span>
-                    </span>
-                  </h1>
-                  
-                  <p className="text-lg md:text-xl mb-8 max-w-2xl animate-slideUp font-medium leading-relaxed">
-                    <span className="bg-gradient-to-r from-black/70 to-red-900/50 px-6 py-3 rounded-lg backdrop-blur-sm text-white font-semibold border-l-4 border-red-500 shadow-lg inline-block">
-                      {slide.description}
-                    </span>
-                  </p>
-                  
-                  <div className="space-y-4 animate-fadeIn">
-                    {/* Show custom button when isRoute is true */}
-                    {slide.isRoute && slide.route && index === current && (
-                      <Link 
-                        href={slide.route}
-                        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-10 rounded-full text-center font-bold tracking-wide transition-all duration-300 inline-block mx-2 shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_20px_rgba(229,62,62,0.4)] transform hover:-translate-y-1 uppercase letter-spacing-wider animate-pulse"
-                      >
-                        {slide.buttonText || "আরও জানুন"}
-                      </Link>
-                    )}
-                    
-                    {/* Show login/register buttons when user is not logged in */}
-                    {!isLoggedIn && index === current && (
-                      <div className="flex flex-wrap justify-center gap-4 mt-2">
-                        <Link 
-                          href="/register" 
-                          className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-10 rounded-full text-center font-bold tracking-wide transition-all duration-300 shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_20px_rgba(229,62,62,0.4)] transform hover:-translate-y-1 uppercase border-2 border-red-400/30 animate-bounce"
-                        >
-                          রেজিস্ট্রেশন করুন
-                        </Link>
-                        <Link 
-                          href="/login" 
-                          className="bg-gradient-to-r from-white to-gray-100 hover:from-gray-100 hover:to-white text-gray-800 py-3 px-10 rounded-full text-center font-bold tracking-wide transition-all duration-300 shadow-[0_8px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_20px_rgba(255,255,255,0.3)] transform hover:-translate-y-1 uppercase border-2 border-white/30"
-                        >
-                          লগইন করুন
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
+      {slides.map((slide, i) => (
+        <div
+          key={i}
+          aria-hidden={i !== current}
+          className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+        >
+          <Image
+            src={slide.image}
+            alt={slide.title}
+            fill
+            priority={i === 0}
+            sizes="100vw"
+            quality={90}
+            className="object-cover object-center"
+          />
+          {/* Gradient overlay — stronger at bottom for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+
+          {/* Content */}
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 px-6 text-center text-white z-10">
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-shadow-lg mb-3 max-w-3xl leading-tight">
+              {slide.title}
+            </h2>
+            <p className="text-sm md:text-base text-white/80 max-w-xl mb-6 text-shadow-sm">
+              {slide.description}
+            </p>
+
+            {i === current && (
+              <div className="flex flex-wrap gap-3 justify-center">
+                {slide.isRoute && slide.route && (
+                  <Link href={slide.route}
+                    className="bg-red-700 hover:bg-red-800 text-white font-semibold px-6 py-2.5 rounded text-sm transition-colors border border-red-600">
+                    {slide.buttonText || 'আরও জানুন'}
+                  </Link>
+                )}
+                {!loggedIn && (
+                  <>
+                    <Link href="/register"
+                      className="bg-white text-red-700 hover:bg-red-50 font-semibold px-6 py-2.5 rounded text-sm transition-colors">
+                      রেজিস্ট্রেশন করুন
+                    </Link>
+                    <Link href="/login"
+                      className="border border-white/60 text-white hover:bg-white/10 font-medium px-6 py-2.5 rounded text-sm transition-colors">
+                      লগইন করুন
+                    </Link>
+                  </>
+                )}
               </div>
-            </div>
+            )}
           </div>
+        </div>
+      ))}
+
+      {/* Prev / Next arrows */}
+      <button
+        aria-label="পূর্ববর্তী"
+        onClick={() => setCurrent(c => (c - 1 + slides.length) % slides.length)}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/30 hover:bg-red-700 transition-colors flex items-center justify-center text-white border border-white/20"
+      >
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+      </button>
+      <button
+        aria-label="পরবর্তী"
+        onClick={() => setCurrent(c => (c + 1) % slides.length)}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/30 hover:bg-red-700 transition-colors flex items-center justify-center text-white border border-white/20"
+      >
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            aria-label={`স্লাইড ${i + 1}`}
+            onClick={() => setCurrent(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'}`}
+          />
         ))}
       </div>
-
-      {/* Navigation arrows - updated with more elegant styling */}
-      <button 
-        aria-label="পূর্ববর্তী স্লাইডে যান"
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-black/20 backdrop-blur-lg text-white p-3 rounded-full z-20 hover:bg-red-600 transition-all duration-300 border border-white/30 hover:scale-110 shadow-md"
-        onClick={prevSlide}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <button 
-        aria-label="পরবর্তী স্লাইডে যান"
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-black/20 backdrop-blur-lg text-white p-3 rounded-full z-20 hover:bg-red-600 transition-all duration-300 border border-white/30 hover:scale-110 shadow-md"
-        onClick={nextSlide}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-
-      {/* Slide indicators - more elegant styling */}
-      <div className="absolute bottom-8 left-0 right-0 z-20">
-        <div className="flex justify-center space-x-3">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              aria-label={`স্লাইড ${index + 1}-এ যান`}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === current 
-                  ? "bg-gradient-to-r from-red-500 to-red-700 w-12 shadow-md shadow-red-500/50" 
-                  : "bg-white/30 hover:bg-white/70 hover:scale-125 border border-white/30"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
     </section>
-  );
-};
+  )
+}
 
-export default Sliders;

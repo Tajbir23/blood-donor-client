@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import { FaBars, FaTimes, FaUser, FaChevronDown, FaDownload } from 'react-icons/fa'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -8,377 +7,251 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import InstallButton from './InstallButton'
 import { logoutUser } from '@/app/actions/authentication'
 import toast from 'react-hot-toast'
+import AppLogo from '@/components/ui/AppLogo'
 
-const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
-  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const pathname = usePathname()
-  const dropdownRef = useRef<HTMLDivElement>(null)
-  const servicesDropdownRef = useRef<HTMLDivElement>(null)
+const NAV_LINKS = [
+  { href: '/blood-donation', label: 'রক্তদান সেবা' },
+  { href: '/sos',            label: 'জরুরি আবেদন' },
+  { href: '/find-blood',     label: 'রক্ত খুঁজুন' },
+  { href: '/organizations',  label: 'প্রতিষ্ঠান' },
+  { href: '/about',          label: 'আমাদের সম্পর্কে' },
+]
 
-  const { data: userData } = useQuery({
+const MORE_LINKS = [
+  { href: '/blog',     label: 'ব্লগ' },
+  { href: '/advice',   label: 'পরামর্শ' },
+  { href: '/donation', label: 'অনুদান' },
+]
+
+export default function Navbar() {
+  const [mobileOpen, setMobileOpen]       = useState(false)
+  const [profileOpen, setProfileOpen]     = useState(false)
+  const [moreOpen, setMoreOpen]           = useState(false)
+  const pathname   = usePathname()
+  const router     = useRouter()
+  const qc         = useQueryClient()
+  const profileRef = useRef<HTMLDivElement>(null)
+  const moreRef    = useRef<HTMLDivElement>(null)
+
+  const { data: auth } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const response = await fetch('/api/user/me')
-      if (!response.ok) return null
-      return response.json()
+      const r = await fetch('/api/user/me')
+      return r.ok ? r.json() : null
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   })
-  
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
-  }
 
-  const toggleProfileDropdown = () => {
-    setProfileDropdownOpen(!profileDropdownOpen)
-    if (servicesDropdownOpen) setServicesDropdownOpen(false)
-  }
+  const user          = auth?.user
+  const hasAdmin      = ['superAdmin', 'admin', 'moderator'].includes(user?.role)
+  const isActive      = (p: string) => pathname === p
 
-  const toggleServicesDropdown = () => {
-    setServicesDropdownOpen(!servicesDropdownOpen)
-    if (profileDropdownOpen) setProfileDropdownOpen(false)
-  }
-
-  // Close mobile menu when changing routes
+  /* Close mobile menu on route change */
   useEffect(() => {
-    setMobileMenuOpen(false)
-    setProfileDropdownOpen(false)
-    setServicesDropdownOpen(false)
+    setMobileOpen(false)
+    setProfileOpen(false)
+    setMoreOpen(false)
   }, [pathname])
 
-  // Close dropdowns when clicking outside
+  /* Click-outside for dropdowns */
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setProfileDropdownOpen(false)
-      }
-      if (servicesDropdownRef.current && !servicesDropdownRef.current.contains(event.target as Node)) {
-        setServicesDropdownOpen(false)
-      }
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false)
+      if (moreRef.current   && !moreRef.current.contains(e.target as Node))    setMoreOpen(false)
     }
-    
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const isActive = (path: string) => {
-    return pathname === path
-  }
-
-  // Check if user has admin privileges
-  const hasAdminAccess = userData?.user?.role === 'superAdmin' || 
-                         userData?.user?.role === 'admin' || 
-                         userData?.user?.role === 'moderator'
-
-  // Primary navigation items
-  const primaryNavItems = [
-    { path: '/blood-donation', label: 'রক্তদান সেবা' },
-    { path: '/sos', label: 'জরুরি রক্তের আবেদন' },
-  ]
-
-  // Secondary navigation items (moved to dropdown)
-  const secondaryNavItems = [
-    { path: '/organizations', label: 'প্রতিষ্ঠান সমূহ' },
-    { path: '/advice', label: 'পরামর্শ দিন' },
-    { path: '/blog', label: 'ব্লগ' },
-    { path: '/donation', label: 'অনুদান করুন' },
-  ]
-
-  const handleLogout = async() => {
-    const data = await logoutUser();
-    if(data.success){
-      toast.success(data.message)
-      queryClient.removeQueries({queryKey : ["user", "organizations"]})
-      router.push("/")
+  const handleLogout = async () => {
+    const res = await logoutUser()
+    if (res.success) {
+      toast.success(res.message)
+      qc.clear()
+      router.push('/')
     }
   }
 
+  const linkClass = (href: string) =>
+    `relative py-1 text-sm font-medium transition-colors duration-150 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-red-600 after:transition-transform after:duration-200 hover:text-red-700 hover:after:scale-x-100 ${
+      isActive(href) ? 'text-red-700 after:scale-x-100' : 'text-stone-600'
+    }`
+
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo and Brand Name */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" passHref>
-              <div className="flex items-center">
-                <Image src="/logo/image.png" alt="Logo" className="h-10 w-auto mr-2" width={100} height={100} />
-                <span className="text-xl font-bold text-red-600 hover:text-red-700 transition-colors">LifeDrop</span>
-              </div>
-            </Link>
-          </div>
+    <header className="sticky top-0 z-50 bg-white border-b border-stone-200 shadow-sm">
+      {/* Top red accent bar */}
+      <div className="h-1 bg-red-700 w-full" />
 
-          {/* Mobile Menu Toggle */}
-          <div className="flex items-center md:hidden">
-            <button 
-              onClick={toggleMobileMenu}
-              className="text-gray-700 hover:text-red-600 focus:outline-none transition-colors duration-200"
-              aria-label={mobileMenuOpen ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
-            >
-              {mobileMenuOpen ? 
-                <FaTimes className="h-6 w-6" /> : 
-                <FaBars className="h-6 w-6" />
-              }
-            </button>
-          </div>
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14">
 
-          {/* Navigation Items - Desktop */}
-          <div className="hidden md:flex md:items-center md:space-x-1">
-            {/* Primary Nav Items */}
-            {primaryNavItems.map((item) => (
-              <Link key={item.path} href={item.path} passHref>
-                <div className={`relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out
-                  ${isActive(item.path) 
-                    ? "text-red-600 font-semibold bg-red-50" 
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"}`}>
-                  {item.label}
-                  {isActive(item.path) && (
-                    <div className="absolute bottom-0 left-0 h-0.5 bg-red-600 w-full" />
-                  )}
-                </div>
+          {/* Logo */}
+          <AppLogo
+            size={36}
+            nameClassName="text-lg font-serif font-bold text-red-700 tracking-tight"
+          />
+
+          {/* Desktop nav links */}
+          <div className="hidden lg:flex items-center gap-6">
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(href)}>
+                {label}
               </Link>
             ))}
 
-            {/* Services Dropdown */}
-            <div className="relative" ref={servicesDropdownRef}>
-              <button 
-                onClick={toggleServicesDropdown}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 rounded-md hover:bg-red-50 transition-all duration-200"
+            {/* More dropdown */}
+            <div className="relative" ref={moreRef}>
+              <button
+                onClick={() => setMoreOpen(o => !o)}
+                className={`${linkClass('')} flex items-center gap-1`}
               >
-                <span className="mr-1">আরও সেবা</span>
-                <FaChevronDown className={`transition-transform duration-200 ${servicesDropdownOpen ? 'rotate-180' : ''}`} size={12} />
+                আরও
+                <svg className={`w-3 h-3 transition-transform duration-200 ${moreOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
-              
-              {servicesDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 transition-opacity duration-200">
-                  {secondaryNavItems.map((item) => (
-                    <Link key={item.path} href={item.path} passHref>
-                      <div className={`block px-4 py-2 text-sm ${
-                        isActive(item.path) 
-                          ? "text-red-600 bg-red-50" 
-                          : "text-gray-700 hover:bg-red-50 hover:text-red-600"
-                      }`}>
-                        {item.label}
-                      </div>
+              {moreOpen && (
+                <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-stone-200 rounded-md shadow-lg py-1 z-50 animate-fadeIn">
+                  {MORE_LINKS.map(({ href, label }) => (
+                    <Link key={href} href={href}
+                      className={`block px-4 py-2 text-sm transition-colors ${isActive(href) ? 'text-red-700 bg-red-50' : 'text-stone-700 hover:bg-stone-50 hover:text-red-700'}`}>
+                      {label}
                     </Link>
                   ))}
+                  {user && hasAdmin && (
+                    <Link href="/dashboard"
+                      className={`block px-4 py-2 text-sm transition-colors ${isActive('/dashboard') ? 'text-red-700 bg-red-50' : 'text-stone-700 hover:bg-stone-50 hover:text-red-700'}`}>
+                      ড্যাশবোর্ড
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Dashboard Link - Only for admin users */}
-            {userData?.user && hasAdminAccess && (
-              <Link href="/dashboard" passHref>
-                <div className={`relative px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out
-                  ${isActive('/dashboard') 
-                    ? "text-red-600 font-semibold bg-red-50" 
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"}`}>
-                  ড্যাশবোর্ড
-                  {isActive('/dashboard') && (
-                    <div className="absolute bottom-0 left-0 h-0.5 bg-red-600 w-full" />
-                  )}
-                </div>
-              </Link>
-            )}
-
-            {/* Install App Button */}
             <InstallButton />
-            
+          </div>
 
-            {/* Profile or Login Button */}
-            {userData?.user ? (
-              <div className="relative" ref={dropdownRef}>
-                <button 
-                  onClick={toggleProfileDropdown}
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 rounded-md hover:bg-red-50 transition-all duration-200"
+          {/* Desktop auth */}
+          <div className="hidden lg:flex items-center gap-3">
+            {user ? (
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setProfileOpen(o => !o)}
+                  className="flex items-center gap-2 py-1 px-2 rounded-full border border-stone-200 hover:border-red-300 transition-colors"
                 >
-                  <div className="flex items-center">
-                    {userData.user.profileImageUrl ? (
-                      <Image 
-                        src={`${userData.user.profileImageUrl}`} 
-                        alt={userData.user.fullName} 
-                        width={32} 
-                        height={32} 
-                        className="rounded-full h-8 w-8 object-cover mr-2" 
-                      />
-                    ) : (
-                      <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-2">
-                        <FaUser className="text-red-600" />
-                      </div>
-                    )}
-                    <span className="mr-1">{userData.user.fullName?.split(' ')[0]}</span>
-                    <FaChevronDown className={`transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} size={12} />
-                  </div>
+                  {user.profileImageUrl ? (
+                    <Image src={user.profileImageUrl} alt={user.fullName} width={30} height={30} className="rounded-full object-cover w-7 h-7" />
+                  ) : (
+                    <span className="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-red-700 text-xs font-bold">
+                      {user.fullName?.[0] ?? '?'}
+                    </span>
+                  )}
+                  <span className="text-sm font-medium text-stone-700 max-w-[100px] truncate">{user.fullName?.split(' ')[0]}</span>
+                  <svg className={`w-3 h-3 text-stone-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
-                
-                {profileDropdownOpen && (
-                  <div 
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 transition-opacity duration-200"
-                  >
-                    <Link href="/profile" passHref>
-                      <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600">
-                        প্রোফাইল
-                      </div>
-                    </Link>
-                    <Link href="/dashboard/donations" passHref>
-                      <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600">
-                        আমার রক্তদান
-                      </div>
-                    </Link>
-                    <Link href="/settings" passHref>
-                      <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600">
-                        সেটিংস
-                      </div>
-                    </Link>
-                    <div className="border-t border-gray-100 my-1"></div>
-                    <button onClick={handleLogout} className='w-full cursor-pointer'>
-                      <div className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                        লগআউট
-                      </div>
+                {profileOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-stone-200 rounded-md shadow-lg py-1 z-50 animate-fadeIn">
+                    <div className="px-4 py-2 border-b border-stone-100">
+                      <p className="text-sm font-semibold text-stone-800 truncate">{user.fullName}</p>
+                      <p className="text-xs text-stone-400 truncate">{user.email}</p>
+                    </div>
+                    {[
+                      { href: '/profile',      label: 'প্রোফাইল' },
+                      { href: '/my-donations', label: 'আমার রক্তদান' },
+                    ].map(({ href, label }) => (
+                      <Link key={href} href={href}
+                        className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50 hover:text-red-700 transition-colors">
+                        {label}
+                      </Link>
+                    ))}
+                    <div className="border-t border-stone-100 mt-1" />
+                    <button onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                      লগআউট
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Link href="/login" passHref>
-                  <div className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 border border-red-600 rounded-md hover:bg-red-50 transition-colors duration-200">
-                    লগইন
-                  </div>
+              <>
+                <Link href="/login"
+                  className="px-4 py-1.5 text-sm font-medium text-red-700 border border-red-700 rounded hover:bg-red-50 transition-colors">
+                  লগইন
                 </Link>
-                <Link href="/register" passHref>
-                  <div className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors duration-200">
-                    রেজিস্টার
-                  </div>
+                <Link href="/register"
+                  className="px-4 py-1.5 text-sm font-medium text-white bg-red-700 rounded hover:bg-red-800 transition-colors">
+                  রেজিস্টার
                 </Link>
-              </div>
+              </>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden transition-all duration-300 ease-in-out">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
-            {/* Primary Nav Items (Mobile) */}
-            {primaryNavItems.map((item) => (
-              <Link key={item.path} href={item.path} passHref>
-                <div className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive(item.path) 
-                    ? "text-red-600 bg-red-50" 
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                }`}>
-                  {item.label}
-                </div>
+          {/* Mobile hamburger */}
+          <button
+            className="lg:hidden p-2 text-stone-600 hover:text-red-700 focus:outline-none"
+            onClick={() => setMobileOpen(o => !o)}
+            aria-label="মেনু"
+          >
+            {mobileOpen ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            )}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden border-t border-stone-200 bg-white animate-fadeIn">
+          <div className="px-4 py-4 space-y-1">
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link key={href} href={href}
+                className={`block px-3 py-2.5 rounded text-sm font-medium transition-colors ${isActive(href) ? 'text-red-700 bg-red-50' : 'text-stone-700 hover:bg-stone-50 hover:text-red-700'}`}>
+                {label}
               </Link>
             ))}
-
-            {/* Secondary Nav Items (Mobile) */}
-            <div className="border-t border-gray-100 pt-2 mt-2">
-              <div className="px-3 py-1 text-sm text-gray-500">আরও সেবা</div>
-              {secondaryNavItems.map((item) => (
-                <Link key={item.path} href={item.path} passHref>
-                  <div className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isActive(item.path) 
-                      ? "text-red-600 bg-red-50" 
-                      : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                  }`}>
-                    {item.label}
-                  </div>
+            <div className="pt-2 border-t border-stone-100">
+              <p className="px-3 py-1 text-xs font-semibold text-stone-400 uppercase tracking-wider">আরও</p>
+              {MORE_LINKS.map(({ href, label }) => (
+                <Link key={href} href={href}
+                  className={`block px-3 py-2.5 rounded text-sm font-medium transition-colors ${isActive(href) ? 'text-red-700 bg-red-50' : 'text-stone-700 hover:bg-stone-50 hover:text-red-700'}`}>
+                  {label}
                 </Link>
               ))}
-            </div>
-
-            {/* Dashboard Link - Only for admin users (mobile) */}
-            {userData?.user && hasAdminAccess && (
-              <Link href="/dashboard" passHref>
-                <div className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive('/dashboard') 
-                    ? "text-red-600 bg-red-50" 
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                }`}>
+              {user && hasAdmin && (
+                <Link href="/dashboard"
+                  className={`block px-3 py-2.5 rounded text-sm font-medium transition-colors ${isActive('/dashboard') ? 'text-red-700 bg-red-50' : 'text-stone-700 hover:bg-stone-50 hover:text-red-700'}`}>
                   ড্যাশবোর্ড
-                </div>
-              </Link>
-            )}
-
-            {/* Install App Button (mobile) */}
-            <Link href="/install" passHref>
-              <div className="flex items-center px-3 py-2 rounded-md text-base font-medium text-green-600 border border-green-600 hover:bg-green-50 mt-2">
-                <FaDownload className="mr-2" />
-                অ্যাপ ইনস্টল করুন
-              </div>
-            </Link>
-
-            {userData?.user ? (
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <div className="flex items-center px-3 py-2">
-                  {userData.user.profileImageUrl ? (
-                    <Image 
-                      src={`${userData.user.profileImageUrl}`} 
-                      alt={userData.user.fullName} 
-                      width={40} 
-                      height={40} 
-                      className="rounded-full h-10 w-10 object-cover mr-3" 
-                    />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                      <FaUser className="text-red-600" />
-                    </div>
-                  )}
-                  <div>
-                    <div className="text-base font-medium text-gray-800">{userData.user.fullName}</div>
-                    <div className="text-sm text-gray-500">{userData.user.email}</div>
-                  </div>
-                </div>
-                <div className="mt-3 space-y-1">
-                  <Link href="/profile" passHref>
-                    <div className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-md">
-                      প্রোফাইল
-                    </div>
-                  </Link>
-                  <Link href="/dashboard/donations" passHref>
-                    <div className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-md">
-                      আমার রক্তদান
-                    </div>
-                  </Link>
-                  <Link href="/settings" passHref>
-                    <div className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-md">
-                      সেটিংস
-                    </div>
-                  </Link>
-                  <button onClick={handleLogout}>
-                    <div className="block px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md">
-                      লগআউট
-                    </div>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col space-y-2">
-                <Link href="/login" passHref>
-                  <div className="block w-full px-3 py-2 text-center text-base font-medium text-red-600 border border-red-600 rounded-md hover:bg-red-50">
-                    লগইন
-                  </div>
                 </Link>
-                <Link href="/register" passHref>
-                  <div className="block w-full px-3 py-2 text-center text-base font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
-                    রেজিস্টার
+              )}
+            </div>
+            <div className="pt-2 border-t border-stone-100">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    {user.profileImageUrl ? (
+                      <Image src={user.profileImageUrl} alt={user.fullName} width={36} height={36} className="rounded-full object-cover" />
+                    ) : (
+                      <span className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center text-red-700 font-bold">{user.fullName?.[0]}</span>
+                    )}
+                    <div>
+                      <p className="text-sm font-semibold text-stone-800">{user.fullName}</p>
+                      <p className="text-xs text-stone-400">{user.email}</p>
+                    </div>
                   </div>
-                </Link>
-              </div>
-            )}
+                  <Link href="/profile"      className="block px-3 py-2 text-sm text-stone-700 hover:text-red-700 hover:bg-stone-50 rounded">প্রোফাইল</Link>
+                  <Link href="/my-donations" className="block px-3 py-2 text-sm text-stone-700 hover:text-red-700 hover:bg-stone-50 rounded">আমার রক্তদান</Link>
+                  <button onClick={handleLogout} className="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded">লগআউট</button>
+                </>
+              ) : (
+                <div className="flex gap-2 px-3 py-2">
+                  <Link href="/login"    className="flex-1 text-center py-2 text-sm font-medium text-red-700 border border-red-700 rounded hover:bg-red-50">লগইন</Link>
+                  <Link href="/register" className="flex-1 text-center py-2 text-sm font-medium text-white bg-red-700 rounded hover:bg-red-800">রেজিস্টার</Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
-    </nav>
+    </header>
   )
 }
-
-export default Navbar

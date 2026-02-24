@@ -1,9 +1,7 @@
-'use client'
-import { getLeaderboardDonors } from '@/app/actions/bloodDonation';
-import { useQuery } from '@tanstack/react-query';
+// Server Component — no 'use client', no useEffect, no useQuery
 import Image from 'next/image';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import Link from 'next/link';
+import { getLeaderboardDonors } from '@/app/actions/bloodDonation';
 
 interface Donor {
   _id: string;
@@ -11,146 +9,101 @@ interface Donor {
   thanaId: string;
   districtId: string;
   profileImageUrl: string;
+  totalDonations?: number;
+  bloodGroup?: string;
 }
 
-interface ProcessedDonor {
-  id: string;
-  name: string;
-  address: string;
-  image: string;
-}
+export default async function RegularDonor() {
+  let donors: Donor[] = [];
+  try {
+    const res = await getLeaderboardDonors();
+    donors = (res?.data ?? []).slice(0, 10);
+  } catch {
+    donors = [];
+  }
 
-const RegularDonor = () => {
-
-  const { data: donorsData, error } = useQuery({
-    queryKey: ['regular-donors'],
-    queryFn: getLeaderboardDonors,
-    gcTime: 1000 * 60 * 60 * 24 * 10, // 10 days cache time
-  });
-
-  console.log(error);
-  const donors = donorsData?.data?.map((donor: Donor): ProcessedDonor => ({
-    id: donor._id,
-    name: donor.fullName,
-    address: `${donor.thanaId}, ${donor.districtId}`,
-    image: `${donor.profileImageUrl}`,
-  }));
-
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [slidesToShow, setSlidesToShow] = useState(3);
-  const sliderRef = useRef(null);
-
-  // Determine number of slides to show based on screen width
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setSlidesToShow(1);
-      } else if (window.innerWidth < 1024) {
-        setSlidesToShow(2);
-      } else {
-        setSlidesToShow(3);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const totalSlides = donorsData?.length;
-  const maxIndex = totalSlides - slidesToShow;
-
-  const nextSlide = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % maxIndex);
-  }, [maxIndex]);
-
-  const prevSlide = () => {
-    setCurrentIndex(prevIndex => 
-      prevIndex <= 0 ? maxIndex : prevIndex - 1
-    );
-  };
-
-  // Auto-advance slides
-  useEffect(() => {
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [nextSlide]);
+  if (!donors.length) return null;
 
   return (
-    <div className="py-10 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">নিয়মিত রক্তদাতা</h2>
-        
-        <div className="relative">
-          {/* Navigation buttons */}
-          <button 
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-red-600 p-2 rounded-full shadow-md -ml-4 focus:outline-none"
-            aria-label="পূর্ববর্তী"
-          >
-            <FaChevronLeft className="w-5 h-5" />
-          </button>
-          
-          <div className="overflow-hidden" ref={sliderRef}>
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
-            >
-              {donors?.map((donor: ProcessedDonor) => (
-                <div 
-                  key={donor.id} 
-                  className={`flex-shrink-0 px-3`}
-                  style={{ width: `${100 / slidesToShow}%` }}
-                >
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 h-full">
-                    <div className="relative h-48 w-full">
-                      <Image 
-                        src={donor.image} 
-                        alt={donor.name} 
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{donor.name}</h3>
-                      <p className="text-gray-600">{donor.address}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+    <section className="py-10 bg-white border-y border-stone-200">
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p className="text-[11px] font-semibold text-red-700 uppercase tracking-widest mb-0.5">সেরা দাতারা</p>
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-stone-900">নিয়মিত রক্তদাতা</h2>
           </div>
-          
-          <button 
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-red-600 p-2 rounded-full shadow-md -mr-4 focus:outline-none"
-            aria-label="পরবর্তী"
-          >
-            <FaChevronRight className="w-5 h-5" />
-          </button>
+          <Link href="/find-blood"
+            className="hidden sm:inline-block px-5 py-2 text-sm font-semibold text-red-700 border border-red-700 rounded hover:bg-red-50 transition-colors flex-shrink-0">
+            সকল দেখুন
+          </Link>
         </div>
-        
-        {/* Dots indicator */}
-        <div className="flex justify-center mt-6 space-x-2">
-          {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                index === currentIndex ? 'bg-red-600' : 'bg-gray-300'
-              }`}
-              aria-label={`স্লাইড ${index + 1}`}
-            />
+
+        {/* CSS-only horizontal scroll — no JS carousel needed */}
+        <div
+          className="flex gap-3 overflow-x-auto pb-3 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {donors.map((donor, idx) => (
+            <article
+              key={donor._id}
+              className="snap-start flex-shrink-0 w-40 sm:w-44 card-classic overflow-hidden text-center"
+            >
+              {/* Avatar */}
+              <div className="relative h-32 w-full bg-stone-100">
+                {donor.profileImageUrl ? (
+                  <Image
+                    src={donor.profileImageUrl}
+                    alt={donor.fullName}
+                    fill
+                    sizes="176px"
+                    className="object-cover object-center"
+                    loading={idx < 4 ? 'eager' : 'lazy'}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <span className="text-4xl font-bold text-stone-300 font-serif">
+                      {donor.fullName?.[0] ?? '?'}
+                    </span>
+                  </div>
+                )}
+                {/* Rank badge */}
+                {idx < 3 && (
+                  <div className="absolute top-2 left-2 w-5 h-5 rounded-full bg-red-700 text-white text-[10px] font-bold flex items-center justify-center">
+                    {idx + 1}
+                  </div>
+                )}
+                {/* Blood group badge */}
+                {donor.bloodGroup && (
+                  <span className="absolute top-2 right-2 bg-red-700 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                    {donor.bloodGroup}
+                  </span>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="px-2.5 py-2">
+                <h3 className="font-serif font-bold text-stone-800 text-xs leading-snug mb-0.5 truncate">
+                  {donor.fullName}
+                </h3>
+                <p className="text-[11px] text-stone-400 truncate">
+                  {donor.districtId || ''}
+                </p>
+                {donor.totalDonations && (
+                  <p className="text-[11px] text-red-700 font-bold mt-0.5">
+                    {donor.totalDonations}× দান
+                  </p>
+                )}
+              </div>
+            </article>
           ))}
         </div>
-      </div>
-    </div>
-  );
-};
 
-export default RegularDonor;
+        <Link href="/find-blood"
+          className="sm:hidden block text-center mt-4 text-sm font-semibold text-red-700">
+          সকল রক্তদাতা দেখুন →
+        </Link>
+      </div>
+    </section>
+  );
+}

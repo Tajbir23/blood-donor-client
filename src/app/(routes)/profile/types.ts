@@ -1,10 +1,19 @@
 import organizationType from '@/lib/types/organizationType'
 
 export interface Donation {
-  date: string;
-  location: string;
-  recipient: string;
-  bloodGroup: string;
+  _id?: string;
+  userId?: string;
+  donationDate: string;
+  recipient?: string;
+  recipientName?: string;
+  createdAt?: string;
+}
+
+export interface DonationPagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface UserOrganization {

@@ -105,7 +105,7 @@ const MapComponent = ({ selectedLocation, onLocationSelect }: MapComponentProps)
     setIsSearching(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`
+        `/api/geocode?q=${encodeURIComponent(query)}`
       );
       const data = await response.json();
       setSearchResults(data);

@@ -53,16 +53,19 @@ export const getBloodRequest = async (page: number, limit: number) => {
 
 export const getBloodDonors = async (page: number, limit: number, search: string) => {
     try {
-        const response = await baseUrl(`/blood_request/donors?page=${page}&limit=${limit}&search=${search}`, {
-            cache: 'force-cache',
+        const encodedSearch = encodeURIComponent(search)
+        const response = await baseUrl(`/blood_request/donors?page=${page}&limit=${limit}&search=${encodedSearch}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             },
-            next: {
-                tags: ['blood-donors'],
-                revalidate: 60 * 60 * 3
-            }
+            cache: search ? 'no-store' : 'force-cache',
+            ...(search ? {} : {
+                next: {
+                    tags: ['blood-donors'],
+                    revalidate: 60 * 60 * 3
+                }
+            })
         })
         const data = await response.json()
         return data
@@ -92,7 +95,6 @@ export const getLeaderboardDonors = async() => {
 }
 
 export const findBloodDonors = async (latitude: string, longitude: string, bloodGroup: string) => {
-    console.log(latitude, longitude, bloodGroup)
     try {
         const response = await baseUrl(`/user/donor/search`, {
             method: "POST",

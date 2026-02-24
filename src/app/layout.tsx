@@ -1,8 +1,7 @@
-export const dynamic = 'force-dynamic'; // Cache UI as static
-export const revalidate = 86400;
+export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Hind_Siliguri, Noto_Serif_Bengali } from 'next/font/google'
 import { defaultMetadata } from './config/metadata'
 import { viewport } from './viewport'
 import './globals.css'
@@ -15,7 +14,19 @@ import UpdateBloodDonationDate from '@/components/home/UpdateBloodDonationDate';
 import BloodDonationModal from '@/components/modals/BloodDonationModal';
 import Script from 'next/script'
 
-const inter = Inter({ subsets: ['latin'] })
+const hindSiliguri = Hind_Siliguri({
+  subsets: ['bengali', 'latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+
+const notoSerifBengali = Noto_Serif_Bengali({
+  subsets: ['bengali'],
+  weight: ['400', '500', '600', '700', '900'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = defaultMetadata
 export { viewport }
@@ -25,12 +36,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Get decoded user and ensure it's serializable
-  
   return (
-    <html lang="bn" className="h-full">
+    <html lang="bn" className={`h-full ${hindSiliguri.variable} ${notoSerifBengali.variable}`}>
       <head>
-        {/* Google Analytics Script */}
         <Script 
           src="https://www.googletagmanager.com/gtag/js?id=G-ZJ4DF1GY9H" 
           strategy="afterInteractive"
@@ -40,11 +48,11 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-ZJ4DF1GY9H', { 'debug_mode': true });
+            gtag('config', 'G-ZJ4DF1GY9H');
           `}
         </Script>
       </head>
-      <body className={`${inter.className} h-full`}>
+      <body className="font-sans h-full bg-stone-50 text-stone-900 antialiased">
         <QueryProvider>
           <Navbar />
           <EmergencyHeadline />
@@ -56,15 +64,13 @@ export default async function RootLayout({
             toastOptions={{
               duration: 3000,
               style: {
-                background: '#333',
+                background: '#1C1917',
                 color: '#fff',
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.9rem',
               },
-              success: {
-                duration: 3000,
-              },
-              error: {
-                duration: 4000,
-              },
+              success: { duration: 3000 },
+              error: { duration: 4000 },
             }}
           />
         </QueryProvider>

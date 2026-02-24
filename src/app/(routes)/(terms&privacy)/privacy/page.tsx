@@ -5,23 +5,23 @@ import React from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "গোপনীয়তা নীতি | রক্তদান বাংলাদেশ",
+  title: "গোপনীয়তা নীতি | LifeDrop",
   description: "বাংলাদেশের রক্তদান সিস্টেমের গোপনীয়তা নীতি - আপনার ব্যক্তিগত তথ্য কিভাবে সংগ্রহ, ব্যবহার এবং সুরক্ষিত করা হয় তা জানুন। আমরা আপনার গোপনীয়তা নিশ্চিত করার জন্য প্রতিশ্রুতিবদ্ধ।",
   keywords: ["রক্তদান", "গোপনীয়তা নীতি", "রংপুর", "রক্তদান সিস্টেম", "ব্যক্তিগত তথ্য সুরক্ষা", "ডাটা প্রাইভেসি"],
   alternates: {
     canonical: "https://blood-donor-bangladesh.vercel.app/privacy"
   },
   openGraph: {
-    title: "গোপনীয়তা নীতি | রক্তদান বাংলাদেশ",
+    title: "গোপনীয়তা নীতি | LifeDrop",
     description: "বাংলাদেশের রক্তদান সিস্টেমের গোপনীয়তা নীতি - আপনার ব্যক্তিগত তথ্য কিভাবে সংগ্রহ, ব্যবহার এবং সুরক্ষিত করা হয় তা জানুন।",
     url: "https://blood-donor-bangladesh.vercel.app/privacy",
-    siteName: "রক্তদান বাংলাদেশ",
+    siteName: "LifeDrop",
     locale: "bn_BD",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "গোপনীয়তা নীতি | রক্তদান বাংলাদেশ",
+    title: "গোপনীয়তা নীতি | LifeDrop",
     description: "বাংলাদেশের রক্তদান সিস্টেমের গোপনীয়তা নীতি - আপনার ব্যক্তিগত তথ্য কিভাবে সংগ্রহ, ব্যবহার এবং সুরক্ষিত করা হয় তা জানুন।",
   },
 };

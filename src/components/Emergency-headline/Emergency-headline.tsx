@@ -1,8 +1,9 @@
 export default function EmergencyHeadline() {
+  const text = '🩸 জরুরি রক্তের প্রয়োজন?  রক্তদাতা খুঁজুন — /find-blood  •  SOS আবেদন করুন — /sos  •  রক্তদান করে জীবন বাঁচান — নিবন্ধন করুন /register  •  ';
   return (
-    <div className="bg-red-600 text-white py-2 overflow-hidden">
-      <div className="animate-marquee">
-        জরুরি রক্তের প্রয়োজনীয় গ্রুপ দ্রুত খুঁজে বের করুন। সহজেই রক্ত পেতে এখনই যোগাযোগ করুন।
+    <div className="bg-red-700 text-white py-1.5 overflow-hidden" role="marquee" aria-label="জরুরি বিজ্ঞপ্তি">
+      <div className="animate-marquee text-sm font-medium tracking-wide">
+        {text}{text}
       </div>
     </div>
   );

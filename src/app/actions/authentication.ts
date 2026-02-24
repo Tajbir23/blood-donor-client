@@ -34,7 +34,6 @@ export const registerAsUser = async (data: User) => {
             //     throw new Error('Failed to register');
             // }
             const user = await response.json()
-            console.log(user)
             return user;
         } else {
             
@@ -52,12 +51,11 @@ export const registerAsUser = async (data: User) => {
             //     throw new Error('Failed to register');
             // }
             const user = await response.json()
-            console.log(user)
             return user;
         }
     } catch (error) {
         console.error('Error registering user:', error);
-        return { success: false, error: 'Registration failed' };
+        return { success: false, message: 'নিবন্ধন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।' };
     }
 }
 
@@ -128,12 +126,9 @@ export const verifyJwt = async(protection: boolean = true) => {
     try {
         const decoded = jwt.verify(token.value, process.env.NEXT_PUBLIC_JWT_TOKEN as string);
 
-        console.log("line 130",decoded)
         // Ensure we return a plain serializable object
         return typeof decoded === 'object' ? Object.assign({}, decoded) : decoded;
-    } catch (error) {
-        console.log("line 135", error);
-        
+    } catch {
         await logoutUser()
         return null;
     }

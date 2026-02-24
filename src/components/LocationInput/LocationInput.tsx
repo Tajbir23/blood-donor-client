@@ -62,9 +62,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
     
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          searchQuery + ', Bangladesh'
-        )}&limit=5`
+        `/api/geocode?q=${encodeURIComponent(searchQuery + ', Bangladesh')}`
       );
 
       if (!response.ok) {

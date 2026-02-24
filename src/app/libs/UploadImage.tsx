@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import imageCompression from 'browser-image-compression';
 
 interface UploadImageProps {
   onImageSelect?: (file: File, previewUrl: string) => void;
@@ -32,85 +33,93 @@ const UploadImage = ({
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>(initialImage);
   const [error, setError] = useState<string>('');
+  const [compressing, setCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  const handleFileChange = useCallback((selectedFile: File) => {
-    // Check file size (convert MB to bytes)
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
-    if (selectedFile.size > maxSizeBytes) {
-      setError(`ফাইল সাইজ ${maxSizeMB}MB এর বেশি হতে পারবে না`);
-      return;
-    }
-    
+
+  const handleFileChange = useCallback(async (selectedFile: File) => {
     // Check file type
     if (!acceptedTypes.includes(selectedFile.type)) {
       setError('অনুমোদিত ফাইল টাইপ: JPG, PNG');
       return;
     }
-    
+
     setError('');
-    setFile(selectedFile);
-    
-    // Create preview
-    const objectUrl = URL.createObjectURL(selectedFile);
-    setPreview(objectUrl);
-    
-    // Call the callback with file and preview
-    if (onImageSelect) {
-      onImageSelect(selectedFile, objectUrl);
+    setCompressing(true);
+
+    try {
+      // Compress image before uploading
+      const options = {
+        maxSizeMB: maxSizeMB,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true,
+        fileType: 'image/webp' as const,
+        initialQuality: 0.8,
+      };
+
+      const compressedFile = await imageCompression(selectedFile, options);
+
+      // Create a proper File object with original name but .webp extension
+      const baseName = selectedFile.name.replace(/\.[^.]+$/, '');
+      const finalFile = new File([compressedFile], `${baseName}.webp`, { type: 'image/webp' });
+
+      setFile(finalFile);
+
+      const objectUrl = URL.createObjectURL(finalFile);
+      setPreview(objectUrl);
+
+      if (onImageSelect) {
+        onImageSelect(finalFile, objectUrl);
+      }
+    } catch {
+      // Fallback: use original file if compression fails
+      setFile(selectedFile);
+      const objectUrl = URL.createObjectURL(selectedFile);
+      setPreview(objectUrl);
+      if (onImageSelect) {
+        onImageSelect(selectedFile, objectUrl);
+      }
+    } finally {
+      setCompressing(false);
     }
-    
-    return () => URL.revokeObjectURL(objectUrl);
   }, [maxSizeMB, acceptedTypes, onImageSelect]);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      return;
-    }
-    
+    if (!e.target.files || e.target.files.length === 0) return;
     handleFileChange(e.target.files[0]);
   };
-  
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
-  
+
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
   };
-  
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFileChange(e.dataTransfer.files[0]);
     }
   };
-  
+
   const openFileDialog = () => {
-    fileInputRef.current?.click();
+    if (!compressing) fileInputRef.current?.click();
   };
-  
+
   const removePicture = (e: React.MouseEvent) => {
     e.stopPropagation();
     setFile(null);
     setPreview('');
-    
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    
-    if (onImageSelect) {
-      onImageSelect(null as unknown as File, '');
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (onImageSelect) onImageSelect(null as unknown as File, '');
   };
-  
-  // Define border-radius based on rounded prop
+
   const borderRadiusClass = rounded ? 'rounded-full' : 'rounded-lg';
-  
+
   return (
     <div className={`space-y-2 ${className}`} style={{ width }}>
       {label && (
@@ -119,18 +128,23 @@ const UploadImage = ({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      
+
       <div
         className={`border-2 border-dashed transition-colors ${
           isDragging ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-gray-50'
-        } ${borderRadiusClass} overflow-hidden cursor-pointer flex flex-col items-center justify-center`}
+        } ${borderRadiusClass} overflow-hidden ${compressing ? 'cursor-wait' : 'cursor-pointer'} flex flex-col items-center justify-center`}
         style={{ height, width: '100%' }}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={openFileDialog}
       >
-        {preview ? (
+        {compressing ? (
+          <div className="text-center p-4 flex flex-col items-center gap-2">
+            <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-gray-600">ছবি compress হচ্ছে...</p>
+          </div>
+        ) : preview ? (
           <div className="relative w-full h-full">
             <Image
               src={preview}
@@ -164,10 +178,10 @@ const UploadImage = ({
               ></path>
             </svg>
             <p className="text-sm text-gray-600 font-medium">ছবি আপলোড করতে ক্লিক করুন অথবা টেনে আনুন</p>
-            <p className="text-xs text-gray-500 mt-1">সর্বোচ্চ ফাইল সাইজ: {maxSizeMB}MB (JPG, PNG)</p>
+            <p className="text-xs text-gray-500 mt-1">সর্বোচ্চ {maxSizeMB}MB (JPG, PNG) — auto compress হবে</p>
           </div>
         )}
-        
+
         <input
           type="file"
           ref={fileInputRef}

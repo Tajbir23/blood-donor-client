@@ -11,21 +11,29 @@ export function useRangpurDivision() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let ignore = false;
+
     const loadDivision = async () => {
       try {
         setLoading(true);
         const data = await fetchRangpurDivision();
-        setDivision(data);
-        setError(null);
-      } catch (err) {
-        setError('বিভাগের ডাটা লোড করতে সমস্যা হয়েছে');
-        console.error(err);
+        if (!ignore) {
+          setDivision(data);
+          setError(null);
+        }
+      } catch {
+        if (!ignore) {
+          setError('বিভাগের ডাটা লোড করতে সমস্যা হয়েছে');
+        }
       } finally {
-        setLoading(false);
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     };
 
     loadDivision();
+    return () => { ignore = true; };
   }, []);
 
   return { division, loading, error };
@@ -34,27 +42,39 @@ export function useRangpurDivision() {
 // জেলা ফেচ করার হুক
 export function useDistrict(districtId: string) {
   const [district, setDistrict] = useState<District | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!districtId) {
+      setDistrict(null);
+      setLoading(false);
+      return;
+    }
+
+    let ignore = false;
+
     const loadDistrict = async () => {
       try {
         setLoading(true);
         const data = await fetchDistrict(districtId);
-        setDistrict(data);
-        setError(null);
-      } catch (err) {
-        setError('জেলার ডাটা লোড করতে সমস্যা হয়েছে');
-        console.error(err);
+        if (!ignore) {
+          setDistrict(data);
+          setError(null);
+        }
+      } catch {
+        if (!ignore) {
+          setError('জেলার ডাটা লোড করতে সমস্যা হয়েছে');
+        }
       } finally {
-        setLoading(false);
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     };
 
-    if (districtId) {
-      loadDistrict();
-    }
+    loadDistrict();
+    return () => { ignore = true; };
   }, [districtId]);
 
   return { district, loading, error };
@@ -63,27 +83,39 @@ export function useDistrict(districtId: string) {
 // থানা ফেচ করার হুক
 export function useThana(districtId: string, thanaId: string) {
   const [thana, setThana] = useState<Thana | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!districtId || !thanaId) {
+      setThana(null);
+      setLoading(false);
+      return;
+    }
+
+    let ignore = false;
+
     const loadThana = async () => {
       try {
         setLoading(true);
         const data = await fetchThana(districtId, thanaId);
-        setThana(data);
-        setError(null);
-      } catch (err) {
-        setError('থানার ডাটা লোড করতে সমস্যা হয়েছে');
-        console.error(err);
+        if (!ignore) {
+          setThana(data);
+          setError(null);
+        }
+      } catch {
+        if (!ignore) {
+          setError('থানার ডাটা লোড করতে সমস্যা হয়েছে');
+        }
       } finally {
-        setLoading(false);
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     };
 
-    if (districtId && thanaId) {
-      loadThana();
-    }
+    loadThana();
+    return () => { ignore = true; };
   }, [districtId, thanaId]);
 
   return { thana, loading, error };

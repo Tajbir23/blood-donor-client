@@ -43,14 +43,13 @@ export const getAllSliders = async (page: number, limit: number, search: string)
     }
 
     const response = await baseUrl(`/system/dashboard/get-all-sliders?page=${page}&limit=${limit}&search=${search}`, {
-        cache: 'force-cache',
+        cache: 'no-store',
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token.value}`
         },
         next: {
             tags: ['sliders'],
-            revalidate: 60 * 60 * 24
         }
     })
 

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { FaHome, FaUser, FaTint, FaCalendarAlt, FaBuilding, FaCog, FaSignOutAlt, FaBars, FaTimes, FaImage } from 'react-icons/fa';
 import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/lib/types/userType';
+import AppLogo from '@/components/ui/AppLogo';
 
 interface UserQueryData {
   user: User
@@ -70,8 +71,8 @@ const Sidebar = () => {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-5 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-red-600">রক্তদান বাংলাদেশ</h1>
-            <p className="text-sm text-gray-500">Dashboard</p>
+            <AppLogo size={36} nameClassName="text-lg font-bold text-red-600" />
+            <p className="text-sm text-gray-500 mt-1">Dashboard</p>
           </div>
 
           {/* Navigation */}

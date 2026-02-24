@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Donation } from './types'
 import ProfileHeader from './components/ProfileHeader'
 import ProfileTabs from './components/ProfileTabs'
 import ProfileOverview from './components/overview'
@@ -49,7 +48,7 @@ const Profile = () => {
   // This would come from your user data fetch
   const userProfile: User = {
     fullName: userData?.fullName ?? 'Profile Name',
-    profileImageUrl: userData?.profileImageUrl ? `${userData.profileImageUrl}` : '/assets/profile-placeholder.jpg',
+    profileImageUrl: userData?.profileImageUrl ? `${userData.profileImageUrl}` : '/images/dummy-image.jpg',
     bloodGroup: userData?.bloodGroup ?? "",
     phone: userData?.phone ?? '',
     email: userData?.email ?? '',
@@ -72,19 +71,11 @@ const Profile = () => {
     organizationId: userData?.organizationId ?? []
   }
 
-  const donationHistory: Donation[] = [
-    { date: '১০ মার্চ, ২০২৩', location: 'মেডিকেল কলেজ হাসপাতাল', recipient: 'শামীমা বেগম', bloodGroup: 'B+' },
-    { date: '১২ ডিসেম্বর, ২০২২', location: 'আদর্শ হাসপাতাল, রংপুর', recipient: 'রফিক আলী', bloodGroup: 'B+' },
-    { date: '০৫ সেপ্টেম্বর, ২০২২', location: 'শিশু হাসপাতাল, রংপুর', recipient: 'তাসনিম আক্তার', bloodGroup: 'B+' },
-    { date: '১৮ জুন, ২০২২', location: 'ডক্টরস ক্লিনিক, রংপুর', recipient: 'আরিফ হোসেন', bloodGroup: 'B+' },
-    { date: '২২ ফেব্রুয়ারি, ২০২২', location: 'রংপুর মেডিকেল কলেজ হাসপাতাল', recipient: 'কামরুল হাসান', bloodGroup: 'B+' },
-  ]
-
   const handleLogout = async() => {
     const data = await logoutUser();
     if(data.success){
       toast.success(data.message)
-      queryClient.removeQueries({queryKey : ["user", "organizations"]})
+      queryClient.clear()
       router.push("/")
     }
   }
@@ -104,7 +95,7 @@ const Profile = () => {
           {/* Tab Content */}
           <div className="mt-6">
             {activeTab === 'overview' && <ProfileOverview userProfile={userProfile} />}
-            {activeTab === 'donations' && <DonationHistory userProfile={userProfile} donationHistory={donationHistory} />}
+            {activeTab === 'donations' && <DonationHistory userProfile={userProfile} />}
             {activeTab === 'organizations' && <Organizations userOrganizations={userOrganizations} memberOforg={userProfile.organizationId || []} refetchMyOrganizations={refetchMyOrganizations} />}
             {activeTab === 'settings' && <ProfileSettings />}
           </div>

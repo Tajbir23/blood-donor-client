@@ -21,6 +21,7 @@
     "@types/socket.io-client": "^1.4.36",
     "@types/uuid": "^10.0.0",
     "axios": "^1.8.4",
+    "browser-image-compression": "^2.0.2",
     "chart.js": "^4.4.9",
     "framer-motion": "^12.8.0",
     "jose": "^6.0.10",

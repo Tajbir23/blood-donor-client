@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { FaCalendarAlt, FaChartBar, FaCog, FaHome, FaTint, FaUsers } from "react-icons/fa";
+import { FaBlog, FaCog, FaFlag, FaHome, FaTint, FaUsers } from "react-icons/fa";
 
 
 const Sidebar = () => {
@@ -13,8 +13,8 @@ const Sidebar = () => {
         { name: 'ড্যাশবোর্ড', href: `/organization_dashboard/${organizationId}`, icon: FaHome },
         { name: 'সদস্যবৃন্দ', href: `/organization_dashboard/${organizationId}/members`, icon: FaUsers },
         { name: 'রক্তদান', href: `/organization_dashboard/${organizationId}/donations`, icon: FaTint },
-        { name: 'ইভেন্টস', href: `/organization_dashboard/${organizationId}/events`, icon: FaCalendarAlt },
-        { name: 'রিপোর্টস', href: `/organization_dashboard/${organizationId}/reports`, icon: FaChartBar },
+        { name: 'ব্লগ', href: `/organization_dashboard/${organizationId}/blog`, icon: FaBlog },
+        { name: 'রিপোর্টস', href: `/organization_dashboard/${organizationId}/reports`, icon: FaFlag },
         { name: 'সেটিংস', href: `/organization_dashboard/${organizationId}/settings`, icon: FaCog },
       ];
   return (

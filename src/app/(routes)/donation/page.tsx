@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     description: 'আপনার অর্থ অনুদানের মাধ্যমে রক্তদান কার্যক্রম পরিচালনা এবং জীবন বাঁচাতে সাহায্য করুন।',
     type: 'website',
     locale: 'bn_BD',
-    url: 'https://your-domain.com/donation',
+    url: 'https://blood-donor-bangladesh.vercel.app/donation',
   },
   twitter: {
     card: 'summary_large_image',

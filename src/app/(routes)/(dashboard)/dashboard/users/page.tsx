@@ -10,7 +10,7 @@ import UserTable from '../components/UserTable'
 import SearchUsers from '../components/SearchUsers'
 import ManageUser from '../components/ManageUser'
 
-type UserTab = 'active' | 'inactive' | 'banned' | 'all'
+type UserTab = 'active' | 'pending' | 'banned' | 'all'
 type TabType = 'isActive' | 'isBanned' | 'isVerified'
 
 interface UserTabState {
@@ -40,15 +40,17 @@ const UsersPage = () => {
     queryKey: ['dashboard-users', page, limit, currentTab],
     queryFn: () => {
       // Set proper boolean values based on tab
-      let isActive = true;
-      let isBanned = false;
+      let isActive: boolean | undefined = undefined;
+      let isBanned: boolean | undefined = undefined;
+      let isVerified: boolean | undefined = undefined;
       let allUser = true;
       // Set default values
       if (currentTab.tab === 'active' && currentTab.tabType === 'isActive') {
         isActive = true;
+        isVerified = true;
         allUser = false;
-      } else if (currentTab.tab === 'inactive' && currentTab.tabType === 'isActive') {
-        isActive = false;
+      } else if (currentTab.tab === 'pending' && currentTab.tabType === 'isVerified') {
+        isVerified = false;
         allUser = false;
       } else if (currentTab.tab === 'banned' && currentTab.tabType === 'isBanned') {
         isBanned = true;
@@ -57,7 +59,7 @@ const UsersPage = () => {
         allUser = true;
       }
       
-      return getAllUsers({ search, page, limit, isActive, isBanned, allUser });
+      return getAllUsers({ search, page, limit, isActive, isBanned, isVerified, allUser });
     },
     staleTime: 1000 * 60 * 5,
   })
@@ -181,11 +183,11 @@ const UsersPage = () => {
           
           <button
             className={`inline-block py-3 px-4 text-sm font-medium ${
-              currentTab.tab === 'inactive'
+              currentTab.tab === 'pending'
                 ? 'border-b-2 border-red-500 text-red-600'
                 : 'text-gray-500 hover:text-gray-700 hover:border-gray-300 border-b-2 border-transparent'
             }`}
-            onClick={() => handleTabChange('inactive', 'isActive')}
+            onClick={() => handleTabChange('pending', 'isVerified')}
           >
             অপেক্ষমাণ ব্যবহারকারী
           </button>

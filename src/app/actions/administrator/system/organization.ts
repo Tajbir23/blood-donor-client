@@ -7,13 +7,9 @@ export const getAllOrganizations = async (search: string, page: number, status: 
     const token = cookieStore.get('token')
     try {
         const response = await baseUrl(`/system/organizations/all_organizations?search=${search}&page=${page}&status=${status}`, {
-            cache: 'force-cache',
+            cache: 'no-store',
             headers: {
                 'Authorization': `Bearer ${token?.value}`
-            },
-            next: {
-                tags: ['organizations'],
-                revalidate: 60 * 60 * 24
             }
         })
         return response.json()
@@ -28,14 +24,10 @@ export const updateOrganizationStatus = async (organizationId: string, status: s
     const token = cookieStore.get('token')
     try {
         const response = await baseUrl(`/system/organizations/update_organization_status/${organizationId}`, {  
-            cache: 'force-cache',
+            cache: 'no-store',
             headers: {
                 'Authorization': `Bearer ${token?.value}`,
                 'Content-Type': 'application/json'
-            },
-            next: {
-                tags: ['organizations'],
-                revalidate: 60 * 60 * 24
             },
             method: 'PUT',
             body: JSON.stringify({ status })

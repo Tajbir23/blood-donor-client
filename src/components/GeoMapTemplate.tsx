@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import 'leaflet/dist/leaflet.css';
 import type { LatLngTuple, LeafletMouseEvent } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // Dynamically load the map components with no SSR
 const MapContainer = dynamic(

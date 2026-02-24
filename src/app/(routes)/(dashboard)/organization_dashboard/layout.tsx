@@ -15,7 +15,7 @@ const OrganizationDashboardLayout = ({ children }: OrganizationDashboardLayoutPr
         <Sidebar />
       {/* Main content */}
       <div className="flex-1 overflow-auto">
-        <main className="p-6 md:p-8 pb-20 md:pb-8">
+        <main className="p-6 md:p-8 pb-20 md:pb-8 ">
           {children}
         </main>
       </div>

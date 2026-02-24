@@ -12,13 +12,9 @@ export async function GET() {
     }
 
     const response = await baseUrl('/user/me', {
-      cache: 'force-cache',
+      cache: 'no-store',
       headers: {
         'Authorization': `Bearer ${token.value}`
-      },
-      next: {
-        revalidate: 60 * 60 * 24,
-        tags: ['user']
       }
     })
 

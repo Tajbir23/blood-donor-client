@@ -6,15 +6,15 @@ import { Metadata } from 'next'
 
 export const generateMetadata = (): Metadata => {
   return {
-    title: 'রক্তদানের তারিখ আপডেট করুন | Blood Donor',
+    title: 'রক্তদানের তারিখ আপডেট করুন | LifeDrop',
     description: 'আপনার সর্বশেষ রক্তদানের তারিখ আপডেট করুন। নিয়মিত রক্তদান করলে সেটি আপডেট করা গুরুত্বপূর্ণ।',
-    keywords: 'রক্তদান, রক্তদানের তারিখ, আপডেট রক্তদান, ব্লাড ডোনেশন, blood donation, blood donor, donate blood',
+    keywords: 'রক্তদান, রক্তদানের তারিখ, আপডেট রক্তদান, ব্লাড ডোনেশন, blood donation, LifeDrop, donate blood',
     openGraph: {
-      title: 'রক্তদানের তারিখ আপডেট করুন | Blood Donor',
+      title: 'রক্তদানের তারিখ আপডেট করুন | LifeDrop',
       description: 'আপনার সর্বশেষ রক্তদানের তারিখ আপডেট করুন। নিয়মিত রক্তদান করলে সেটি আপডেট করা গুরুত্বপূর্ণ।',
       type: 'website',
       locale: 'bn_BD',
-      siteName: 'Blood Donor',
+      siteName: 'LifeDrop',
       images: [
         {
           url: '/assets/og-image.jpg',
@@ -26,7 +26,7 @@ export const generateMetadata = (): Metadata => {
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'রক্তদানের তারিখ আপডেট করুন | Blood Donor',
+      title: 'রক্তদানের তারিখ আপডেট করুন | LifeDrop',
       description: 'আপনার সর্বশেষ রক্তদানের তারিখ আপডেট করুন। নিয়মিত রক্তদান করলে সেটি আপডেট করা গুরুত্বপূর্ণ।',
     },
     alternates: {

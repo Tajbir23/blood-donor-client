@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useRangpurDivision } from '@/hooks/useLocation';
 import { UploadImage } from '@/app/libs';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,6 +19,7 @@ interface UserQueryData {
 }
 
 const RegisterOrg = () => {
+  const router = useRouter();
   const { division } = useRangpurDivision();
   const [isPending, setIsPending] = useState(false);
   const queryClient = useQueryClient();
@@ -119,15 +121,66 @@ const RegisterOrg = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side validation for required fields
+    const requiredFields: { key: keyof typeof formData; label: string }[] = [
+      { key: 'organizationName', label: 'প্রতিষ্ঠানের নাম' },
+      { key: 'organizationType', label: 'প্রতিষ্ঠানের ধরণ' },
+      { key: 'establishmentYear', label: 'প্রতিষ্ঠার বছর' },
+      { key: 'description', label: 'প্রতিষ্ঠানের সংক্ষিপ্ত বিবরণ' },
+      { key: 'email', label: 'ইমেইল' },
+      { key: 'phone', label: 'ফোন নম্বর' },
+      { key: 'districtId', label: 'জেলা' },
+      { key: 'thanaId', label: 'থানা/উপজেলা' },
+      { key: 'address', label: 'ঠিকানা' },
+      { key: 'representativeName', label: 'প্রতিনিধির নাম' },
+      { key: 'representativePhone', label: 'প্রতিনিধির ফোন নম্বর' },
+      { key: 'representativeEmail', label: 'প্রতিনিধির ইমেইল' },
+    ];
+
+    const missingFields = requiredFields.filter(f => {
+      const val = formData[f.key];
+      return !val || (typeof val === 'string' && val.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+      toast.error(`অনুগ্রহ করে পূরণ করুন: ${missingFields.map(f => f.label).join(', ')}`);
+      return;
+    }
+
+    if (!formData.logoImage) {
+      toast.error('প্রতিষ্ঠানের লোগো আপলোড করুন');
+      return;
+    }
+
     setIsPending(true);
-    // Form validation and submission logic
-    const response = await registerOrganization(formData)
-    if(response.success){
-      toast.success(response.message)
-      revalidateTags('my_organizations')
-      queryClient.invalidateQueries({ queryKey: ['my_organizations'] })
-    }else{
-      toast.error(response.message)
+    
+    try {
+      // Build FormData on client side so File objects are preserved
+      const submitData = new FormData();
+      
+      if (formData.logoImage) {
+        submitData.append('organization', formData.logoImage);
+      }
+      
+      // Create a clean copy without File objects for JSON serialization
+      const organizationData = { ...formData } as Record<string, unknown>;
+      delete organizationData.logoImage;
+      delete organizationData.logoImageUrl;
+      
+      submitData.append('organizationData', JSON.stringify(organizationData));
+      
+      const response = await registerOrganization(submitData);
+      if(response.success){
+        toast.success(response.message)
+        revalidateTags('my_organizations')
+        queryClient.invalidateQueries({ queryKey: ['my_organizations'] })
+        router.push('/organizations')
+      }else{
+        toast.error(response.message || 'Organization creation failed')
+      }
+    } catch {
+      toast.error('কিছু ভুল হয়েছে, আবার চেষ্টা করুন')
     }
     setIsPending(false);
   };
