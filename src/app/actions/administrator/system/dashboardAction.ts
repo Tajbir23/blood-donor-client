@@ -141,3 +141,24 @@ export const getAllModerators = async ({search, page, limit}: {search: string, p
     return await moderators.json()
 
 }
+
+export const getFacebookMessages = async ({ page = 1, limit = 20, psId = '', direction = '' }: { page?: number, limit?: number, psId?: string, direction?: string }) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) return { error: 'Unauthorized' };
+
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (psId) params.set('psId', psId);
+    if (direction) params.set('direction', direction);
+
+    const res = await baseUrl(`/system/dashboard/facebook-messages?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+
+    return await res.json();
+}
