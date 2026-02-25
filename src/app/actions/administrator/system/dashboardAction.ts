@@ -162,3 +162,24 @@ export const getFacebookMessages = async ({ page = 1, limit = 20, psId = '', dir
 
     return await res.json();
 }
+
+export const getTelegramMessages = async ({ page = 1, limit = 20, chatId = '', direction = '' }: { page?: number, limit?: number, chatId?: string, direction?: string }) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) return { error: 'Unauthorized' };
+
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (chatId)    params.set('chatId', chatId);
+    if (direction) params.set('direction', direction);
+
+    const res = await baseUrl(`/system/dashboard/telegram-messages?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+
+    return await res.json();
+}

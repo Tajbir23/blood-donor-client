@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaUser, FaTint, FaCalendarAlt, FaBuilding, FaCog, FaSignOutAlt, FaBars, FaTimes, FaImage, FaFacebook } from 'react-icons/fa';
+import { FaHome, FaUser, FaTint, FaCalendarAlt, FaBuilding, FaCog, FaSignOutAlt, FaBars, FaTimes, FaImage, FaFacebook, FaTelegram } from 'react-icons/fa';
 import { useQueryClient } from '@tanstack/react-query';
 import { User } from '@/lib/types/userType';
 import AppLogo from '@/components/ui/AppLogo';
@@ -43,6 +43,7 @@ const Sidebar = () => {
 
   if(isSuperAdmin){
     menuItems.push({ title: 'FB Messages', path: '/dashboard/facebook-messages', icon: <FaFacebook className="mr-3" /> })
+    menuItems.push({ title: 'TG Messages', path: '/dashboard/telegram-messages', icon: <FaTelegram className="mr-3" /> })
   }
   
 
