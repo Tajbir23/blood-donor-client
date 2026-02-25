@@ -137,11 +137,15 @@ const Organizations = ({ userOrganizations, memberOforg, refetchMyOrganizations 
                   className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
               সংস্থা পেইজ
             </Link>
-          ) : (
+          ) : org.isActive ? (
             <Link href={`/organization_dashboard/${org._id}`}
                   className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
               ড্যাশবোর্ড
             </Link>
+          ) : (
+            <span className="text-sm font-medium text-amber-600">
+              {org.isBanned ? 'নিষিদ্ধ' : 'অনুমোদনের অপেক্ষায়'}
+            </span>
           )}
         </div>
       </div>

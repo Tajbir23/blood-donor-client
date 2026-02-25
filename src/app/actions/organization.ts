@@ -38,7 +38,7 @@ export const myOrganizations = async() => {
             },
             next: {
                 tags: ['my_organizations'],
-                revalidate: 60 * 60 * 24
+                revalidate: 300
             }
         })
 

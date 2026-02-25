@@ -1,6 +1,7 @@
 "use server"
 import baseUrl from "@/lib/api/baseUrl"
 import { cookies } from "next/headers"
+import { revalidateTag } from "next/cache"
 
 export const getAllOrganizations = async (search: string, page: number, status: string) => {
     const cookieStore = await cookies()
@@ -32,7 +33,11 @@ export const updateOrganizationStatus = async (organizationId: string, status: s
             method: 'PUT',
             body: JSON.stringify({ status })
         })
-        return response.json()
+        const data = await response.json()
+        if (data?.success) {
+            revalidateTag('my_organizations')
+        }
+        return data
     } catch (error) {
         console.log(error)
         return null

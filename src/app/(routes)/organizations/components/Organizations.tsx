@@ -66,8 +66,8 @@ const Organizations = ({ initialData, decodedUser }: OrganizationsProps) => {
       if (!res.ok) throw new Error('Failed to fetch organizations')
       return res.json()
     },
-    initialData,
-    staleTime: 600000,
+    initialData: initialData?.organizations?.length > 0 ? initialData : undefined,
+    staleTime: initialData?.organizations?.length > 0 ? 600000 : 0,
     retry: 2,
     refetchOnWindowFocus: false
   })

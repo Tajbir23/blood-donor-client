@@ -34,7 +34,7 @@ const Profile = () => {
   const {data: myOrganizationsData, refetch: refetchMyOrganizations} = useQuery({
     queryKey: ["my_organizations"],
     queryFn:async() => await myOrganizations(),
-    staleTime: 60 * 60 * 24 
+    staleTime: 1000 * 60 * 5
   })
   useEffect(() => {
     const timeOut = setTimeout(() => {
