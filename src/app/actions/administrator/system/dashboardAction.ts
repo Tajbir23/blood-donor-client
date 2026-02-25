@@ -242,3 +242,87 @@ export const deleteAiTrainingData = async (id: string) => {
     });
     return await res.json();
 }
+
+// ── Telegram Broadcast ────────────────────────────────────────────────────────
+
+export interface TgBroadcastFilters {
+    bloodGroup?: string;       // comma-separated, e.g. "A+,B-"
+    divisionId?: string;
+    districtId?: string;
+    thanaId?: string;
+    lastDonationFrom?: string; // ISO date string
+    lastDonationTo?: string;
+    neverDonated?: boolean;
+    registeredFrom?: string;
+    registeredTo?: string;
+}
+
+export const getTgBroadcastLocations = async (params: { divisionId?: string; districtId?: string } = {}) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const query = new URLSearchParams();
+    if (params.divisionId) query.set('divisionId', params.divisionId);
+    if (params.districtId) query.set('districtId', params.districtId);
+
+    const res = await baseUrl(`/system/dashboard/tg-broadcast/locations?${query.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+    return await res.json();
+};
+
+export const getTgBroadcastCount = async (filters: TgBroadcastFilters) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const query = new URLSearchParams();
+    if (filters.bloodGroup)      query.set('bloodGroup',      filters.bloodGroup);
+    if (filters.divisionId)      query.set('divisionId',      filters.divisionId);
+    if (filters.districtId)      query.set('districtId',      filters.districtId);
+    if (filters.thanaId)         query.set('thanaId',         filters.thanaId);
+    if (filters.neverDonated)    query.set('neverDonated',    'true');
+    if (filters.lastDonationFrom) query.set('lastDonationFrom', filters.lastDonationFrom);
+    if (filters.lastDonationTo)   query.set('lastDonationTo',   filters.lastDonationTo);
+    if (filters.registeredFrom)  query.set('registeredFrom',  filters.registeredFrom);
+    if (filters.registeredTo)    query.set('registeredTo',    filters.registeredTo);
+
+    const res = await baseUrl(`/system/dashboard/tg-broadcast/count?${query.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+    return await res.json();
+};
+
+export const sendTgBroadcast = async (filters: TgBroadcastFilters, message: string) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const body: Record<string, string> = { message };
+    if (filters.bloodGroup)       body.bloodGroup      = filters.bloodGroup;
+    if (filters.divisionId)       body.divisionId      = filters.divisionId;
+    if (filters.districtId)       body.districtId      = filters.districtId;
+    if (filters.thanaId)          body.thanaId         = filters.thanaId;
+    if (filters.neverDonated)     body.neverDonated    = 'true';
+    if (filters.lastDonationFrom) body.lastDonationFrom = filters.lastDonationFrom;
+    if (filters.lastDonationTo)   body.lastDonationTo   = filters.lastDonationTo;
+    if (filters.registeredFrom)   body.registeredFrom   = filters.registeredFrom;
+    if (filters.registeredTo)     body.registeredTo     = filters.registeredTo;
+
+    const res = await baseUrl('/system/dashboard/tg-broadcast', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        cache: 'no-store',
+    });
+    return await res.json();
+};
