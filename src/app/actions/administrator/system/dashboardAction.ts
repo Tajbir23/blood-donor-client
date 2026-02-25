@@ -183,3 +183,62 @@ export const getTelegramMessages = async ({ page = 1, limit = 20, chatId = '', d
 
     return await res.json();
 }
+
+// ── AI Training ───────────────────────────────────────────────────────────────
+
+export const getAiTrainingData = async ({ page = 1, limit = 20, search = '' }: { page?: number, limit?: number, search?: string } = {}) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (search) params.set('search', search);
+
+    const res = await baseUrl(`/system/dashboard/ai-training?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+    return await res.json();
+}
+
+export const addAiTrainingData = async (payload: {
+    questionText: string;
+    answerText: string;
+    intent: string;
+    sourceMessageId?: string;
+    sourcePlatform?: string;
+}) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const res = await baseUrl('/system/dashboard/ai-training', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        cache: 'no-store',
+    });
+    return await res.json();
+}
+
+export const deleteAiTrainingData = async (id: string) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const res = await baseUrl(`/system/dashboard/ai-training/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+    return await res.json();
+}

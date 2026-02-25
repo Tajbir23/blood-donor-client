@@ -4,11 +4,10 @@ import { getTelegramMessages } from "@/app/actions/administrator/system/dashboar
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 import { User } from "@/lib/types/userType"
-import { FaTelegram, FaChevronLeft, FaChevronRight } from "react-icons/fa"
+import { FaTelegram, FaChevronLeft, FaChevronRight, FaBrain } from "react-icons/fa"
+import AiTrainModal from "@/components/dashboard/ai/AiTrainModal"
 
-interface UserQueryData {
-    user: User
-}
+interface UserQueryData { user: User }
 
 interface TelegramMessage {
     _id: string
@@ -24,12 +23,7 @@ interface TelegramMessage {
 interface MessagesResponse {
     success: boolean
     data: TelegramMessage[]
-    pagination: {
-        total: number
-        page: number
-        limit: number
-        totalPages: number
-    }
+    pagination: { total: number; page: number; limit: number; totalPages: number }
 }
 
 const TelegramMessagesPage = () => {
@@ -37,11 +31,10 @@ const TelegramMessagesPage = () => {
     const [page, setPage] = useState(1)
     const [chatIdFilter, setChatIdFilter] = useState("")
     const [directionFilter, setDirectionFilter] = useState("")
+    const [trainModal, setTrainModal] = useState<{ msgId: string; text: string } | null>(null)
     const limit = 20
 
-    const user = useMemo(() => {
-        return queryClient.getQueryData<UserQueryData>(["user"])
-    }, [queryClient])
+    const user = useMemo(() => queryClient.getQueryData<UserQueryData>(["user"]), [queryClient])
 
     if (user?.user?.role !== "superAdmin") {
         return (
@@ -117,6 +110,7 @@ const TelegramMessagesPage = () => {
                                 <th className="px-4 py-3 text-left">Callback</th>
                                 <th className="px-4 py-3 text-left">Direction</th>
                                 <th className="px-4 py-3 text-left">সময়</th>
+                                <th className="px-4 py-3 text-left">AI Train</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -151,6 +145,17 @@ const TelegramMessagesPage = () => {
                                             timeStyle: "short",
                                         })}
                                     </td>
+                                    <td className="px-4 py-3">
+                                        {msg.direction === "incoming" && msg.messageText && (
+                                            <button
+                                                onClick={() => setTrainModal({ msgId: msg._id, text: msg.messageText! })}
+                                                className="flex items-center gap-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+                                                title="AI কে Train করুন"
+                                            >
+                                                <FaBrain size={10} /> Train
+                                            </button>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -168,9 +173,7 @@ const TelegramMessagesPage = () => {
                     >
                         <FaChevronLeft size={12} /> আগে
                     </button>
-                    <span className="text-sm text-gray-600">
-                        {page} / {pagination.totalPages}
-                    </span>
+                    <span className="text-sm text-gray-600">{page} / {pagination.totalPages}</span>
                     <button
                         disabled={page === pagination.totalPages}
                         onClick={() => setPage((p) => p + 1)}
@@ -179,6 +182,17 @@ const TelegramMessagesPage = () => {
                         পরে <FaChevronRight size={12} />
                     </button>
                 </div>
+            )}
+
+            {/* AI Train Modal */}
+            {trainModal && (
+                <AiTrainModal
+                    isOpen={true}
+                    onClose={() => setTrainModal(null)}
+                    initialQuestion={trainModal.text}
+                    sourceMessageId={trainModal.msgId}
+                    sourcePlatform="telegram"
+                />
             )}
         </div>
     )
