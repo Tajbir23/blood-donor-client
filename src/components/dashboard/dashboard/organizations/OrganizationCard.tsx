@@ -21,7 +21,7 @@ const OrganizationCard = ({ organization, userRole, orgStatus, onActionSuccess }
   const getStatusColor = () => {
     switch (orgStatus) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
-      case 'inactive': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ban': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -61,21 +61,14 @@ const OrganizationCard = ({ organization, userRole, orgStatus, onActionSuccess }
         icon: <FaCheck className="mr-2" />,
         bgColor: 'bg-green-50 hover:bg-green-100',
         textColor: 'text-green-700',
-        show: orgStatus === 'inactive'
-      },
-      inactive: {
-        label: 'Disable',
-        icon: <FaExclamationTriangle className="mr-2" />,
-        bgColor: 'bg-yellow-50 hover:bg-yellow-100',
-        textColor: 'text-yellow-700',
-        show: orgStatus === 'active'
+        show: orgStatus === 'pending'
       },
       ban: {
         label: 'Ban',
         icon: <FaBan className="mr-2" />,
         bgColor: 'bg-red-50 hover:bg-red-100',
         textColor: 'text-red-700',
-        show: orgStatus === 'active'
+        show: orgStatus === 'active' || orgStatus === 'pending'
       },
       unban: {
         label: 'Unban',
@@ -120,7 +113,7 @@ const OrganizationCard = ({ organization, userRole, orgStatus, onActionSuccess }
       {/* Status Indicator */}
       <div className={`absolute top-0 right-0 w-3 h-3 rounded-full m-3 ${
         orgStatus === 'active' ? 'bg-green-500' : 
-        orgStatus === 'inactive' ? 'bg-yellow-500' : 
+        orgStatus === 'pending' ? 'bg-orange-500' :
         'bg-red-500'
       }`}></div>
       
@@ -181,7 +174,6 @@ const OrganizationCard = ({ organization, userRole, orgStatus, onActionSuccess }
         {isAdmin && (
           <div className="grid grid-cols-2 gap-2 mb-4">
             {getActionButton('active')}
-            {getActionButton('inactive')}
             {getActionButton('ban')}
             {getActionButton('unban')}
             {getActionButton('delete')}

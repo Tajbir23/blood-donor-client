@@ -182,6 +182,7 @@ const Dashboard = () => {
     totalDonations: data?.statistics?.totalDonationCount || 0,
     thisMonthDonations: data?.statistics?.thisMonthDonations || 0,
     organizations: data?.totalOrganizations || 0,
+    pendingOrganizations: data?.pendingOrganizations || 0,
   }
 
   // Blood inventory data
@@ -270,7 +271,14 @@ const Dashboard = () => {
           <div>
             <p className="text-sm text-gray-500">সংগঠন</p>
             <p className="text-2xl font-bold text-gray-800">{stats.organizations}</p>
-            <p className="text-xs text-gray-500">সক্রিয় সংগঠন</p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-gray-500">সক্রিয় সংগঠন</p>
+              {stats.pendingOrganizations > 0 && (
+                <Link href="/dashboard/organizations" className="text-xs text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                  {stats.pendingOrganizations} পেন্ডিং
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
