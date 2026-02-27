@@ -326,3 +326,66 @@ export const sendTgBroadcast = async (filters: TgBroadcastFilters, message: stri
     });
     return await res.json();
 };
+// ─── Custom Bot Rules ─────────────────────────────────────────────────────────
+
+export const getBotRules = async ({ page = 1, limit = 50, search = "" }: { page?: number; limit?: number; search?: string }) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const params = new URLSearchParams({ page: String(page), limit: String(limit), search });
+    const res = await baseUrl(`/system/dashboard/bot-rules?${params}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+    return await res.json();
+};
+
+export const addBotRule = async (data: { trigger: string; response: string; matchType: string; platform: string }) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const res = await baseUrl('/system/dashboard/bot-rules', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        cache: 'no-store',
+    });
+    return await res.json();
+};
+
+export const updateBotRule = async (id: string, data: { trigger?: string; response?: string; matchType?: string; platform?: string; isActive?: boolean }) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const res = await baseUrl(`/system/dashboard/bot-rules/${id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        cache: 'no-store',
+    });
+    return await res.json();
+};
+
+export const deleteBotRule = async (id: string) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+    if (!token) return { error: 'Unauthorized' };
+    const { role } = await verifyJwt() as decodedJwtType;
+    if (role !== 'superAdmin') redirect('/dashboard');
+
+    const res = await baseUrl(`/system/dashboard/bot-rules/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+        cache: 'no-store',
+    });
+    return await res.json();
+};
