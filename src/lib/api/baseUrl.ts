@@ -22,17 +22,26 @@ type FetchOptions = {
     }
   }
 
-const baseUrl = async(path: string, options: FetchOptions = {}) => {
+const MAX_RETRIES = 2
+const TIMEOUT_MS = 15000 // 15s — Vercel serverless limit safe
+
+const baseUrl = async(path: string, options: FetchOptions = {}, _retryCount = 0): Promise<Response> => {
     const cookieStore = await cookies()
+
+    // AbortController for timeout — connection hang হলে নিজে cancel করবে
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
+
     try {
-       
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
             cache: options.cache || 'no-store',
             ...options,
             credentials: 'include',
+            signal: options.signal || controller.signal,
             next: options.next
         })
 
+        clearTimeout(timeoutId)
 
         const token = res.headers.get("set-cookie")?.split(";")[0]?.split("=")[1]
 
@@ -51,7 +60,22 @@ const baseUrl = async(path: string, options: FetchOptions = {}) => {
         }
 
         return res
-    } catch (error) {
+    } catch (error: any) {
+        clearTimeout(timeoutId)
+
+        // Retry on network/timeout errors (not on 4xx/5xx — those already returned a Response)
+        const isRetryable = error?.name === 'AbortError'
+            || error?.message?.includes('fetch failed')
+            || error?.message?.includes('ECONNRESET')
+            || error?.message?.includes('ETIMEDOUT')
+            || error?.message?.includes('Connection closed')
+
+        if (isRetryable && _retryCount < MAX_RETRIES) {
+            // Exponential backoff: 500ms, 1000ms
+            await new Promise(r => setTimeout(r, 500 * (_retryCount + 1)))
+            return baseUrl(path, options, _retryCount + 1)
+        }
+
         throw error
     }
 }

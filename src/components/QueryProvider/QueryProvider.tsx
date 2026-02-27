@@ -12,7 +12,24 @@ const queryClient = new QueryClient({
     queries: {
       gcTime: 1000 * 60 * 60 * 24,
       refetchOnWindowFocus: false,
-      retry: failureCount => failureCount < 3
+      retry: (failureCount, error: any) => {
+        // "Connection closed" বা network error হলে retry করো
+        const msg = error?.message || ''
+        if (msg.includes('Connection closed') || msg.includes('fetch failed') || msg.includes('Failed to fetch')) {
+          return failureCount < 3
+        }
+        return failureCount < 2
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    },
+    mutations: {
+      retry: (failureCount, error: any) => {
+        const msg = error?.message || ''
+        if (msg.includes('Connection closed')) {
+          return failureCount < 2
+        }
+        return false
+      },
     }
   }
 })
