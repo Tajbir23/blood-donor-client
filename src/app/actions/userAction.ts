@@ -91,3 +91,103 @@ export const reportUser = async (reportedUserId: string, reason: string, categor
         return { success: false, message: 'সার্ভার ত্রুটি হয়েছে' }
     }
 }
+
+export const changePassword = async (currentPassword: string, newPassword: string) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')
+    if (!token) {
+        return { success: false, message: 'Unauthorized' }
+    }
+
+    try {
+        const response = await baseUrl('/user/change-password', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token.value}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ currentPassword, newPassword })
+        })
+        return response.json()
+    } catch {
+        return { success: false, message: 'সার্ভার ত্রুটি হয়েছে' }
+    }
+}
+
+export const updateProfile = async (profileData: {
+    fullName?: string;
+    phone?: string;
+    bloodGroup?: string;
+    address?: string;
+    districtId?: string;
+    thanaId?: string;
+    latitude?: number;
+    longitude?: number;
+}) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')
+    if (!token) {
+        return { success: false, message: 'Unauthorized' }
+    }
+
+    try {
+        const response = await baseUrl('/user/update-profile', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token.value}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(profileData)
+        })
+        return response.json()
+    } catch {
+        return { success: false, message: 'সার্ভার ত্রুটি হয়েছে' }
+    }
+}
+
+export const deleteAccount = async (password: string) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')
+    if (!token) {
+        return { success: false, message: 'Unauthorized' }
+    }
+
+    try {
+        const response = await baseUrl('/user/delete-account', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token.value}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password })
+        })
+        return response.json()
+    } catch {
+        return { success: false, message: 'সার্ভার ত্রুটি হয়েছে' }
+    }
+}
+
+export const updateNotificationPreferences = async (preferences: {
+    bloodRequestNotification?: boolean;
+    emailNotification?: boolean;
+}) => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')
+    if (!token) {
+        return { success: false, message: 'Unauthorized' }
+    }
+
+    try {
+        const response = await baseUrl('/user/notification-preferences', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token.value}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(preferences)
+        })
+        return response.json()
+    } catch {
+        return { success: false, message: 'সার্ভার ত্রুটি হয়েছে' }
+    }
+}

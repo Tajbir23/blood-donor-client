@@ -1,32 +1,43 @@
+'use client'
+
+import { useState } from 'react';
+
 interface ToggleSwitchProps {
   id: string;
   label: string;
-  defaultChecked?: boolean;
-  onChange?: (checked: boolean) => void;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: (checked: boolean) => void;
 }
 
-const ToggleSwitch = ({ id, label, defaultChecked = false, onChange }: ToggleSwitchProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(e.target.checked);
-    }
+const ToggleSwitch = ({ id, label, checked, disabled = false, onChange }: ToggleSwitchProps) => {
+  const [isChecked, setIsChecked] = useState(checked);
+
+  const handleToggle = () => {
+    if (disabled) return;
+    const newValue = !isChecked;
+    setIsChecked(newValue);
+    onChange(newValue);
   };
 
   return (
-    <label htmlFor={id} className="flex items-center cursor-pointer">
-      <div className="relative">
-        <input 
-          id={id}
-          type="checkbox" 
-          className="sr-only" 
-          defaultChecked={defaultChecked}
-          onChange={handleChange}
-          aria-label={label}
-        />
-        <div className="w-10 h-5 bg-gray-300 rounded-full shadow-inner"></div>
-        <div className={`dot absolute w-5 h-5 bg-white rounded-full shadow -left-1 -top-0 transition ${defaultChecked ? 'transform translate-x-full bg-red-500' : ''}`}></div>
-      </div>
-    </label>
+    <button
+      id={id}
+      role="switch"
+      aria-checked={isChecked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={handleToggle}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+        isChecked ? 'bg-red-500' : 'bg-gray-300'
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+          isChecked ? 'translate-x-6' : 'translate-x-1'
+        }`}
+      />
+    </button>
   );
 };
 

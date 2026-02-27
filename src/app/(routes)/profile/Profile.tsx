@@ -68,7 +68,11 @@ const Profile = () => {
     agreedToTerms: true,
     profileImage: null,
     reportCount: userData?.reportCount ?? 0, // Number of times this user has been reported
-    organizationId: userData?.organizationId ?? []
+    organizationId: userData?.organizationId ?? [],
+    notificationPreferences: userData?.notificationPreferences ?? {
+      bloodRequestNotification: true,
+      emailNotification: true
+    }
   }
 
   const handleLogout = async() => {
@@ -97,7 +101,7 @@ const Profile = () => {
             {activeTab === 'overview' && <ProfileOverview userProfile={userProfile} />}
             {activeTab === 'donations' && <DonationHistory userProfile={userProfile} />}
             {activeTab === 'organizations' && <Organizations userOrganizations={userOrganizations} memberOforg={userProfile.organizationId || []} refetchMyOrganizations={refetchMyOrganizations} />}
-            {activeTab === 'settings' && <ProfileSettings />}
+            {activeTab === 'settings' && <ProfileSettings userProfile={userProfile} />}
           </div>
         </div>
       </div>

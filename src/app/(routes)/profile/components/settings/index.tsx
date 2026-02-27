@@ -1,8 +1,15 @@
+'use client'
+
+import { User } from '@/lib/types/userType'
 import ProfileSettingsSection from './ProfileSettingsSection'
 import NotificationSettingsSection from './NotificationSettingsSection'
 import AccountActionsSection from './AccountActionsSection'
 
-const ProfileSettings = () => {
+interface ProfileSettingsProps {
+  userProfile: User;
+}
+
+const ProfileSettings = ({ userProfile }: ProfileSettingsProps) => {
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:px-6">
@@ -10,8 +17,8 @@ const ProfileSettings = () => {
       </div>
       <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
         <div className="space-y-6">
-          <ProfileSettingsSection />
-          <NotificationSettingsSection />
+          <ProfileSettingsSection userProfile={userProfile} />
+          <NotificationSettingsSection userProfile={userProfile} />
           <AccountActionsSection />
         </div>
       </div>

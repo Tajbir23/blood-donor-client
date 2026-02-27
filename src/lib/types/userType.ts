@@ -33,6 +33,10 @@ export interface User {
     isBanned?: boolean;
     isVerified?: boolean;
     reportCount?: number;
+    notificationPreferences?: {
+        bloodRequestNotification: boolean;
+        emailNotification: boolean;
+    };
     distance?: number;
     distanceKm?: string;
     createdAt?: string;
