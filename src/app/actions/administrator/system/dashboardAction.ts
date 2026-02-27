@@ -389,3 +389,38 @@ export const deleteBotRule = async (id: string) => {
     });
     return await res.json();
 };
+
+
+export const getAllDonationsAdmin = async ({ search, page, limit, bloodGroup, startDate, endDate }: { search: string, page: number, limit: number, bloodGroup?: string, startDate?: string, endDate?: string }) => {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) {
+        logoutUser()
+        redirect('/')
+    }
+
+    const { role } = await verifyJwt() as decodedJwtType
+    const isAdmin = role === 'admin' || role === 'superAdmin' || role === 'moderator';
+    if (!isAdmin) redirect('/')
+
+    const params = new URLSearchParams();
+    params.set('search', search);
+    params.set('page', String(page));
+    params.set('limit', String(limit));
+    if (bloodGroup) params.set('bloodGroup', bloodGroup);
+    if (startDate) params.set('startDate', startDate);
+    if (endDate) params.set('endDate', endDate);
+
+    const donations = await baseUrl(`/system/dashboard/donations?${params.toString()}`, {
+        cache: 'no-store',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        next: {
+            tags: ['admin-donations'],
+        }
+    })
+
+    return await donations.json()
+};
