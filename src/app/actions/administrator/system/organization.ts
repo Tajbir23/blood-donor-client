@@ -35,7 +35,7 @@ export const updateOrganizationStatus = async (organizationId: string, status: s
         })
         const data = await response.json()
         if (data?.success) {
-            revalidateTag('my_organizations')
+            revalidateTag('my_organizations', {})
         }
         return data
     } catch (error) {

@@ -31,7 +31,7 @@ const PLATFORM_LABELS: Record<string, string> = {
     facebook: "শুধু Facebook",
 }
 
-const EMPTY_FORM = { trigger: "", response: "", matchType: "contains", platform: "all" }
+const EMPTY_FORM: { trigger: string; response: string; matchType: BotRule["matchType"]; platform: BotRule["platform"] } = { trigger: "", response: "", matchType: "contains", platform: "all" }
 
 export default function BotRulesPage() {
     const queryClient = useQueryClient()
@@ -40,7 +40,7 @@ export default function BotRulesPage() {
     const [search, setSearch]       = useState("")
     const [showForm, setShowForm]   = useState(false)
     const [editing, setEditing]     = useState<BotRule | null>(null)
-    const [form, setForm]           = useState({ ...EMPTY_FORM })
+    const [form, setForm]           = useState<typeof EMPTY_FORM>({ ...EMPTY_FORM })
     const [deletingId, setDel]      = useState<string | null>(null)
 
     if (user?.user?.role !== "superAdmin") {
@@ -146,7 +146,7 @@ export default function BotRulesPage() {
                                 <select
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
                                     value={form.matchType}
-                                    onChange={e => setForm(f => ({ ...f, matchType: e.target.value }))}
+                                    onChange={e => setForm(f => ({ ...f, matchType: e.target.value as BotRule["matchType"] }))}
                                 >
                                     {Object.entries(MATCH_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                                 </select>
@@ -156,7 +156,7 @@ export default function BotRulesPage() {
                                 <select
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
                                     value={form.platform}
-                                    onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
+                                    onChange={e => setForm(f => ({ ...f, platform: e.target.value as BotRule["platform"] }))}
                                 >
                                     {Object.entries(PLATFORM_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                                 </select>
