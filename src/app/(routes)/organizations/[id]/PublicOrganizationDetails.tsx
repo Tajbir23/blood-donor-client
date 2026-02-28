@@ -280,21 +280,40 @@ const PublicOrganizationDetails = ({ organizationId }: PublicOrganizationDetails
                         <span>যোগদান: {org.createdAt ? new Date(org.createdAt).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
                     </div>
 
-                    <button
-                        onClick={handleJoinRequest}
-                        disabled={joinLoading}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {joinLoading ? (
-                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        ) : (
-                            <FaHandshake />
-                        )}
-                        যোগদান অনুরোধ পাঠান
-                    </button>
+                    {/* Show different states based on membershipStatus */}
+                    {org.membershipStatus === 'owner' ? (
+                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-green-100 text-green-800 font-medium rounded-xl">
+                            <FaUserTie /> আপনি এই প্রতিষ্ঠানের মালিক
+                        </span>
+                    ) : org.membershipStatus === 'admin' ? (
+                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-blue-100 text-blue-800 font-medium rounded-xl">
+                            <FaUserTie /> আপনি এই প্রতিষ্ঠানের পরিচালক
+                        </span>
+                    ) : org.membershipStatus === 'accepted' ? (
+                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-green-100 text-green-800 font-medium rounded-xl">
+                            <FaUsers /> আপনি ইতোমধ্যে সদস্য
+                        </span>
+                    ) : org.membershipStatus === 'pending' ? (
+                        <span className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-100 text-yellow-800 font-medium rounded-xl">
+                            <FaClock /> আপনার আবেদন অনুমোদনের অপেক্ষায়
+                        </span>
+                    ) : (
+                        <button
+                            onClick={handleJoinRequest}
+                            disabled={joinLoading}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {joinLoading ? (
+                                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : (
+                                <FaHandshake />
+                            )}
+                            যোগদান অনুরোধ পাঠান
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

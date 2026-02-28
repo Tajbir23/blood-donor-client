@@ -129,9 +129,16 @@ export const getOrganizationDetails = async (organizationId: string) => {
 
 export const getPublicOrganizationDetails = async (organizationId: string) => {
     try {
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
+        const headers: Record<string, string> = {}
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`
+        }
         const response = await baseUrl(`/organization/public/${organizationId}`, {
             cache: 'no-store',
-            method: "GET"
+            method: "GET",
+            headers
         })
         return await response.json()
     } catch (error) {
