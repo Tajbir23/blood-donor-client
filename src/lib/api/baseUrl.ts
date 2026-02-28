@@ -33,9 +33,16 @@ const baseUrl = async(path: string, options: FetchOptions = {}, _retryCount = 0)
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
     try {
+        // Merge headers: keep user-provided headers + add server secret for VPN bypass
+        const mergedHeaders = new Headers(options.headers || {});
+        if (process.env.SERVER_SECRET_KEY) {
+            mergedHeaders.set('X-Server-Key', process.env.SERVER_SECRET_KEY);
+        }
+
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
             cache: options.cache || 'no-store',
             ...options,
+            headers: mergedHeaders,
             credentials: 'include',
             signal: options.signal || controller.signal,
             next: options.next
@@ -43,14 +50,19 @@ const baseUrl = async(path: string, options: FetchOptions = {}, _retryCount = 0)
 
         clearTimeout(timeoutId)
 
-        const token = res.headers.get("set-cookie")?.split(";")[0]?.split("=")[1]
+        // Extract token from set-cookie header
+        // Format: "token=eyJhbG...abc==; Path=/; HttpOnly; Secure; SameSite=Lax"
+        // Must handle JWT tokens that contain '=' (base64 padding)
+        const setCookieHeader = res.headers.get("set-cookie")
+        const tokenMatch = setCookieHeader?.match(/^token=([^;]+)/)
+        const token = tokenMatch?.[1]
 
         if(token){
             cookieStore.set('token', token, {
                 httpOnly: true,
                 secure: process.env.NEXT_PUBLIC_NODE_ENV === 'production',
                 maxAge: 60 * 60 * 24 * 30,
-                sameSite: 'strict'
+                sameSite: 'lax'
             })
         }
         

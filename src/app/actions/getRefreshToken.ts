@@ -7,6 +7,15 @@ const getRefreshToken = async () => {
   if (!token) {
     return null;
   }
+
+  // Build headers — include server secret for VPN middleware bypass
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (process.env.SERVER_SECRET_KEY) {
+    headers['X-Server-Key'] = process.env.SERVER_SECRET_KEY;
+  }
+
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/refresh-token`, {
     cache: 'force-cache',
     next: {
@@ -15,9 +24,7 @@ const getRefreshToken = async () => {
     },
     method: 'POST',
     body: JSON.stringify({ token: token.value }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
   });
   const data = await response.json();
 
