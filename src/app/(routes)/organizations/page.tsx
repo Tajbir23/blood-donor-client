@@ -3,6 +3,7 @@ import { verifyJwt } from "@/app/actions/authentication";
 import Organizations from "./components/Organizations"
 import { Metadata } from 'next'
 import decodedJwtType from "@/lib/types/decodedJwtType";
+import { myOrganizations, getMyJoinRequests } from "@/app/actions/organization";
 
 // Add this line to make the page dynamic
 export const dynamic = 'force-dynamic'
@@ -118,9 +119,32 @@ const page = async () => {
       getOrganizations(),
       verifyJwt(false) as Promise<decodedJwtType>
     ]);
+
+    // Fetch user's joined organization IDs
+    let joinedOrgIds: string[] = [];
+    if (user) {
+      try {
+        const [myOrgsData, myJoinReqData] = await Promise.all([
+          myOrganizations(),
+          getMyJoinRequests()
+        ]);
+
+        // Orgs where user is owner/admin/mod
+        if (myOrgsData?.success && myOrgsData.organizations) {
+          joinedOrgIds = myOrgsData.organizations.map((org: any) => org._id?.toString());
+        }
+
+        // Orgs where user has pending/accepted join request
+        if (myJoinReqData?.success && myJoinReqData.joinedOrgIds) {
+          joinedOrgIds = [...new Set([...joinedOrgIds, ...myJoinReqData.joinedOrgIds])];
+        }
+      } catch (e) {
+        console.error('Error fetching my organizations:', e);
+      }
+    }
     
     return (
-      <Organizations decodedUser={user} initialData={initialData} />
+      <Organizations decodedUser={user} initialData={initialData} joinedOrgIds={joinedOrgIds} />
     );
   } catch (error) {
     console.error('Error in organizations page:', error);

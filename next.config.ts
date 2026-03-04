@@ -8,6 +8,8 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
+    unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
       {
         protocol: 'http',
@@ -28,7 +30,8 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-  }
+  },
+  allowedDevOrigins: ['localhost', '127.0.0.1']
 }
 
 module.exports = withPWA(nextConfig)

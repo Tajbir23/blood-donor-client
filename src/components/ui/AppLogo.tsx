@@ -24,7 +24,8 @@ const AppLogo = ({
         alt={APP_NAME}
         width={size}
         height={size}
-        className="w-auto object-contain"
+        className="object-contain"
+        style={{ width: size, height: 'auto', maxHeight: size }}
         priority
       />
       {showName && (

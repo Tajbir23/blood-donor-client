@@ -66,6 +66,24 @@ export const joinOrganization = async(orgId: string) => {
     }
 }
 
+export const getMyJoinRequests = async() => {
+    const cookieStore = await cookies()
+    const token = await cookieStore.get("token")?.value
+    try {
+        const response = await baseUrl('/organization/my_join_requests', {
+            method: "GET",
+            headers: {
+                "Authorization" : `Bearer ${token}`
+            }
+        })
+
+        return await response.json()
+    } catch (error) {
+        console.log(error)
+        return { success: false, joinedOrgIds: [] }
+    }
+}
+
 export const getMembers = async(organizationId: string, page?: number, limit?: number, search?: string) => {
     try {
         const response = await baseUrl(`/organization/members/${organizationId}?page=${page}&limit=${limit}&search=${search}`, {

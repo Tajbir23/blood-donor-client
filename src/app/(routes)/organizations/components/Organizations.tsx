@@ -31,7 +31,8 @@ interface OrganizationsProps {
     organizations: Organization[];
     totalOrganizations: number;
   },
-  decodedUser: decodedJwtType
+  decodedUser: decodedJwtType,
+  joinedOrgIds?: string[]
 }
 
 const ITEMS_PER_PAGE = 10
@@ -48,7 +49,7 @@ const getOrganizationTypeBangla = (type: string): string => {
   }
 };
 
-const Organizations = ({ initialData, decodedUser }: OrganizationsProps) => {
+const Organizations = ({ initialData, decodedUser, joinedOrgIds = [] }: OrganizationsProps) => {
   const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
@@ -243,13 +244,18 @@ const Organizations = ({ initialData, decodedUser }: OrganizationsProps) => {
                     >
                       বিস্তারিত
                     </Link>
-                    {decodedUser && (
+                    {decodedUser && !joinedOrgIds.includes(org._id) && (
                       <button
                         onClick={() => handleJoinOrganization(org._id)}
                         className="flex-1 py-2 rounded bg-red-700 text-white text-sm font-semibold hover:bg-red-800 transition-colors"
                       >
                         যোগ দিন
                       </button>
+                    )}
+                    {decodedUser && joinedOrgIds.includes(org._id) && (
+                      <span className="flex-1 py-2 rounded bg-stone-100 text-stone-500 text-sm font-semibold text-center cursor-default">
+                        সদস্য
+                      </span>
                     )}
                   </div>
                 </div>
