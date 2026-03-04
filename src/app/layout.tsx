@@ -12,6 +12,7 @@ import QueryProvider from "@/components/QueryProvider/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import UpdateBloodDonationDate from '@/components/home/UpdateBloodDonationDate';
 import BloodDonationModal from '@/components/modals/BloodDonationModal';
+import LiveChatWidget from '@/components/LiveChat/LiveChatWidget';
 import Script from 'next/script'
 
 const hindSiliguri = Hind_Siliguri({
@@ -59,6 +60,7 @@ export default async function RootLayout({
           <UpdateBloodDonationDate Modal={BloodDonationModal} />
           {children}
           <Footer />
+          <LiveChatWidget />
           <Toaster 
             position="top-right"
             toastOptions={{
