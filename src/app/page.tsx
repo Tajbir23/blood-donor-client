@@ -1,4 +1,3 @@
-export const dynamic = 'force-static';
 export const revalidate = 3600;
 
 import { Metadata } from 'next';
@@ -11,20 +10,39 @@ import RegularDonor from '@/components/home/RegularDonor';
 import RecentBloodRequests from '@/components/home/RecentBloodRequests';
 import Script from 'next/script';
 
-export const metadata: Metadata = {
-  title: 'LifeDrop | জীবন বাঁচাতে রক্ত দিন',
-  description: 'বাংলাদেশের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
-  keywords: ['রক্তদান', 'বাংলাদেশ', 'blood donation', 'Bangladesh', 'blood donors', 'emergency blood', 'blood bank', 'রক্তদাতা', 'জরুরি রক্ত', 'রক্ত সংগ্রহ', 'LifeDrop'],
-  openGraph: {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
+export async function generateMetadata(): Promise<Metadata> {
+  // Fetch sliders directly (not via server action) to avoid cookies() dependency
+  // so this works with ISR/static generation
+  let ogImage = '/images/home-og.jpg';
+  try {
+    const res = await fetch(`${API_URL}/home/slider`, {
+      next: { revalidate: 3600, tags: ['sliders'] },
+    });
+    const data = await res.json();
+    if (data?.slider?.length > 0 && data.slider[0].image) {
+      ogImage = data.slider[0].image;
+    }
+  } catch {
+    // Fallback to static image
+  }
+
+  return {
     title: 'LifeDrop | জীবন বাঁচাতে রক্ত দিন',
     description: 'বাংলাদেশের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
-    type: 'website',
-    url: 'https://blood-donor-bangladesh.vercel.app',
-    images: [{ url: '/images/home-og.jpg', width: 1200, height: 630, alt: 'LifeDrop' }],
-  },
-  alternates: { canonical: 'https://blood-donor-bangladesh.vercel.app' },
-  other: { 'google-site-verification': '4r6L_E636xBF3hU6OjXMUdfSnfTKiwofEtBSHhxMHRw' },
-};
+    keywords: ['রক্তদান', 'বাংলাদেশ', 'blood donation', 'Bangladesh', 'blood donors', 'emergency blood', 'blood bank', 'রক্তদাতা', 'জরুরি রক্ত', 'রক্ত সংগ্রহ', 'LifeDrop'],
+    openGraph: {
+      title: 'LifeDrop | জীবন বাঁচাতে রক্ত দিন',
+      description: 'বাংলাদেশের সকল জেলার রক্তদাতাদের সাথে সংযোগ স্থাপন করুন। জরুরি প্রয়োজনে দ্রুত ও নির্ভরযোগ্যভাবে রক্তের জন্য অনুরোধ করুন।',
+      type: 'website',
+      url: 'https://blood-donor-bangladesh.vercel.app',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: 'LifeDrop — জীবন বাঁচাতে রক্ত দিন' }],
+    },
+    alternates: { canonical: 'https://blood-donor-bangladesh.vercel.app' },
+    other: { 'google-site-verification': '4r6L_E636xBF3hU6OjXMUdfSnfTKiwofEtBSHhxMHRw' },
+  };
+}
 
 export default function Home() {
   return (
