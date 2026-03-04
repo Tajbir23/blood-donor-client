@@ -11,18 +11,26 @@ import RecentBloodRequests from '@/components/home/RecentBloodRequests';
 import Script from 'next/script';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const SITE_URL = 'https://blood-donor-bangladesh.vercel.app';
 
 export async function generateMetadata(): Promise<Metadata> {
   // Fetch sliders directly (not via server action) to avoid cookies() dependency
   // so this works with ISR/static generation
-  let ogImage = '/images/home-og.jpg';
+  let ogImage = `${SITE_URL}/images/home-og.jpg`;
   try {
+    const headers: HeadersInit = {};
+    if (process.env.SERVER_SECRET_KEY) {
+      headers['X-Server-Key'] = process.env.SERVER_SECRET_KEY;
+    }
     const res = await fetch(`${API_URL}/home/slider`, {
+      headers,
       next: { revalidate: 3600, tags: ['sliders'] },
     });
     const data = await res.json();
     if (data?.slider?.length > 0 && data.slider[0].image) {
-      ogImage = data.slider[0].image;
+      const img = data.slider[0].image;
+      // Ensure absolute URL for OG image (Facebook requires it)
+      ogImage = img.startsWith('http') ? img : `${SITE_URL}${img}`;
     }
   } catch {
     // Fallback to static image
